@@ -1,0 +1,193 @@
+:root {
+    --size:      800px;
+    --box-size:  calc(var(--size)/8);
+    --backcolor: darkslategray;
+    --dark:      grey;
+    --light:     white;
+    --legend:    azure;
+    --hover:     lightgreen
+  }
+.board {
+  max-width: var(--size);
+  max-width: var(--size);
+}
+.square {
+  border: 1px black solid;
+  box-sizing: border-box;
+  width: var(--box-size);
+  height: var(--box-size);
+  min-width: var(--box-size);
+  min-height: var(--box-size);
+
+}
+.light{
+  background: var(--light);
+}
+.dark{
+  background: var(--dark)
+}
+/* .board tr::before {
+  content: attr(data-line);
+  position: absolute;
+  margin: 1.8rem 0 0rem -1.5rem;
+  font-size: larger;
+  color: var(--legend);
+}
+.board tr::after {
+  content: attr(data-line);
+  position: absolute;
+  margin: 1.8rem 0 0rem 0.8rem;
+  font-size: larger;
+  color: var(--legend);
+}
+.board tr:first-child > td::before {
+  content: attr(data-col);
+  position: absolute;
+  margin: -4rem 0 0rem 1.6rem;
+  font-size: larger;
+  color: var(--legend);
+}
+.board tr:last-child > td::after {
+  content: attr(data-col);
+  position: absolute;
+  margin: 2.6rem 0 0rem 1.6rem;
+  font-size: larger;
+  color: var(--legend);
+} */
+td:hover {
+  background: var(--hover);
+  cursor: pointer
+}
+.piece {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: var(--box-size);
+  max-height: var(--box-size);
+}
+
+.piece.dragging {
+  opacity: 0.1%;
+}
+
+.draggable {
+  cursor: move;
+}
+
+.draggable.dragging {
+  opacity: 0.1%;
+}
+
+/* Pawns */
+#light-A-pawn::after,
+#light-B-pawn::after,
+#light-C-pawn::after,
+#light-D-pawn::after,
+#light-E-pawn::after,
+#light-F-pawn::after,
+#light-G-pawn::after,
+#light-H-pawn::after{
+  content: "\2659";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+
+#dark-A-pawn::after,
+#dark-B-pawn::after,
+#dark-C-pawn::after,
+#dark-D-pawn::after,
+#dark-E-pawn::after,
+#dark-F-pawn::after,
+#dark-G-pawn::after,
+#dark-H-pawn::after{
+  content: "\265F";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+
+/* Rank one */
+#light-A-rook::after,
+#light-H-rook::after{
+  content: "\2656";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#light-B-knight::after,
+#light-G-knight::after{
+  content: "\2658";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#light-C-bishop::after,
+#light-F-bishop::after{
+  content: "\2657";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#light-C-bishop::after,
+#light-F-bishop::after{
+  content: "\2657";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#light-X-king::after{
+  content: "\2654";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#light-X-queen::after{
+  content: "\2655";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+
+/* Rank eight */
+#dark-A-rook::after,
+#dark-H-rook::after{
+  content: "\265C";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#dark-B-knight::after,
+#dark-G-knight::after{
+  content: "\265E";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#dark-C-bishop::after,
+#dark-F-bishop::after{
+  content: "\265D";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#dark-X-king::after{
+  content: "\265A";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+#dark-X-queen::after{
+  content: "\265B";
+  font-size: 3rem;
+  font-weight: normal;
+  opacity: 100%;
+}
+
+/* td[data-line = "2"]{
+  display: none;
+} */
+
+/* td[data-col = "B"]{
+  display: none;
+} */
