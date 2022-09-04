@@ -1,24 +1,25 @@
 :root {
     --size:      800px;
     --box-size:  calc(var(--size)/8);
-    --backcolor: darkslategray;
     --dark:      grey;
     --light:     white;
-    --legend:    azure;
     --hover:     lightgreen
   }
 .board {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
   max-width: var(--size);
   max-width: var(--size);
+  border-spacing: 0;
 }
 .square {
-  border: 1px black solid;
   box-sizing: border-box;
   width: var(--box-size);
   height: var(--box-size);
   min-width: var(--box-size);
   min-height: var(--box-size);
-
+  padding: 0;
 }
 .light{
   background: var(--light);
@@ -26,38 +27,46 @@
 .dark{
   background: var(--dark)
 }
-/* .board tr::before {
-  content: attr(data-line);
-  position: absolute;
-  margin: 1.8rem 0 0rem -1.5rem;
-  font-size: larger;
-  color: var(--legend);
-}
-.board tr::after {
-  content: attr(data-line);
-  position: absolute;
-  margin: 1.8rem 0 0rem 0.8rem;
-  font-size: larger;
-  color: var(--legend);
-}
-.board tr:first-child > td::before {
-  content: attr(data-col);
-  position: absolute;
-  margin: -4rem 0 0rem 1.6rem;
-  font-size: larger;
-  color: var(--legend);
-}
-.board tr:last-child > td::after {
-  content: attr(data-col);
-  position: absolute;
-  margin: 2.6rem 0 0rem 1.6rem;
-  font-size: larger;
-  color: var(--legend);
-} */
 td:hover {
   background: var(--hover);
   cursor: pointer
 }
+.turn-indicator-container{
+  position: absolute;
+  display: flex;
+  left: 50%;
+  top: calc(30px + var(--size));
+  transform: translate(-50%);
+  border-radius: 1rem;
+  background-color: blanchedalmond;
+  padding: 0.5rem;
+}
+.turn-indicator{
+  display: flex;
+  width: 12rem;
+  height: 6rem;
+  border-radius: 1rem;
+  font-size: 2rem;
+  justify-content: center;
+  align-items: center;
+  border: solid black;
+  margin: 0.5rem;
+}
+#light-turn-indicator{
+  color: black;
+  background-color: white;
+}
+#dark-turn-indicator{
+  color: white;
+  background-color: black;
+}
+#light-turn-indicator[isLight="false"]{
+  opacity: 20%;
+}
+#dark-turn-indicator[isLight="true"]{
+  opacity: 20%;
+}
+
 .piece {
   display: flex;
   justify-content: center;
@@ -65,15 +74,12 @@ td:hover {
   max-width: var(--box-size);
   max-height: var(--box-size);
 }
-
 .piece.dragging {
   opacity: 0.1%;
 }
-
 .draggable {
   cursor: move;
 }
-
 .draggable.dragging {
   opacity: 0.1%;
 }

@@ -1,8 +1,5 @@
-import {domCheckValidMove} from "./valid-move-checker.js"
-// import {checkCheckmate} from "./valid-move-checker.js"
-
+import {domMoveChecker} from "./valid-move-checker.js"
 let isLightTurn = true;
-
 //Create the board
 const cols = {0:"A", 1:"B", 2:"C", 3:"D", 4:"E", 5:"F", 6:"G", 7:"H"}
 const table = document.createElement("table");
@@ -98,13 +95,22 @@ squares.forEach(square => {
         e.preventDefault();
         const draggedPiece = document.querySelector('.dragging');
         const fromSquare = draggedPiece.parentElement;
-        if (domCheckValidMove(fromSquare, square, isLightTurn, draggedPiece)){
+        let isValidMove;
+        let isCheckmate;
+        [isValidMove, isCheckmate] = domMoveChecker(fromSquare, square, isLightTurn, draggedPiece);
+        if (isValidMove){
             if (square.hasChildNodes()){
                 square.removeChild(square.firstChild);
             }
             square.appendChild(draggedPiece);
             isLightTurn = !isLightTurn;
+            const lightTurnIndicator = document.getElementById('light-turn-indicator');
+            const darkTurnIndicator = document.getElementById('dark-turn-indicator');
+            lightTurnIndicator.setAttribute('isLight', isLightTurn);
+            darkTurnIndicator.setAttribute('isLight', isLightTurn);
         }
-        // if()
+        if (isValidMove && isCheckmate){
+            //
+        }
     })
 })

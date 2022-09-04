@@ -10,3 +10,7 @@ CSS based
     Html to board state needs to account for CSS in the board state
     Board state needs to be used
     Move the piece from id to class as well
+
+Making CSS nicer
+    Fade animations for the switch turn buttons
+    Sounds for pieces moving
