@@ -1,5 +1,5 @@
-import {isValidMove} from "./valid-move-checker.js"
-import {isCheckmate} from "./valid-move-checker.js"
+import {domCheckValidMove} from "./valid-move-checker.js"
+// import {checkCheckmate} from "./valid-move-checker.js"
 
 let isLightTurn = true;
 
@@ -98,7 +98,7 @@ squares.forEach(square => {
         e.preventDefault();
         const draggedPiece = document.querySelector('.dragging');
         const fromSquare = draggedPiece.parentElement;
-        if (isValidMove(fromSquare, square, isLightTurn, draggedPiece)){
+        if (domCheckValidMove(fromSquare, square, isLightTurn, draggedPiece)){
             if (square.hasChildNodes()){
                 square.removeChild(square.firstChild);
             }
