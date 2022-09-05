@@ -71,10 +71,10 @@ td:hover {
   color: white;
   background-color: black;
 }
-#light-turn-indicator[isLight]{
+#light-turn-indicator[isLightTurn]{
   opacity: 100%;
 }
-#dark-turn-indicator[isLight]{
+#dark-turn-indicator[isLightTurn]{
   opacity: 20%;
 }
 #undo-button{

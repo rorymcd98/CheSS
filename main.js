@@ -13,7 +13,11 @@ function createBoard(savedBoard = null, isLightTurn = true){
     const table = document.createElement("table");
     table.className = "board";
     table.id = "board";
-    if (isLightTurn){table.setAttribute('isLightTurn',"")};
+    table.setAttribute('isLightTurn',"");
+    if (!isLightTurn){
+        document.getElementById('dark-turn-indicator').removeAttribute('isLightTurn');
+        document.getElementById('light-turn-indicator').removeAttribute('isLightTurn');
+    };
     for (let i = 1; i < 9; i++) {
         let tr = document.createElement('tr');
         tr.dataset.line = 9-i
@@ -113,8 +117,8 @@ function createBoard(savedBoard = null, isLightTurn = true){
                 square.appendChild(draggedPiece);
                 const lightTurnIndicator = document.getElementById('light-turn-indicator');
                 const darkTurnIndicator = document.getElementById('dark-turn-indicator');
-                lightTurnIndicator.toggleAttribute('isLight');
-                darkTurnIndicator.toggleAttribute('isLight');
+                lightTurnIndicator.toggleAttribute('isLightTurn');
+                darkTurnIndicator.toggleAttribute('isLightTurn');
                 document.getElementById('board').toggleAttribute('isLightTurn');
             }
             if (isValidMove && isCheckmate){
