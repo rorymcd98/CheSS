@@ -1,16 +1,21 @@
+Board state save, undo functions
     Create a function which generates a custom board layout / a saved board layout.
+    Create an undo button
 
 Code best practices
-    Consider making a class to reduce variable passing
     Consider adding more debugging for which piece is putting the king in check "The king is in check due to: knight."
         Consider double checks
 
-CSS based
-
+Functional CSS chess
     Html to board state needs to account for CSS in the board state
     Board state needs to be used
     Move the piece from id to class as well
 
 Making CSS nicer
     Fade animations for the switch turn buttons
-    Sounds for pieces moving
+    Sounds for pieces moving and so on
+
+Chess edge cases
+    Pawn promotions
+    En passant
+    Castling

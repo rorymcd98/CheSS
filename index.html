@@ -10,9 +10,18 @@
 </head>
 <body>
     <div></div>
-    <div class ="turn-indicator-container">
-        <span class ="turn-indicator" id="light-turn-indicator" isLight = true>Light Turn</span>
-        <span class ="turn-indicator" id="dark-turn-indicator" isLight = true>Dark Turn</span>
+    <div class = "turn-control-dashboard">
+        <span class ="turn-indicator-container">
+            <span class ="turn-indicator" id="light-turn-indicator" isLight = true>Light Turn</span>
+            <span class ="turn-indicator" id="dark-turn-indicator" isLight = true>Dark Turn</span>
+        </span>
+        <button id = "undo-button">Undo</button>
+        <button id = "redo-button">Redo</button>
+        <button id = "new-game">New game</button>
+        <span id = "save-load-buttons">
+            <button id = "save-game">Save game</button>
+            <button id = "load-game">Load game</button>
+        </span>
     </div>
     <script src="main.js" type = "module"></script>
 </body>

@@ -136,27 +136,25 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
     function isKingInCheck(boardState){
         const kings = findKings(boardState, isLightTurn);
         const fits = makeFits(boardState[0].length, boardState.length);
-        let res = false;
-        kings.forEach((king)=>{
-            if(checkLineForPiece(king, 1, 0)){res = true}
-            if(checkLineForPiece(king, 0, 1)){res = true}
-            if(checkLineForPiece(king, -1, 0)){res = true}
-            if(checkLineForPiece(king, 0, -1)){res = true}
-            if(checkLineForPiece(king, 1, 1)){res = true}
-            if(checkLineForPiece(king, 1, -1)){res = true}
-            if(checkLineForPiece(king, -1, 1)){res = true}
-            if(checkLineForPiece(king, -1, -1)){res = true}
+        return(kings.some((king)=>{
+            if(checkLineForPiece(king, 1, 0)){return true}
+            if(checkLineForPiece(king, 0, 1)){return true}
+            if(checkLineForPiece(king, -1, 0)){return true}
+            if(checkLineForPiece(king, 0, -1)){return true}
+            if(checkLineForPiece(king, 1, 1)){return true}
+            if(checkLineForPiece(king, 1, -1)){return true}
+            if(checkLineForPiece(king, -1, 1)){return true}
+            if(checkLineForPiece(king, -1, -1)){return true}
             const pawnDir = isLightTurn ? -1 : 1;
             const pawnMoveset =  [[1,1*pawnDir],[-1,1*pawnDir]];
             let kf= 2; let ks = 1; //knight forward, knight side
             const knightMoveset = [[kf,ks],[-kf,ks],[kf,-ks],[-kf,-ks],[ks,kf],[-ks,kf],[ks,-kf],[-ks,-kf]];
             let k = 1; //king step
             const kingMoveset = [[k,k],[-k,k],[k,-k],[-k,-k],[k,0],[0,k],[-k,0],[0,-k]];
-            if(checkMovesetForPiece(king, pawnMoveset, 'pawn')){res = true}
-            if(checkMovesetForPiece(king, knightMoveset, 'knight')){res = true}
-            if(checkMovesetForPiece(king, kingMoveset, 'king')){res = true}
-        })
-        return res;
+            if(checkMovesetForPiece(king, pawnMoveset, 'pawn')){return true}
+            if(checkMovesetForPiece(king, knightMoveset, 'knight')){return true}
+            if(checkMovesetForPiece(king, kingMoveset, 'king')){return true}
+        }))
 
         //Returns true if the line encounters a threatening bishop/rook/queen, false if not
         function checkLineForPiece(king, dirX, dirY){
