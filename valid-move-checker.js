@@ -1,7 +1,8 @@
 //Passes the dom board to the valid move checker
-export function domMoveChecker(fromSquare, toSquare, isLightTurn, domPiece){
+export function domMoveChecker(fromSquare, toSquare, domPiece){
     let isValidMove = false;
     let isCheckmate = false;
+    let isLightTurn = document.getElementById('board').hasAttribute('isLightTurn') ? true : false;
     const domBoard = document.getElementById('board');
     const boardState = domToBoardState(domBoard);
     const movesets = new generateMoveset(isLightTurn);

@@ -3,11 +3,17 @@ let isLightTurn = true;
 //Create the board
 createBoard(null, isLightTurn);//null for default board
 
+let newGameButton = document.getElementById("new-game");
+newGameButton.addEventListener('click', ()=>{createBoard(null, isLightTurn)});
+
 function createBoard(savedBoard = null, isLightTurn = true){
+    let exists = document.getElementById('board');
+    if (exists){exists.remove()}
     const cols = {0:"A", 1:"B", 2:"C", 3:"D", 4:"E", 5:"F", 6:"G", 7:"H"}
     const table = document.createElement("table");
     table.className = "board";
     table.id = "board";
+    if (isLightTurn){table.setAttribute('isLightTurn',"")};
     for (let i = 1; i < 9; i++) {
         let tr = document.createElement('tr');
         tr.dataset.line = 9-i
@@ -99,17 +105,17 @@ function createBoard(savedBoard = null, isLightTurn = true){
             const fromSquare = draggedPiece.parentElement;
             let isValidMove;
             let isCheckmate;
-            [isValidMove, isCheckmate] = domMoveChecker(fromSquare, square, isLightTurn, draggedPiece);
+            [isValidMove, isCheckmate] = domMoveChecker(fromSquare, square, draggedPiece);
             if (isValidMove){
                 if (square.hasChildNodes()){
                     square.removeChild(square.firstChild);
                 }
                 square.appendChild(draggedPiece);
-                isLightTurn = !isLightTurn;
                 const lightTurnIndicator = document.getElementById('light-turn-indicator');
                 const darkTurnIndicator = document.getElementById('dark-turn-indicator');
-                lightTurnIndicator.setAttribute('isLight', isLightTurn);
-                darkTurnIndicator.setAttribute('isLight', isLightTurn);
+                lightTurnIndicator.toggleAttribute('isLight');
+                darkTurnIndicator.toggleAttribute('isLight');
+                document.getElementById('board').toggleAttribute('isLightTurn');
             }
             if (isValidMove && isCheckmate){
                 //

@@ -62,17 +62,19 @@ td:hover {
   margin: 0.2rem;
 }
 #light-turn-indicator{
+  opacity: 20%;
   color: black;
   background-color: white;
 }
 #dark-turn-indicator{
+  opacity: 100%;
   color: white;
   background-color: black;
 }
-#light-turn-indicator[isLight="false"]{
-  opacity: 20%;
+#light-turn-indicator[isLight]{
+  opacity: 100%;
 }
-#dark-turn-indicator[isLight="true"]{
+#dark-turn-indicator[isLight]{
   opacity: 20%;
 }
 #undo-button{
