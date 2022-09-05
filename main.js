@@ -1,38 +1,86 @@
 import {domMoveChecker} from "./valid-move-checker.js"
 let isLightTurn = true;
+var gameTurnList;
+
+//Doubly linked list of turn nodes
+class turnNode{
+    constructor(boardElement, isLightTurn){
+        this.board = boardElement;
+        this.turn = isLightTurn;
+        this.next = null;
+        this.prev = null;
+    }
+}
+
+class turnList{
+    constructor(boardElement, isLightTurn){
+        this.head = new turnNode(boardElement, isLightTurn);
+        this.tail = this.head;
+        this.current = this.tail;
+    }
+    append(boardElement, isLightTurn){
+        let newTurnNode = new turnNode(boardElement, isLightTurn);
+
+        this.current.next = newTurnNode;
+        newTurnNode.prev = this.current;
+        this.tail = newTurnNode;
+        this.current = this.tail;
+    }
+    undo(){
+        this.current = this.current.prev;
+        return [this.current.board, this.current.turn];
+    }
+}
+
 //Create the board
-createBoard(null, isLightTurn);//null for default board
+renderBoard(null, isLightTurn);//null for default board
 
-let newGameButton = document.getElementById("new-game");
-newGameButton.addEventListener('click', ()=>{createBoard(null, isLightTurn)});
 
-function createBoard(savedBoard = null, isLightTurn = true){
+let newGameButton = document.getElementById("new-game-button");
+newGameButton.addEventListener('click', ()=>{
+    renderBoard(null, isLightTurn)
+});
+
+
+let undoButton = document.getElementById("undo-button");
+undoButton.addEventListener('click', ()=>{
+    let board;
+    let turn; 
+    [board, turn] = gameTurnList.undo();
+    console.log(board)
+    renderBoard(board, isLightTurn);
+});
+
+function renderBoard(savedBoard = null, isLightTurn = true){
     let exists = document.getElementById('board');
     if (exists){exists.remove()}
-    const cols = {0:"A", 1:"B", 2:"C", 3:"D", 4:"E", 5:"F", 6:"G", 7:"H"}
-    const table = document.createElement("table");
-    table.className = "board";
-    table.id = "board";
-    table.setAttribute('isLightTurn',"");
-    if (!isLightTurn){
-        document.getElementById('dark-turn-indicator').removeAttribute('isLightTurn');
-        document.getElementById('light-turn-indicator').removeAttribute('isLightTurn');
-    };
-    for (let i = 1; i < 9; i++) {
-        let tr = document.createElement('tr');
-        tr.dataset.line = 9-i
-        for (let j = 1; j < 9; j++) {
-            let td = document.createElement('td');
-            td.dataset.col = cols[j-1];
-            td.dataset.line = 9-i;
-            td.className = (i%2 === j%2) ? "light square" : "dark square";
-            tr.appendChild(td);
+    if (savedBoard != null){ 
+        document.getElementById("table-container").appendChild(savedBoard);
+    } else {
+        const cols = {0:"A", 1:"B", 2:"C", 3:"D", 4:"E", 5:"F", 6:"G", 7:"H"}
+        const table = document.createElement("table");
+        table.className = "board";
+        table.id = "board";
+        table.setAttribute('isLightTurn',"");
+        if (!isLightTurn){
+            document.getElementById('dark-turn-indicator').removeAttribute('isLightTurn');
+            document.getElementById('light-turn-indicator').removeAttribute('isLightTurn');
+        };
+        for (let i = 1; i < 9; i++) {
+            let tr = document.createElement('tr');
+            tr.dataset.line = 9-i
+            for (let j = 1; j < 9; j++) {
+                let td = document.createElement('td');
+                td.dataset.col = cols[j-1];
+                td.dataset.line = 9-i;
+                td.className = (i%2 === j%2) ? "light square" : "dark square";
+                tr.appendChild(td);
+            }
+            table.appendChild(tr);
         }
-        table.appendChild(tr);
-    }
-    document.querySelector("div").appendChild(table);
+        document.getElementById("table-container").appendChild(table);
     
-    if (savedBoard === null){
+
         const pieceOrder = ['A-rook', 'B-knight', 'C-bishop', 'X-queen', 'X-king', 'F-bishop', 'G-knight', 'H-rook'];
         //Draw the pieces
         //White Pawns
@@ -80,7 +128,9 @@ function createBoard(savedBoard = null, isLightTurn = true){
             square.appendChild(piece);
         }    
     }
-     
+    const boardElement = document.getElementById('board');
+    gameTurnList = new turnList(boardElement, boardElement.hasAttribute('isLightTurn'))
+
     //Attach drag event listeners to draggables (pieces)
     const draggables = document.querySelectorAll('.draggable');
     draggables.forEach(draggable => {
@@ -111,15 +161,21 @@ function createBoard(savedBoard = null, isLightTurn = true){
             let isCheckmate;
             [isValidMove, isCheckmate] = domMoveChecker(fromSquare, square, draggedPiece);
             if (isValidMove){
-                if (square.hasChildNodes()){
-                    square.removeChild(square.firstChild);
-                }
-                square.appendChild(draggedPiece);
+                const board = document.getElementById('board');
+                console.log(board);
+                gameTurnList.append(board, board.hasAttribute('isLightTurn'));
                 const lightTurnIndicator = document.getElementById('light-turn-indicator');
                 const darkTurnIndicator = document.getElementById('dark-turn-indicator');
                 lightTurnIndicator.toggleAttribute('isLightTurn');
                 darkTurnIndicator.toggleAttribute('isLightTurn');
-                document.getElementById('board').toggleAttribute('isLightTurn');
+                board.toggleAttribute('isLightTurn');
+
+                if (square.hasChildNodes()){
+                    square.removeChild(square.firstChild);
+                }
+                square.appendChild(draggedPiece);
+
+
             }
             if (isValidMove && isCheckmate){
                 //
@@ -127,3 +183,4 @@ function createBoard(savedBoard = null, isLightTurn = true){
         })
     })    
 }
+
