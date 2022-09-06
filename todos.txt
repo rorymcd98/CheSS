@@ -1,3 +1,6 @@
+Misc
+    Get rid of is light turn for the baord ele
+
 Board state save, undo functions
     Create a function which generates a custom board layout / a saved board layout.
     Create an undo button
@@ -5,6 +8,9 @@ Board state save, undo functions
 Code best practices
     Consider adding more debugging for which piece is putting the king in check "The king is in check due to: knight."
         Consider double checks
+    Consider changing != to !==
+    Is enemy piece function is ugly
+
 
 Functional CSS chess
     Html to board state needs to account for CSS in the board state

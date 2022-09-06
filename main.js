@@ -1,4 +1,4 @@
-import {domMoveChecker, Piece} from "./valid-move-checker.js"
+import {turnHandler, Piece} from "./valid-move-checker.js"
 let isLightTurn = true;
 var gameTurnList;
 
@@ -41,6 +41,8 @@ gameTurnList = new TurnList(defaultBoardState, isLightTurn);
 let newGameButton = document.getElementById("new-game-button");
 newGameButton.addEventListener('click', ()=>{
     renderBoard(createDefaultBoard(), true);
+    document.getElementById('light-turn-indicator').setAttribute("isLightTurn", "");
+    document.getElementById('dark-turn-indicator').setAttribute("isLightTurn", "");
 });
 let undoButton = document.getElementById("undo-button");
 undoButton.addEventListener('click', ()=>{
@@ -53,11 +55,10 @@ undoButton.addEventListener('click', ()=>{
 function renderBoard(boardState, isLightTurn = true){
     let exists = document.getElementById('board');
     if (exists){exists.remove()}
-
+    console.log(boardState)
     const boardElement = document.createElement("table");
     boardElement.className = "board";
     boardElement.id = "board";
-    boardElement.setAttribute('isLightTurn',"");
     if (!isLightTurn){
         document.getElementById('dark-turn-indicator').removeAttribute('isLightTurn');
         document.getElementById('light-turn-indicator').removeAttribute('isLightTurn');
@@ -121,18 +122,26 @@ function renderBoard(boardState, isLightTurn = true){
             e.preventDefault();
             const draggedPiece = document.querySelector('.dragging');
             const fromSquare = draggedPiece.parentElement;
+            const fyles = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7};
+            const fromX = fyles[fromSquare.getAttribute('data-fyle')];
+            const fromY = 8-Number(fromSquare.getAttribute('data-rank'));
+            const toX = fyles[square.getAttribute('data-fyle')];
+            const toY = 8-Number(square.getAttribute('data-rank'));
+            const curPiece = boardState[fromY][fromX];
+
             let isValidMove;
             let isCheckmate;
-            [isValidMove, isCheckmate] = domMoveChecker(fromSquare, square, draggedPiece);
+            [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn);
             if (isValidMove){
-                const board = document.getElementById('board');
-                console.log(board);
-                gameTurnList.append(board, board.hasAttribute('isLightTurn'));
+                gameTurnList.append(boardState, isLightTurn);
                 const lightTurnIndicator = document.getElementById('light-turn-indicator');
                 const darkTurnIndicator = document.getElementById('dark-turn-indicator');
                 lightTurnIndicator.toggleAttribute('isLightTurn');
                 darkTurnIndicator.toggleAttribute('isLightTurn');
-                board.toggleAttribute('isLightTurn');
+                isLightTurn = !isLightTurn;
+
+                boardState[toY][toX] = boardState[fromY][fromX];
+                boardState[fromY][fromX] = undefined;
 
                 if (square.hasChildNodes()){
                     square.removeChild(square.firstChild);

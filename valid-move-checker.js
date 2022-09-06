@@ -1,30 +1,17 @@
 //Passes the dom board to the valid move checker
-export function domMoveChecker(fromSquare, toSquare, domPiece){
+export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn){
     let isValidMove = false;
     let isCheckmate = false;
-    let isLightTurn = document.getElementById('board').hasAttribute('isLightTurn') ? true : false;
-    const domBoard = document.getElementById('board');
-    const boardState = domToBoardState(domBoard);
-    const movesets = new generateMoveset(isLightTurn);
-
-    const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
-    //Co-ordinate system: Square A8 is [0,0]
-    const fromX = files.findIndex((el)=> el === fromSquare.getAttribute('data-col'));
-    const fromY = 8-fromSquare.getAttribute('data-line');
-    const toX = files.findIndex((el)=> el === toSquare.getAttribute('data-col'));
-    const toY = 8-toSquare.getAttribute('data-line');
-    const curPiece = new Piece(domPiece);
+    const movesets = new GenerateMoveset(isLightTurn);
 
     if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn)){
-        domPiece.setAttribute('unmoved', false)
+        boardState[fromY][fromX].unmoved = false;
         isValidMove = true;
-        let newBoardState = [];
-        for (let i = 0; i<boardState.length; i++){
-            newBoardState.push([...boardState[i]]);
-        }
-        newBoardState[toY][toX] = boardState[fromY][fromX];
-        newBoardState[fromY][fromX] = null;
-        if(checkCheckmate(newBoardState, !isLightTurn)){
+        let nextBoardState = [];
+        for (let i = 0; i<boardState.length; i++){nextBoardState.push([...boardState[i]]);}
+        nextBoardState[toY][toX] = boardState[fromY][fromX];
+        nextBoardState[fromY][fromX] = undefined;
+        if(checkCheckmate(nextBoardState, !isLightTurn)){
             isCheckmate = true;
         }
     }
@@ -49,16 +36,16 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
     }
     const [moveX, moveY] = [Math.abs(toX-fromX),Math.abs(toY-fromY)];
     //Check if the cell is either unnocupied or an enemy
-    if(boardState[toY][toX] != null && !isEnemyPiece(toX, toY)){
+    if(boardState[toY][toX] != undefined && !isEnemyPiece(toX, toY)){
         if(debug){console.log('No self-taking!')}
         return false;
     }  
     //Pawn
     if (piece.type === "pawn"){
         const orientation = piece.col === 'light' ? -1 : 1;
-        const canMove = (piece.unmoved === "true") ? 2 : 1;
+        const canMove = (piece.unmoved) ? 2 : 1;
         const movePawn = orientation*(toY-fromY);
-        if (!((movePawn > 0) && (movePawn <= canMove) && (fromX === toX) && (boardState[toY][toX] === null))){
+        if (!((movePawn > 0) && (movePawn <= canMove) && (fromX === toX) && (boardState[toY][toX] == undefined))){
             if (!((movePawn === 1 && moveX === 1) && isEnemyPiece(toX, toY))){
                 if(debug){console.log('Not a valid pawn move!')}
                 return false;
@@ -92,7 +79,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
             let xDir = (toX - fromX) > 0 ? 1 : -1;
             let yDir = (toY - fromY) > 0 ? 1 : -1;
             for (let i = 1; i<moveY;i++){
-                if(boardState[fromY+i*yDir][fromX+i*xDir]!=null){
+                if(boardState[fromY+i*yDir][fromX+i*xDir]!=undefined){
                     if(debug){console.log("There's a piece in the way!")}
                     return false;
                 }   
@@ -109,7 +96,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
                 yDir = (toY - fromY) > 0 ? 1 : -1;
             }
             for (let i = 1; i<moveY;i++){
-                if(boardState[fromY+i*yDir][fromX+i*xDir]!=null){
+                if(boardState[fromY+i*yDir][fromX+i*xDir]!=undefined){
                     if(debug){console.log("There's a piece in the way!")}
                     return false;
                 }   
@@ -117,14 +104,12 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
         }
     }
     //Create a new board with the piece moved
-    let newBoardState = [];
-    for (let i = 0; i<boardState.length; i++){
-        newBoardState.push([...boardState[i]]);
-    }
-    newBoardState[toY][toX] = boardState[fromY][fromX];
-    newBoardState[fromY][fromX] = null;
+    let nextBoardState = [];
+    for (let i = 0; i<boardState.length; i++){nextBoardState.push([...boardState[i]]);}
+    nextBoardState[toY][toX] = boardState[fromY][fromX];
+    nextBoardState[fromY][fromX] = undefined;
     //Check for checks in the updated board state
-    if (isKingInCheck(newBoardState)){
+    if (isKingInCheck(nextBoardState)){
         if(debug){console.log('The king will be in check!')}
         return false;
     }
@@ -167,7 +152,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
                 const posX = kingX + dirX*i;
                 const posY = kingY + dirY*i;
                 if (!fits(posX, posY)){return false}
-                if (boardState[posY][posX] != null){
+                if (boardState[posY][posX] != undefined){
                     return ((lookForType.includes(boardState[posY][posX].type)) && (boardState[posY][posX].col === lookForCol));
                 }
             }
@@ -183,7 +168,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
                 const posX = kingX + move[0];
                 const posY = kingY + move[1];
                 if (fits(posX, posY)){
-                    if (boardState[posY][posX] != null){
+                    if (boardState[posY][posX] != undefined){
                         if((boardState[posY][posX].type === lookForType) && (boardState[posY][posX].col === lookForCol)){res = true};
                     }
                 }
@@ -199,11 +184,11 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
 
     }
     
+    //(Bug potential here?)
     function isEnemyPiece(toX, toY){
-        if (boardState[toY][toX] != null) {
-            const targetPieceCol = boardState[toY][toX].col;
-            return (isLightTurn && (targetPieceCol === "dark")) || (!isLightTurn && (targetPieceCol === "light"))
-        }
+        if(boardState[toY][toX]===undefined){return false}
+        const targetPieceCol = boardState[toY][toX].col;
+        return (isLightTurn && (targetPieceCol === "dark")) || (!isLightTurn && (targetPieceCol === "light"))
     }
 }
 
@@ -212,8 +197,7 @@ function checkCheckmate(boardState,isLightTurn){
     //1. Iterate through all pieces that can currently move
     //2. Generate all moves that that piece can do
     //3. For each move, check if the king is in check
-
-    const movesets = new generateMoveset(isLightTurn);
+    const movesets = new GenerateMoveset(isLightTurn);
     const lookForTurn = isLightTurn ? 'light' : 'dark';
     for (let j=0; j<boardState.length;j++){
         for (let i=0; i<boardState[0].length;i++){
@@ -234,7 +218,7 @@ function checkCheckmate(boardState,isLightTurn){
 
 //Generates an exhaustive list of moves a piece can perform
 //Needs access to a 'moveset' variable
-function generateMoveset(isLightTurn){
+function GenerateMoveset(isLightTurn){
     const pawnDir = isLightTurn ? -1 : 1;
     this.pawn =  [[1,1*pawnDir],[-1,1*pawnDir],[0,pawnDir],[0,2*pawnDir]];
 
@@ -258,24 +242,7 @@ function generateMoveset(isLightTurn){
     this.queen = queenMoveset;
 }
 
-//Turns the table DOM element into an interprettable board
-function domToBoardState(domBoard){
-    let boardState = Array.apply(null, Array(8)).map(()=>{return new Array(8)})
-    for (let j=0; j<domBoard.children.length;j++){
-        const rank = domBoard.children[j];
-        for (let i=0; i<rank.children.length;i++){
-            const square = rank.children[i];
-            if (square.children.length>0){
-                boardState[j][i] = new Piece(square.children[0]);
-            } else {
-                boardState[j][i] = null;
-            }
-        }
-    }
-    return boardState;
-}
-
-//Turns the DOM piece element into a piece object
+//Creates a piece object (may add some methods later)
 export class Piece{
     constructor (col, type, unmoved, file, properties = {}) {
         this.col = col;
@@ -293,7 +260,7 @@ function findKings(boardState, isLightTurn){
     for (let j=0; j<boardState.length;j++){
         for (let i=0; i<boardState[0].length;i++){
             const piece = boardState[j][i];
-            if ((piece) && (piece["type"] === "king") && (piece.col === turn)){
+            if ((piece) && (piece.type === 'king') && (piece.col === turn)){
                 kings.push([i,j]);
             }
         }
