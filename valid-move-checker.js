@@ -276,13 +276,14 @@ function domToBoardState(domBoard){
 }
 
 //Turns the DOM piece element into a piece object
-class Piece{
-    constructor (domPiece) {
-        this.col = domPiece.id.split('-')[0];
-        this.type = domPiece.id.split('-')[2];
-        this.unmoved = domPiece.getAttribute('unmoved');
+export class Piece{
+    constructor (col, type, unmoved, file, properties = {}) {
+        this.col = col;
+        this.type = type;
+        this.unmoved = unmoved;
+        this.file = file;
+        this.properties = properties;
     }
-    //Todo, log the type when logging board for easier debugging
 }
 
 //Find all the current-turn kings

@@ -164,13 +164,13 @@ td:hover {
   font-weight: normal;
   opacity: 100%;
 }
-#light-X-king::after{
+#light-E-king::after{
   content: "\2654";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#light-X-queen::after{
+#light-D-queen::after{
   content: "\2655";
   font-size: 3rem;
   font-weight: normal;
@@ -199,13 +199,13 @@ td:hover {
   font-weight: normal;
   opacity: 100%;
 }
-#dark-X-king::after{
+#dark-E-king::after{
   content: "\265A";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#dark-X-queen::after{
+#dark-D-queen::after{
   content: "\265B";
   font-size: 3rem;
   font-weight: normal;
