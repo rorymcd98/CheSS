@@ -61,20 +61,20 @@ td:hover {
   border: solid black;
   margin: 0.2rem;
 }
-#light-turn-indicator{
+#white-turn-indicator{
   opacity: 20%;
   color: black;
   background-color: white;
 }
-#dark-turn-indicator{
+#black-turn-indicator{
   opacity: 100%;
   color: white;
   background-color: black;
 }
-#light-turn-indicator[data-isLightTurn]{
+#white-turn-indicator[data-isWhiteTurn]{
   opacity: 100%;
 }
-#dark-turn-indicator[data-isLightTurn]{
+#black-turn-indicator[data-isWhiteTurn]{
   opacity: 20%;
 }
 #undo-button{
@@ -107,28 +107,28 @@ td:hover {
 }
 
 /* Pawns */
-#light-A-pawn::after,
-#light-B-pawn::after,
-#light-C-pawn::after,
-#light-D-pawn::after,
-#light-E-pawn::after,
-#light-F-pawn::after,
-#light-G-pawn::after,
-#light-H-pawn::after{
+#white-A-pawn::after,
+#white-B-pawn::after,
+#white-C-pawn::after,
+#white-D-pawn::after,
+#white-E-pawn::after,
+#white-F-pawn::after,
+#white-G-pawn::after,
+#white-H-pawn::after{
   content: "\2659";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
 
-#dark-A-pawn::after,
-#dark-B-pawn::after,
-#dark-C-pawn::after,
-#dark-D-pawn::after,
-#dark-E-pawn::after,
-#dark-F-pawn::after,
-#dark-G-pawn::after,
-#dark-H-pawn::after{
+#black-A-pawn::after,
+#black-B-pawn::after,
+#black-C-pawn::after,
+#black-D-pawn::after,
+#black-E-pawn::after,
+#black-F-pawn::after,
+#black-G-pawn::after,
+#black-H-pawn::after{
   content: "\265F";
   font-size: 3rem;
   font-weight: normal;
@@ -136,41 +136,41 @@ td:hover {
 }
 
 /* Rank one */
-#light-A-rook::after,
-#light-H-rook::after{
+#white-A-rook::after,
+#white-H-rook::after{
   content: "\2656";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#light-B-knight::after,
-#light-G-knight::after{
+#white-B-knight::after,
+#white-G-knight::after{
   content: "\2658";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#light-C-bishop::after,
-#light-F-bishop::after{
+#white-C-bishop::after,
+#white-F-bishop::after{
   content: "\2657";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#light-C-bishop::after,
-#light-F-bishop::after{
+#white-C-bishop::after,
+#white-F-bishop::after{
   content: "\2657";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#light-E-king::after{
+#white-E-king::after{
   content: "\2654";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#light-D-queen::after{
+#white-D-queen::after{
   content: "\2655";
   font-size: 3rem;
   font-weight: normal;
@@ -178,34 +178,34 @@ td:hover {
 }
 
 /* Rank eight */
-#dark-A-rook::after,
-#dark-H-rook::after{
+#black-A-rook::after,
+#black-H-rook::after{
   content: "\265C";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#dark-B-knight::after,
-#dark-G-knight::after{
+#black-B-knight::after,
+#black-G-knight::after{
   content: "\265E";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#dark-C-bishop::after,
-#dark-F-bishop::after{
+#black-C-bishop::after,
+#black-F-bishop::after{
   content: "\265D";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#dark-E-king::after{
+#black-E-king::after{
   content: "\265A";
   font-size: 3rem;
   font-weight: normal;
   opacity: 100%;
 }
-#dark-D-queen::after{
+#black-D-queen::after{
   content: "\265B";
   font-size: 3rem;
   font-weight: normal;

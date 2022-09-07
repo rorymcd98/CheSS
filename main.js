@@ -1,27 +1,27 @@
 import {turnHandler, Piece} from "./valid-move-checker.js"
-let isLightTurn = true;
+let isWhiteTurn = true;
 var gblBoardState;
 var gblGameTurnList;
 
 //Doubly linked list of turn nodes
 class TurnNode{
-    constructor(savedBoardState, isLightTurn){
+    constructor(savedBoardState, isWhiteTurn){
         this.board = savedBoardState;
-        this.turn = isLightTurn;
+        this.turn = isWhiteTurn;
         this.next = null;
         this.prev = null;
     }
 }
 
 class TurnList{
-    constructor(savedBoardState, isLightTurn){
-        this.head = new TurnNode(savedBoardState, isLightTurn);
+    constructor(savedBoardState, isWhiteTurn){
+        this.head = new TurnNode(savedBoardState, isWhiteTurn);
         // this.head.prev = null;
         this.tail = this.head;
         this.current = this.tail;
     }
-    append(savedBoardState, isLightTurn){
-        let newTurnNode = new TurnNode(savedBoardState, isLightTurn);
+    append(savedBoardState, isWhiteTurn){
+        let newTurnNode = new TurnNode(savedBoardState, isWhiteTurn);
         newTurnNode.prev = this.current;
         this.current.next = newTurnNode;
         this.current = this.current.next;
@@ -57,8 +57,8 @@ class TurnList{
 
 //---Create the board---
 const defaultBoardState = createDefaultBoard();
-renderBoard(defaultBoardState, isLightTurn);//null for default board
-gblGameTurnList = new TurnList(structuredClone(defaultBoardState), isLightTurn);
+renderBoard(defaultBoardState, isWhiteTurn);//null for default board
+gblGameTurnList = new TurnList(structuredClone(defaultBoardState), isWhiteTurn);
 
 //Create the event listeners for buttons
 let newGameButton = document.getElementById("new-game-button");
@@ -86,7 +86,7 @@ saveButton.addEventListener('click', ()=>{
     gblGameTurnList.debug();
 });
 
-function renderBoard(boardState, isLightTurn = true){
+function renderBoard(boardState, isWhiteTurn = true){
     //Update the global board state
     gblBoardState = structuredClone(boardState);
 
@@ -95,14 +95,14 @@ function renderBoard(boardState, isLightTurn = true){
     const boardElement = document.createElement("table");
     boardElement.className = "board";
     boardElement.id = "board";
-    const lightTurnIndicatorEle = document.getElementById('light-turn-indicator');
-    const darkTurnIndicatorEle = document.getElementById('dark-turn-indicator');
-    if (isLightTurn){
-        lightTurnIndicatorEle.setAttribute('data-isLightTurn', "");
-        darkTurnIndicatorEle.setAttribute('data-isLightTurn', "");
+    const whiteTurnIndicatorEle = document.getElementById('white-turn-indicator');
+    const blackTurnIndicatorEle = document.getElementById('black-turn-indicator');
+    if (isWhiteTurn){
+        whiteTurnIndicatorEle.setAttribute('data-isWhiteTurn', "");
+        blackTurnIndicatorEle.setAttribute('data-isWhiteTurn', "");
     } else {
-        lightTurnIndicatorEle.removeAttribute('data-isLightTurn');
-        darkTurnIndicatorEle.removeAttribute('data-isLightTurn');
+        whiteTurnIndicatorEle.removeAttribute('data-isWhiteTurn');
+        blackTurnIndicatorEle.removeAttribute('data-isWhiteTurn');
     }
     //Create the board as a table element
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
@@ -170,18 +170,18 @@ function renderBoard(boardState, isLightTurn = true){
             const toY = 8-Number(square.getAttribute('data-rank'));
             const curPiece = gblBoardState[fromY][fromX];
 
-            const [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, gblBoardState, isLightTurn);
+            const [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, gblBoardState, isWhiteTurn);
             if (isValidMove){
-                const lightTurnIndicatorEle = document.getElementById('light-turn-indicator');
-                const darkTurnIndicatorEle = document.getElementById('dark-turn-indicator');
-                lightTurnIndicatorEle.toggleAttribute('data-isLightTurn');
-                darkTurnIndicatorEle.toggleAttribute('data-isLightTurn');
-                isLightTurn = !isLightTurn;
+                const whiteTurnIndicatorEle = document.getElementById('white-turn-indicator');
+                const blackTurnIndicatorEle = document.getElementById('black-turn-indicator');
+                whiteTurnIndicatorEle.toggleAttribute('data-isWhiteTurn');
+                blackTurnIndicatorEle.toggleAttribute('data-isWhiteTurn');
+                isWhiteTurn = !isWhiteTurn;
 
                 gblBoardState[toY][toX] = boardState[fromY][fromX];
                 gblBoardState[fromY][fromX] = null;
                 const savedBoardState = structuredClone(gblBoardState);
-                gblGameTurnList.append(savedBoardState, isLightTurn);
+                gblGameTurnList.append(savedBoardState, isWhiteTurn);
 
                 if (square.hasChildNodes()){
                     square.removeChild(square.firstChild);
@@ -201,14 +201,14 @@ function createDefaultBoard(){
     const pieceOrder = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
     //Draw the pieces
     for (let i = 0; i<8; i++) {
-        defaultBoard[0][i] = new Piece('dark', pieceOrder[i], true, fyles[i]);
-        defaultBoard[1][i] = new Piece('dark', 'pawn', true, fyles[i]);
+        defaultBoard[0][i] = new Piece('black', pieceOrder[i], true, fyles[i]);
+        defaultBoard[1][i] = new Piece('black', 'pawn', true, fyles[i]);
         defaultBoard[2][i] = null;
         defaultBoard[3][i] = null;
         defaultBoard[4][i] = null;
         defaultBoard[5][i] = null;
-        defaultBoard[6][i] = new Piece('light', 'pawn', true, fyles[i]);
-        defaultBoard[7][i] = new Piece('light', pieceOrder[i], true, fyles[i]);
+        defaultBoard[6][i] = new Piece('white', 'pawn', true, fyles[i]);
+        defaultBoard[7][i] = new Piece('white', pieceOrder[i], true, fyles[i]);
     }
     return defaultBoard;
 }

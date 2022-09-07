@@ -1,16 +1,16 @@
 //Passes the dom board to the valid move checker
-export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn){
+export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isWhiteTurn){
     let isValidMove = false;
     let isCheckmate = false;
-    const movesets = new GenerateMoveset(isLightTurn);
+    const movesets = new GenerateMoveset(isWhiteTurn);
 
-    if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn)){
+    if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardState, isWhiteTurn)){
         isValidMove = true;
         let nextBoardState = structuredClone(boardState);
         nextBoardState[fromY][fromX].unmoved = false;
         nextBoardState[toY][toX] = boardState[fromY][fromX];
         nextBoardState[fromY][fromX] = undefined;
-        if(checkCheckmate(nextBoardState, !isLightTurn)){
+        if(checkCheckmate(nextBoardState, !isWhiteTurn)){
             isCheckmate = true;
         }
     }
@@ -18,7 +18,7 @@ export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLigh
 }
 
 //Returns whether a piece move is a valid CheSS move
-function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, debug = true){
+function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isWhiteTurn, debug = true){
     //---Check if the move is valid---
     //Moved from its own square
     if ((fromX === toX) && (fromY === toY)){
@@ -29,7 +29,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
         return false;
     }
     //Correct colour
-    if ((isLightTurn && piece.col === 'dark') || (!isLightTurn && piece.col === 'light')){
+    if ((isWhiteTurn && piece.col === 'black') || (!isWhiteTurn && piece.col === 'white')){
         if(debug){console.log('You can only move your own piece colour!')}
         return false;
     }
@@ -41,7 +41,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
     }  
     //Pawn
     if (piece.type === "pawn"){
-        const orientation = piece.col === 'light' ? -1 : 1;
+        const orientation = piece.col === 'white' ? -1 : 1;
         const canMove = (piece.unmoved) ? 2 : 1;
         const movePawn = orientation*(toY-fromY);
         if (!((movePawn > 0) && (movePawn <= canMove) && (fromX === toX) && (boardState[toY][toX] == undefined))){
@@ -118,7 +118,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
     //checkValidMove scoped functions
     //Check if the king is in 'check' after the turn
     function isKingInCheck(boardState){
-        const kings = findKings(boardState, isLightTurn);
+        const kings = findKings(boardState, isWhiteTurn);
         const fits = makeFits(boardState[0].length, boardState.length);
         return(kings.some((king)=>{
             if(checkLineForPiece(king, 1, 0)){return true}
@@ -129,7 +129,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
             if(checkLineForPiece(king, 1, -1)){return true}
             if(checkLineForPiece(king, -1, 1)){return true}
             if(checkLineForPiece(king, -1, -1)){return true}
-            const pawnDir = isLightTurn ? -1 : 1;
+            const pawnDir = isWhiteTurn ? -1 : 1;
             const pawnMoveset =  [[1,1*pawnDir],[-1,1*pawnDir]];
             let kf= 2; let ks = 1; //knight forward, knight side
             const knightMoveset = [[kf,ks],[-kf,ks],[kf,-ks],[-kf,-ks],[ks,kf],[-ks,kf],[ks,-kf],[-ks,-kf]];
@@ -145,7 +145,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
             const kingX = king[0];
             const kingY = king[1];
             const lookForType = (Math.abs(dirX) === Math.abs(dirY)) ? ["queen", "bishop"] : ["queen", "rook"];
-            const lookForCol = isLightTurn ? 'dark' : 'light';
+            const lookForCol = isWhiteTurn ? 'black' : 'white';
             for (let i = 1; i<8; i++){
                 const posX = kingX + dirX*i;
                 const posY = kingY + dirY*i;
@@ -160,7 +160,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
         function checkMovesetForPiece(king, moveset, lookForType){
             const kingX = king[0];
             const kingY = king[1];
-            const lookForCol = isLightTurn ? 'dark' : 'light';
+            const lookForCol = isWhiteTurn ? 'black' : 'white';
             let res = false;
             moveset.forEach((move)=>{
                 const posX = kingX + move[0];
@@ -186,38 +186,38 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
     function isEnemyPiece(toX, toY){
         if(boardState[toY][toX]===null){return false}
         const targetPieceCol = boardState[toY][toX].col;
-        return (isLightTurn && (targetPieceCol === "dark")) || (!isLightTurn && (targetPieceCol === "light"))
+        return (isWhiteTurn && (targetPieceCol === "black")) || (!isWhiteTurn && (targetPieceCol === "white"))
     }
 }
 
 //Check if the board is in 'checkmate'
-function checkCheckmate(boardState,isLightTurn){
+function checkCheckmate(boardState,isWhiteTurn){
     //1. Iterate through all pieces that can currently move
     //2. Generate all moves that that piece can do
     //3. For each move, check if the king is in check
-    const movesets = new GenerateMoveset(isLightTurn);
-    const lookForTurn = isLightTurn ? 'light' : 'dark';
+    const movesets = new GenerateMoveset(isWhiteTurn);
+    const lookForTurn = isWhiteTurn ? 'white' : 'black';
     for (let j=0; j<boardState.length;j++){
         for (let i=0; i<boardState[0].length;i++){
             const piece = boardState[j][i];
             if ((piece) && (piece.col === lookForTurn)){
                 if(movesets[piece.type].some((move) => {
-                    //if(checkValidMove(i,j,i+move[0],j+move[1],piece,boardState,isLightTurn)){console.log(i,j,move, piece)} //Common debug
-                    return checkValidMove(i,j,i+move[0],j+move[1],piece,boardState,isLightTurn, false)})){
+                    //if(checkValidMove(i,j,i+move[0],j+move[1],piece,boardState,isWhiteTurn)){console.log(i,j,move, piece)} //Common debug
+                    return checkValidMove(i,j,i+move[0],j+move[1],piece,boardState,isWhiteTurn, false)})){
                     return false;
                 }
             }
         }
     }
-    const winner = !isLightTurn ? 'light' : 'dark';
+    const winner = !isWhiteTurn ? 'white' : 'black';
     console.log(`Checkmate, ${winner} wins!`);
     return true;
 }
 
 //Generates an exhaustive list of moves a piece can perform
 //Needs access to a 'moveset' variable
-function GenerateMoveset(isLightTurn){
-    const pawnDir = isLightTurn ? -1 : 1;
+function GenerateMoveset(isWhiteTurn){
+    const pawnDir = isWhiteTurn ? -1 : 1;
     this.pawn =  [[1,1*pawnDir],[-1,1*pawnDir],[0,pawnDir],[0,2*pawnDir]];
 
     let kf= 2; let ks = 1; //knight forward, knight side
@@ -252,9 +252,9 @@ export class Piece{
 }
 
 //Find all the current-turn kings
-function findKings(boardState, isLightTurn){
+function findKings(boardState, isWhiteTurn){
     let kings = [];
-    const turn = isLightTurn ? 'light' : 'dark';
+    const turn = isWhiteTurn ? 'white' : 'black';
     for (let j=0; j<boardState.length;j++){
         for (let i=0; i<boardState[0].length;i++){
             const piece = boardState[j][i];
