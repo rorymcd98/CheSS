@@ -1,6 +1,7 @@
 import {turnHandler, Piece} from "./valid-move-checker.js"
 let isLightTurn = true;
-var gameTurnList;
+var gblBoardState;
+var gblGameTurnList;
 
 //Doubly linked list of turn nodes
 class TurnNode{
@@ -15,49 +16,80 @@ class TurnNode{
 class TurnList{
     constructor(savedBoardState, isLightTurn){
         this.head = new TurnNode(savedBoardState, isLightTurn);
-        this.head.prev = this.head;
+        // this.head.prev = null;
         this.tail = this.head;
         this.current = this.tail;
     }
     append(savedBoardState, isLightTurn){
         let newTurnNode = new TurnNode(savedBoardState, isLightTurn);
-        this.current.next = newTurnNode;
         newTurnNode.prev = this.current;
+        this.current.next = newTurnNode;
+        this.current = this.current.next;
         this.tail = newTurnNode;
-        this.current = this.tail;
     }
     undo(){
-        console.log(this.current.board)
-        // if (this.current === this.head){
-        //     return [this.current.board, this.current.turn];
-        // } else {
-        const undoBoardState = this.current.board;
-        const undoTurn = this.current.turn;
-        this.current = this.current.prev;
-        return [undoBoardState, undoTurn];
-        // }
+        if (this.current.prev !== null){
+            this.current = this.current.prev;
+            const undoBoardState = this.current.board;
+            const undoTurn = this.current.turn;
+            return [undoBoardState, undoTurn];
+        } else {return [null, null]}
+    }
+    redo(){
+        if (this.current.next !== null){
+            this.current = this.current.next;
+            const redoBoard = this.current.board;
+            const redoTurn = this.current.turn;
+            return [redoBoard, redoTurn];
+        } else {return [null, null]}
+    }
+    debug(){
+        let dummy = this.head;
+        console.log("debug")
+        while(dummy){
+            if (dummy === this.current){console.log('current')}
+            console.log(dummy.board);
 
+            dummy = dummy.next;
+        }
     }
 }
 
-//Create the board
-let defaultBoardState = createDefaultBoard();
+//---Create the board---
+const defaultBoardState = createDefaultBoard();
 renderBoard(defaultBoardState, isLightTurn);//null for default board
-gameTurnList = new TurnList(structuredClone(defaultBoardState), isLightTurn);
+gblGameTurnList = new TurnList(structuredClone(defaultBoardState), isLightTurn);
 
 //Create the event listeners for buttons
 let newGameButton = document.getElementById("new-game-button");
 newGameButton.addEventListener('click', ()=>{
     renderBoard(createDefaultBoard(), true);
-    gameTurnList = new TurnList(structuredClone(defaultBoardState), true);
+    gblGameTurnList = new TurnList(structuredClone(defaultBoardState), true);
 });
 let undoButton = document.getElementById("undo-button");
 undoButton.addEventListener('click', ()=>{
-    let [undoBoard, undoTurn] = gameTurnList.undo();
-    renderBoard(undoBoard, undoTurn);
+    const [undoBoard, undoTurn] = gblGameTurnList.undo();
+    if (undoBoard !== null){
+        renderBoard(undoBoard, undoTurn);
+    }
+});
+let redoButton = document.getElementById("redo-button");
+redoButton.addEventListener('click', ()=>{
+    const [redoBoard, redoTurn] = gblGameTurnList.redo();
+    if (redoBoard != null){
+        renderBoard(redoBoard, redoTurn);
+    }
+});
+
+let saveButton = document.getElementById("save-button");
+saveButton.addEventListener('click', ()=>{
+    gblGameTurnList.debug();
 });
 
 function renderBoard(boardState, isLightTurn = true){
+    //Update the global board state
+    gblBoardState = structuredClone(boardState);
+
     let exists = document.getElementById('board');
     if (exists){exists.remove()}
     const boardElement = document.createElement("table");
@@ -71,7 +103,7 @@ function renderBoard(boardState, isLightTurn = true){
     } else {
         lightTurnIndicatorEle.removeAttribute('data-isLightTurn');
         darkTurnIndicatorEle.removeAttribute('data-isLightTurn');
-    };
+    }
     //Create the board as a table element
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
     for (let i = 1; i < 9; i++) {
@@ -136,27 +168,25 @@ function renderBoard(boardState, isLightTurn = true){
             const fromY = 8-Number(fromSquare.getAttribute('data-rank'));
             const toX = fyles[square.getAttribute('data-fyle')];
             const toY = 8-Number(square.getAttribute('data-rank'));
-            const curPiece = boardState[fromY][fromX];
+            const curPiece = gblBoardState[fromY][fromX];
 
-            let [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn);
+            const [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, gblBoardState, isLightTurn);
             if (isValidMove){
-                const savedBoardState = structuredClone(boardState);
-                gameTurnList.append(savedBoardState, isLightTurn);
                 const lightTurnIndicatorEle = document.getElementById('light-turn-indicator');
                 const darkTurnIndicatorEle = document.getElementById('dark-turn-indicator');
                 lightTurnIndicatorEle.toggleAttribute('data-isLightTurn');
                 darkTurnIndicatorEle.toggleAttribute('data-isLightTurn');
                 isLightTurn = !isLightTurn;
 
-                boardState[toY][toX] = boardState[fromY][fromX];
-                boardState[fromY][fromX] = undefined;
+                gblBoardState[toY][toX] = boardState[fromY][fromX];
+                gblBoardState[fromY][fromX] = null;
+                const savedBoardState = structuredClone(gblBoardState);
+                gblGameTurnList.append(savedBoardState, isLightTurn);
 
                 if (square.hasChildNodes()){
                     square.removeChild(square.firstChild);
                 }
                 square.appendChild(draggedPiece);
-
-
             }
             if (isValidMove && isCheckmate){
                 //
@@ -166,16 +196,19 @@ function renderBoard(boardState, isLightTurn = true){
 }
 
 function createDefaultBoard(){
-    let board = Array.apply(null, Array(8)).map(()=>{return new Array(8)});
+    let defaultBoard = Array.apply(null, Array(8)).map(()=>{return new Array(8)});
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
     const pieceOrder = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
     //Draw the pieces
-    //White Pawns
     for (let i = 0; i<8; i++) {
-        board[0][i] = new Piece('dark', pieceOrder[i], true, fyles[i]);
-        board[1][i] = new Piece('dark', 'pawn', true, fyles[i]);
-        board[6][i] = new Piece('light', 'pawn', true, fyles[i]);
-        board[7][i] = new Piece('light', pieceOrder[i], true, fyles[i]);
+        defaultBoard[0][i] = new Piece('dark', pieceOrder[i], true, fyles[i]);
+        defaultBoard[1][i] = new Piece('dark', 'pawn', true, fyles[i]);
+        defaultBoard[2][i] = null;
+        defaultBoard[3][i] = null;
+        defaultBoard[4][i] = null;
+        defaultBoard[5][i] = null;
+        defaultBoard[6][i] = new Piece('light', 'pawn', true, fyles[i]);
+        defaultBoard[7][i] = new Piece('light', pieceOrder[i], true, fyles[i]);
     }
-    return board;
+    return defaultBoard;
 }

@@ -19,7 +19,7 @@ export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLigh
 
 //Returns whether a piece move is a valid CheSS move
 function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, debug = true){
-    //***Check if the move is valid***
+    //---Check if the move is valid---
     //Moved from its own square
     if ((fromX === toX) && (fromY === toY)){
         return false;
@@ -95,7 +95,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
                 yDir = (toY - fromY) > 0 ? 1 : -1;
             }
             for (let i = 1; i<moveY;i++){
-                if(boardState[fromY+i*yDir][fromX+i*xDir]!=undefined){
+                if(boardState[fromY+i*yDir][fromX+i*xDir]!==null){
                     if(debug){console.log("There's a piece in the way!")}
                     return false;
                 }   
@@ -105,7 +105,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
     //Create a new board with the piece moved
     let nextBoardState = structuredClone(boardState);
     nextBoardState[toY][toX] = boardState[fromY][fromX];
-    nextBoardState[fromY][fromX] = undefined;
+    nextBoardState[fromY][fromX] = null;
     //Check for checks in the updated board state
     if (isKingInCheck(nextBoardState)){
         if(debug){console.log('The king will be in check!')}
@@ -150,7 +150,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
                 const posX = kingX + dirX*i;
                 const posY = kingY + dirY*i;
                 if (!fits(posX, posY)){return false}
-                if (boardState[posY][posX] != undefined){
+                if (boardState[posY][posX] !== null){
                     return ((lookForType.includes(boardState[posY][posX].type)) && (boardState[posY][posX].col === lookForCol));
                 }
             }
@@ -166,7 +166,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
                 const posX = kingX + move[0];
                 const posY = kingY + move[1];
                 if (fits(posX, posY)){
-                    if (boardState[posY][posX] != undefined){
+                    if (boardState[posY][posX] !== null){
                         if((boardState[posY][posX].type === lookForType) && (boardState[posY][posX].col === lookForCol)){res = true};
                     }
                 }
@@ -184,7 +184,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
     
     //(Bug potential here?)
     function isEnemyPiece(toX, toY){
-        if(boardState[toY][toX]===undefined){return false}
+        if(boardState[toY][toX]===null){return false}
         const targetPieceCol = boardState[toY][toX].col;
         return (isLightTurn && (targetPieceCol === "dark")) || (!isLightTurn && (targetPieceCol === "light"))
     }
