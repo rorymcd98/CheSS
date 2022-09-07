@@ -66,11 +66,11 @@ function renderBoard(boardState, isLightTurn = true){
     const lightTurnIndicatorEle = document.getElementById('light-turn-indicator');
     const darkTurnIndicatorEle = document.getElementById('dark-turn-indicator');
     if (isLightTurn){
-        lightTurnIndicatorEle.setAttribute('isLightTurn', "");
-        darkTurnIndicatorEle.setAttribute('isLightTurn', "");
+        lightTurnIndicatorEle.setAttribute('data-isLightTurn', "");
+        darkTurnIndicatorEle.setAttribute('data-isLightTurn', "");
     } else {
-        lightTurnIndicatorEle.removeAttribute('isLightTurn');
-        darkTurnIndicatorEle.removeAttribute('isLightTurn');
+        lightTurnIndicatorEle.removeAttribute('data-isLightTurn');
+        darkTurnIndicatorEle.removeAttribute('data-isLightTurn');
     };
     //Create the board as a table element
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
@@ -98,7 +98,7 @@ function renderBoard(boardState, isLightTurn = true){
                 const pieceElement = document.createElement('text');
                 pieceElement.classList.add('piece', 'draggable');
                 pieceElement.setAttribute('draggable', true);
-                if (pieceObj.unmoved){pieceElement.setAttribute('unmoved', "")};
+                if (pieceObj.unmoved){pieceElement.setAttribute('data-unmoved', "")};
                 pieceElement.id = pieceObj.col + '-' + pieceObj.file + '-' + pieceObj.type;
                 squareElement.appendChild(pieceElement);
             }
@@ -144,8 +144,8 @@ function renderBoard(boardState, isLightTurn = true){
                 gameTurnList.append(savedBoardState, isLightTurn);
                 const lightTurnIndicatorEle = document.getElementById('light-turn-indicator');
                 const darkTurnIndicatorEle = document.getElementById('dark-turn-indicator');
-                lightTurnIndicatorEle.toggleAttribute('isLightTurn');
-                darkTurnIndicatorEle.toggleAttribute('isLightTurn');
+                lightTurnIndicatorEle.toggleAttribute('data-isLightTurn');
+                darkTurnIndicatorEle.toggleAttribute('data-isLightTurn');
                 isLightTurn = !isLightTurn;
 
                 boardState[toY][toX] = boardState[fromY][fromX];
