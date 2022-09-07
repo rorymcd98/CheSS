@@ -5,9 +5,9 @@ export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLigh
     const movesets = new GenerateMoveset(isLightTurn);
 
     if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn)){
-        boardState[fromY][fromX].unmoved = false;
         isValidMove = true;
         let nextBoardState = structuredClone(boardState);
+        nextBoardState[fromY][fromX].unmoved = false;
         nextBoardState[toY][toX] = boardState[fromY][fromX];
         nextBoardState[fromY][fromX] = undefined;
         if(checkCheckmate(nextBoardState, !isLightTurn)){
