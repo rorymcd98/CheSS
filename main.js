@@ -4,8 +4,8 @@ var gameTurnList;
 
 //Doubly linked list of turn nodes
 class TurnNode{
-    constructor(boardState, isLightTurn){
-        this.board = boardState;
+    constructor(savedBoardState, isLightTurn){
+        this.board = savedBoardState;
         this.turn = isLightTurn;
         this.next = null;
         this.prev = null;
@@ -13,55 +13,64 @@ class TurnNode{
 }
 
 class TurnList{
-    constructor(boardState, isLightTurn){
-        this.head = new TurnNode(boardState, isLightTurn);
+    constructor(savedBoardState, isLightTurn){
+        this.head = new TurnNode(savedBoardState, isLightTurn);
+        this.head.prev = this.head;
         this.tail = this.head;
         this.current = this.tail;
     }
-    append(boardState, isLightTurn){
-        let newTurnNode = new TurnNode(boardState, isLightTurn);
-
+    append(savedBoardState, isLightTurn){
+        let newTurnNode = new TurnNode(savedBoardState, isLightTurn);
         this.current.next = newTurnNode;
         newTurnNode.prev = this.current;
         this.tail = newTurnNode;
         this.current = this.tail;
     }
     undo(){
+        console.log(this.current.board)
+        // if (this.current === this.head){
+        //     return [this.current.board, this.current.turn];
+        // } else {
+        const undoBoardState = this.current.board;
+        const undoTurn = this.current.turn;
         this.current = this.current.prev;
-        return [this.current.board, this.current.turn];
+        return [undoBoardState, undoTurn];
+        // }
+
     }
 }
 
 //Create the board
 let defaultBoardState = createDefaultBoard();
 renderBoard(defaultBoardState, isLightTurn);//null for default board
-gameTurnList = new TurnList(defaultBoardState, isLightTurn);
+gameTurnList = new TurnList(structuredClone(defaultBoardState), isLightTurn);
 
 //Create the event listeners for buttons
 let newGameButton = document.getElementById("new-game-button");
 newGameButton.addEventListener('click', ()=>{
     renderBoard(createDefaultBoard(), true);
-    document.getElementById('light-turn-indicator').setAttribute("isLightTurn", "");
-    document.getElementById('dark-turn-indicator').setAttribute("isLightTurn", "");
+    gameTurnList = new TurnList(structuredClone(defaultBoardState), true);
 });
 let undoButton = document.getElementById("undo-button");
 undoButton.addEventListener('click', ()=>{
-    let undoBoard;
-    let undoTurn; 
-    [undoBoard, undoTurn] = gameTurnList.undo();
+    let [undoBoard, undoTurn] = gameTurnList.undo();
     renderBoard(undoBoard, undoTurn);
 });
 
 function renderBoard(boardState, isLightTurn = true){
     let exists = document.getElementById('board');
     if (exists){exists.remove()}
-    console.log(boardState)
     const boardElement = document.createElement("table");
     boardElement.className = "board";
     boardElement.id = "board";
-    if (!isLightTurn){
-        document.getElementById('dark-turn-indicator').removeAttribute('isLightTurn');
-        document.getElementById('light-turn-indicator').removeAttribute('isLightTurn');
+    const lightTurnIndicatorEle = document.getElementById('light-turn-indicator');
+    const darkTurnIndicatorEle = document.getElementById('dark-turn-indicator');
+    if (isLightTurn){
+        lightTurnIndicatorEle.setAttribute('isLightTurn', "");
+        darkTurnIndicatorEle.setAttribute('isLightTurn', "");
+    } else {
+        lightTurnIndicatorEle.removeAttribute('isLightTurn');
+        darkTurnIndicatorEle.removeAttribute('isLightTurn');
     };
     //Create the board as a table element
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
@@ -129,15 +138,14 @@ function renderBoard(boardState, isLightTurn = true){
             const toY = 8-Number(square.getAttribute('data-rank'));
             const curPiece = boardState[fromY][fromX];
 
-            let isValidMove;
-            let isCheckmate;
-            [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn);
+            let [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn);
             if (isValidMove){
-                gameTurnList.append(boardState, isLightTurn);
-                const lightTurnIndicator = document.getElementById('light-turn-indicator');
-                const darkTurnIndicator = document.getElementById('dark-turn-indicator');
-                lightTurnIndicator.toggleAttribute('isLightTurn');
-                darkTurnIndicator.toggleAttribute('isLightTurn');
+                const savedBoardState = structuredClone(boardState);
+                gameTurnList.append(savedBoardState, isLightTurn);
+                const lightTurnIndicatorEle = document.getElementById('light-turn-indicator');
+                const darkTurnIndicatorEle = document.getElementById('dark-turn-indicator');
+                lightTurnIndicatorEle.toggleAttribute('isLightTurn');
+                darkTurnIndicatorEle.toggleAttribute('isLightTurn');
                 isLightTurn = !isLightTurn;
 
                 boardState[toY][toX] = boardState[fromY][fromX];

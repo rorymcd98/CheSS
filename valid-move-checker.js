@@ -7,8 +7,7 @@ export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isLigh
     if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardState, isLightTurn)){
         boardState[fromY][fromX].unmoved = false;
         isValidMove = true;
-        let nextBoardState = [];
-        for (let i = 0; i<boardState.length; i++){nextBoardState.push([...boardState[i]]);}
+        let nextBoardState = structuredClone(boardState);
         nextBoardState[toY][toX] = boardState[fromY][fromX];
         nextBoardState[fromY][fromX] = undefined;
         if(checkCheckmate(nextBoardState, !isLightTurn)){
@@ -104,8 +103,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isLightTurn, 
         }
     }
     //Create a new board with the piece moved
-    let nextBoardState = [];
-    for (let i = 0; i<boardState.length; i++){nextBoardState.push([...boardState[i]]);}
+    let nextBoardState = structuredClone(boardState);
     nextBoardState[toY][toX] = boardState[fromY][fromX];
     nextBoardState[fromY][fromX] = undefined;
     //Check for checks in the updated board state
