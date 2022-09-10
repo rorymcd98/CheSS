@@ -25,3 +25,6 @@ Chess edge cases
     Pawn promotions
     En passant
     Castling
+
+Bugs
+    e4,d5,eXd undo redo

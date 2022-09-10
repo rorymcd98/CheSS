@@ -13,9 +13,9 @@ app.use(express.static('.'));
 //     res.sendFile(path.join(__dirname, 'node_modules/monaco-editor/min/vs/loader.js'));
 // });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'index.html'));
+// });
 
 
 server.listen(process.env.PORT || 3000);

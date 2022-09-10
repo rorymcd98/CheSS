@@ -8,8 +8,39 @@
 body{
   background-color: rgb(36,44,48);
 }
-.board {
+#text-editor{
   position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+}
+#left-panel {
+  position: absolute;
+  left: 0%;
+  right: 50%;
+  top: 0%;
+  bottom: 0%;
+}
+#right-panel {
+  position: absolute;
+  display: flex;
+  left: 50%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+}
+#board-container {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  transform: translate(-50%);
+  max-width: var(--size);
+  max-width: var(--size);
+  border-spacing: 0;
+}
+.board {
+  position: relative;
   left: 50%;
   transform: translate(-50%);
   max-width: var(--size);
@@ -36,12 +67,12 @@ td:hover {
 }
 
 .turn-control-dashboard{
-  position: absolute;
+  position: relative;
   display: flex;
   left: 50%;
   align-content: center;
   justify-content: center;
-  top: calc(30px + var(--size));
+  top: calc(22% + var(--size));
   transform: translate(-50%);
 }
 .turn-indicator-container{
@@ -211,11 +242,3 @@ td:hover {
   font-weight: normal;
   opacity: 100%;
 }
-
-/* td[data-line = "2"]{
-  display: none;
-} */
-
-/* td[data-col = "B"]{
-  display: none;
-} */

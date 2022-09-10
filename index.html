@@ -4,37 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="main-styles.css">
+    <!-- <link rel="stylesheet" href="CheSS-styles.css"> -->
     
     <title>Document</title>
 </head>
 <body>
-    <div id = "board-container"></div>
-    <div class = "turn-control-dashboard">
-        <span class ="turn-indicator-container">
-            <span class ="turn-indicator" id="white-turn-indicator" data-isWhiteTurn>White Turn</span>
-            <span class ="turn-indicator" id="black-turn-indicator" data-isWhiteTurn>Black Turn</span>
-        </span>
-        <button id = "undo-button">Undo</button>
-        <button id = "redo-button">Redo</button>
-        <button id = "new-game-button">New game</button>
-        <span id = "save-load-buttons">
-            <button id = "save-button">Save game</button>
-            <button id = "load-button">Load game</button>
-        </span>
+    <div id="left-panel">
+        <div id = "board-container"></div>
+        <div class = "turn-control-dashboard">
+            <span class ="turn-indicator-container">
+                <span class ="turn-indicator" id="white-turn-indicator" data-isWhiteTurn>White Turn</span>
+                <span class ="turn-indicator" id="black-turn-indicator" data-isWhiteTurn>Black Turn</span>
+            </span>
+            <button id = "undo-button">Undo</button>
+            <button id = "redo-button">Redo</button>
+            <button id = "new-game-button">New game</button>
+            <span id = "save-load-buttons">
+                <button id = "save-button">Save game</button>
+                <button id = "load-button">Load game</button>
+            </span>
+        </div>
     </div>
-    <!-- <script src="node_modules/monaco-editor/min/vs/loader.js"></script>
-    <div>
-        <script>
-			require.config({ paths: { vs: 'node_modules/monaco-editor/min/vs' } });
-			require(['vs/editor/editor.main'], function () {
-				var editor = monaco.editor.create(document.getElementById('container'), {
-					value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-					language: 'javascript'
-				});
-			});
-		</script>
-    </div> -->
+
+    <div id="right-panel">
+        <div id="text-editor" style="border:1px solid grey"></div>
+    </div>
+    
+    
+    <script src="./node_modules/requirejs/require.js"></script>
     <script src="main.js" type = "module"></script>
 </body>
 </html>

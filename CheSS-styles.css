@@ -1,0 +1,7 @@
+/* td[data-line = "2"]{
+  display: none;
+} */
+
+td[data-rank = "7"]{
+  display: none;
+}

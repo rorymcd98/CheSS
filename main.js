@@ -1,7 +1,10 @@
 import {turnHandler, Piece} from "./valid-move-checker.js"
+import {updateEditor} from "./editor.js"
 let isWhiteTurn = true;
 var gblBoardState;
 var gblGameTurnList;
+
+updateEditor();
 
 //Doubly linked list of turn nodes
 class TurnNode{
@@ -108,7 +111,7 @@ function renderBoard(boardState, isWhiteTurn = true){
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
     for (let i = 1; i < 9; i++) {
         let rank = document.createElement('tr');
-        rank.dataset.line = 9-i
+        rank.dataset.rank = 9-i
         for (let j = 1; j < 9; j++) {
             let square = document.createElement('td');
             square.dataset.fyle = fyles[j-1];
