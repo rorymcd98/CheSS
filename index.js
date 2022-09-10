@@ -9,9 +9,13 @@ let rooms = 0;
 
 app.use(express.static('.'));
 
+// app.get('/loader/', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'node_modules/monaco-editor/min/vs/loader.js'));
+// });
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 
-server.listen(process.env.PORT || 5000);
+server.listen(process.env.PORT || 3000);
