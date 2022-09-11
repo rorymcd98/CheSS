@@ -1,4 +1,4 @@
-:root {
+:root{
     --size:      800px;
     --box-size:  calc(var(--size)/8);
     --dark:      grey;
@@ -15,14 +15,14 @@ body{
   top: 0%;
   bottom: 0%;
 }
-#left-panel {
+#left-panel{
   position: absolute;
   left: 0%;
   right: 50%;
   top: 0%;
   bottom: 0%;
 }
-#right-panel {
+#right-panel{
   position: absolute;
   display: flex;
   left: 50%;
@@ -30,7 +30,7 @@ body{
   top: 0%;
   bottom: 0%;
 }
-#board-container {
+#board-container{
   position: absolute;
   left: 50%;
   top: 20%;
@@ -39,7 +39,7 @@ body{
   max-width: var(--size);
   border-spacing: 0;
 }
-.board {
+.board{
   position: relative;
   left: 50%;
   transform: translate(-50%);
@@ -47,7 +47,7 @@ body{
   max-width: var(--size);
   border-spacing: 0;
 }
-.square {
+.square{
   box-sizing: border-box;
   width: var(--box-size);
   height: var(--box-size);
@@ -61,7 +61,7 @@ body{
 .dark{
   background: var(--dark)
 }
-td:hover {
+td:hover{
   background: var(--hover);
   cursor: pointer
 }
@@ -120,20 +120,20 @@ td:hover {
   cursor: pointer;
 }
 
-.piece {
+.piece{
   display: flex;
   justify-content: center;
   align-items: center;
   max-width: var(--box-size);
   max-height: var(--box-size);
 }
-.piece.dragging {
+.piece.dragging{
   opacity: 0.1%;
 }
-.draggable {
+.draggable{
   cursor: move;
 }
-.draggable.dragging {
+.draggable.dragging{
   opacity: 0.1%;
 }
 

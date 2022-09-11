@@ -13,15 +13,13 @@ require(['vs/editor/editor.main'], function () {
     
 });
 
-
-
-export function updateEditor(){
+export function setCSS(){
     fetch('CheSS-styles.css').then(res => res.text()).then(cssText => {
         editor.setValue(cssText)
     })
 }
 
-
-export function updateCSS(){
-    const newCSS = editor.getValue();
+export function getCSS(){
+    return editor.getValue();
 }
+

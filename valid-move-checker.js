@@ -1,3 +1,5 @@
+import {getCSS} from './editor.js';
+
 //Passes the dom board to the valid move checker
 export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isWhiteTurn){
     let isValidMove = false;
@@ -265,3 +267,22 @@ function findKings(boardState, isWhiteTurn){
     }
     return kings;
 }
+
+function cssModifyPieces(){
+
+}
+
+function cssModifyBoard(boardState){
+    const currentCSS = getCSS();
+    const lines = currentCSS.split('\n');
+    lines.forEach((line)=>{
+        if (line.includes('{')){
+            const selector = line.substring(0,line.indexOf('{'));
+            const eles = document.querySelectorAll(selector);
+            console.log(eles);
+        }
+    })
+}
+setTimeout(() => {
+    cssModifyBoard()
+}, 3000);

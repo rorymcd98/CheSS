@@ -1,10 +1,7 @@
 import {turnHandler, Piece} from "./valid-move-checker.js"
-import {updateEditor} from "./editor.js"
 let isWhiteTurn = true;
 var gblBoardState;
 var gblGameTurnList;
-
-updateEditor();
 
 //Doubly linked list of turn nodes
 class TurnNode{
@@ -108,14 +105,14 @@ function renderBoard(boardState, isWhiteTurn = true){
         blackTurnIndicatorEle.removeAttribute('data-isWhiteTurn');
     }
     //Create the board as a table element
-    const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
-    for (let i = 1; i < 9; i++) {
+
+    for (let i = 0; i < 8; i++) {
         let rank = document.createElement('tr');
-        rank.dataset.rank = 9-i
-        for (let j = 1; j < 9; j++) {
+        rank.dataset.rank = i
+        for (let j = 0; j < 8; j++) {
             let square = document.createElement('td');
-            square.dataset.fyle = fyles[j-1];
-            square.dataset.rank = 9-i;
+            square.dataset.fyle = j;
+            square.dataset.rank = i;
             square.className = (i%2 === j%2) ? "light square" : "dark square";
             rank.appendChild(square);
         }
@@ -166,11 +163,10 @@ function renderBoard(boardState, isWhiteTurn = true){
             e.preventDefault();
             const draggedPiece = document.querySelector('.dragging');
             const fromSquare = draggedPiece.parentElement;
-            const fyles = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7};
-            const fromX = fyles[fromSquare.getAttribute('data-fyle')];
-            const fromY = 8-Number(fromSquare.getAttribute('data-rank'));
-            const toX = fyles[square.getAttribute('data-fyle')];
-            const toY = 8-Number(square.getAttribute('data-rank'));
+            const fromX = fromSquare.getAttribute('data-fyle');
+            const fromY = fromSquare.getAttribute('data-rank');
+            const toX = square.getAttribute('data-fyle');
+            const toY = square.getAttribute('data-rank');
             const curPiece = gblBoardState[fromY][fromX];
 
             const [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, gblBoardState, isWhiteTurn);
