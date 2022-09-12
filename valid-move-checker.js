@@ -1,7 +1,7 @@
-import {getCSS} from './editor.js';
+import {getCss} from './editor.js';
 
 //Passes the dom board to the valid move checker
-export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isWhiteTurn){
+export function pieceTurnHandler(fromX, fromY, toX, toY, curPiece, boardState, isWhiteTurn){
     let isValidMove = false;
     let isCheckmate = false;
     const movesets = new GenerateMoveset(isWhiteTurn);
@@ -19,6 +19,23 @@ export function turnHandler(fromX, fromY, toX, toY, curPiece, boardState, isWhit
     return [isValidMove, isCheckmate];
 }
 
+//Passes the dom board to the valid move checker
+export function cssTurnHandler(boardState, isWhiteTurn){
+    if(isKingInCheck(boardState, isWhiteTurn)){
+        console.log('CSS moves can\'t be made while in check!')
+        return false;
+    }
+    const nextBoardState = cssModifyBoardState(boardState);
+    if(!(findKings(nextBoardState, true).length === 1 && findKings(nextBoardState, false).length === 1)){
+        Con
+        return false;
+    }
+    if(isKingInCheck(nextBoardState, true) || isKingInCheck(nextBoardState, true)){
+        return false;
+    }
+    return true;
+}
+
 //Returns whether a piece move is a valid CheSS move
 function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isWhiteTurn, debug = true){
     //---Check if the move is valid---
@@ -27,7 +44,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isWhiteTurn, 
         return false;
     }
     //On the board
-    if ((toX>=boardState[0].length) || (toY>=boardState.length) || (toX<0) || (toY<0)){
+    if ((toX>=Object.keys(boardState[0]).length) || (toY>=Object.keys(boardState).length) || (toX<0) || (toY<0)){
         return false;
     }
     //Correct colour
@@ -80,7 +97,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isWhiteTurn, 
             let xDir = (toX - fromX) > 0 ? 1 : -1;
             let yDir = (toY - fromY) > 0 ? 1 : -1;
             for (let i = 1; i<moveY;i++){
-                if(boardState[fromY+i*yDir][fromX+i*xDir]!=undefined){
+                if(boardState[(fromY+i*yDir)][fromX+i*xDir]!=undefined){
                     if(debug){console.log("There's a piece in the way!")}
                     return false;
                 }   
@@ -109,7 +126,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isWhiteTurn, 
     nextBoardState[toY][toX] = boardState[fromY][fromX];
     nextBoardState[fromY][fromX] = null;
     //Check for checks in the updated board state
-    if (isKingInCheck(nextBoardState)){
+    if (isKingInCheck(nextBoardState, isWhiteTurn)){
         if(debug){console.log('The king will be in check!')}
         return false;
     }
@@ -118,77 +135,66 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardState, isWhiteTurn, 
     return true;
     
     //checkValidMove scoped functions
-    //Check if the king is in 'check' after the turn
-    function isKingInCheck(boardState){
-        const kings = findKings(boardState, isWhiteTurn);
-        const fits = makeFits(boardState[0].length, boardState.length);
-        return(kings.some((king)=>{
-            if(checkLineForPiece(king, 1, 0)){return true}
-            if(checkLineForPiece(king, 0, 1)){return true}
-            if(checkLineForPiece(king, -1, 0)){return true}
-            if(checkLineForPiece(king, 0, -1)){return true}
-            if(checkLineForPiece(king, 1, 1)){return true}
-            if(checkLineForPiece(king, 1, -1)){return true}
-            if(checkLineForPiece(king, -1, 1)){return true}
-            if(checkLineForPiece(king, -1, -1)){return true}
-            const pawnDir = isWhiteTurn ? -1 : 1;
-            const pawnMoveset =  [[1,1*pawnDir],[-1,1*pawnDir]];
-            let kf= 2; let ks = 1; //knight forward, knight side
-            const knightMoveset = [[kf,ks],[-kf,ks],[kf,-ks],[-kf,-ks],[ks,kf],[-ks,kf],[ks,-kf],[-ks,-kf]];
-            let k = 1; //king step
-            const kingMoveset = [[k,k],[-k,k],[k,-k],[-k,-k],[k,0],[0,k],[-k,0],[0,-k]];
-            if(checkMovesetForPiece(king, pawnMoveset, 'pawn')){return true}
-            if(checkMovesetForPiece(king, knightMoveset, 'knight')){return true}
-            if(checkMovesetForPiece(king, kingMoveset, 'king')){return true}
-        }))
-
-        //Returns true if the line encounters a threatening bishop/rook/queen, false if not
-        function checkLineForPiece(king, dirX, dirY){
-            const kingX = king[0];
-            const kingY = king[1];
-            const lookForType = (Math.abs(dirX) === Math.abs(dirY)) ? ["queen", "bishop"] : ["queen", "rook"];
-            const lookForCol = isWhiteTurn ? 'black' : 'white';
-            for (let i = 1; i<8; i++){
-                const posX = kingX + dirX*i;
-                const posY = kingY + dirY*i;
-                if (!fits(posX, posY)){return false}
-                if (boardState[posY][posX] !== null){
-                    return ((lookForType.includes(boardState[posY][posX].type)) && (boardState[posY][posX].col === lookForCol));
-                }
-            }
-            return false;
-        }
-        //Returns true if an array of moves (the moveset) encounters a threatening piece/pawn, false if not
-        function checkMovesetForPiece(king, moveset, lookForType){
-            const kingX = king[0];
-            const kingY = king[1];
-            const lookForCol = isWhiteTurn ? 'black' : 'white';
-            let res = false;
-            moveset.forEach((move)=>{
-                const posX = kingX + move[0];
-                const posY = kingY + move[1];
-                if (fits(posX, posY)){
-                    if (boardState[posY][posX] !== null){
-                        if((boardState[posY][posX].type === lookForType) && (boardState[posY][posX].col === lookForCol)){res = true};
-                    }
-                }
-            })
-            return res;
-        }
-        //Closure creator for checking if a coordinate fits within the board
-        function makeFits(width, height){
-            return (locX, locY)=>{
-                return !((locX>=width) || (locX<0) || (locY>=height) || (locY<0));
-            }
-        }
-
-    }
-    
     //(Bug potential here?)
     function isEnemyPiece(toX, toY){
         if(boardState[toY][toX]===null){return false}
         const targetPieceCol = boardState[toY][toX].col;
         return (isWhiteTurn && (targetPieceCol === "black")) || (!isWhiteTurn && (targetPieceCol === "white"))
+    }
+}
+
+//Check if the king is in 'check' after the turn
+function isKingInCheck(boardState, isWhiteTurn){
+    const kings = findKings(boardState, isWhiteTurn);
+    return(kings.some((king)=>{
+        if(checkLineForPiece(king, 1, 0)){return true}
+        if(checkLineForPiece(king, 0, 1)){return true}
+        if(checkLineForPiece(king, -1, 0)){return true}
+        if(checkLineForPiece(king, 0, -1)){return true}
+        if(checkLineForPiece(king, 1, 1)){return true}
+        if(checkLineForPiece(king, 1, -1)){return true}
+        if(checkLineForPiece(king, -1, 1)){return true}
+        if(checkLineForPiece(king, -1, -1)){return true}
+        const pawnDir = isWhiteTurn ? -1 : 1;
+        const pawnMoveset =  [[1,1*pawnDir],[-1,1*pawnDir]];
+        let kf= 2; let ks = 1; //knight forward, knight side
+        const knightMoveset = [[kf,ks],[-kf,ks],[kf,-ks],[-kf,-ks],[ks,kf],[-ks,kf],[ks,-kf],[-ks,-kf]];
+        let k = 1; //king step
+        const kingMoveset = [[k,k],[-k,k],[k,-k],[-k,-k],[k,0],[0,k],[-k,0],[0,-k]];
+        if(checkMovesetForPiece(king, pawnMoveset, 'pawn')){return true}
+        if(checkMovesetForPiece(king, knightMoveset, 'knight')){return true}
+        if(checkMovesetForPiece(king, kingMoveset, 'king')){return true}
+    }))
+
+    //Returns true if the line encounters a threatening bishop/rook/queen, false if not
+    function checkLineForPiece(king, dirX, dirY){
+        const kingX = king[0];
+        const kingY = king[1];
+        const lookForType = (Math.abs(dirX) === Math.abs(dirY)) ? ["queen", "bishop"] : ["queen", "rook"];
+        const lookForCol = isWhiteTurn ? 'black' : 'white';
+        for (let i = 1; i<8; i++){
+            const posX = kingX + dirX*i;
+            const posY = kingY + dirY*i;
+            if (posY in boardState && posX in boardState[posY] && boardState[posY][posX] !== null){
+                return ((lookForType.includes(boardState[posY][posX].type)) && (boardState[posY][posX].col === lookForCol));
+            }
+        }
+        return false;
+    }
+    //Returns true if an array of moves (the moveset) encounters a threatening piece/pawn, false if not
+    function checkMovesetForPiece(king, moveset, lookForType){
+        const kingX = king[0];
+        const kingY = king[1];
+        const lookForCol = isWhiteTurn ? 'black' : 'white';
+        let res = false;
+        moveset.forEach((move)=>{
+            const posX = kingX + move[0];
+            const posY = kingY + move[1];
+            if (posY in boardState && posX in boardState[posY] && boardState[posY][posX] !== null){
+                if((boardState[posY][posX].type === lookForType) && (boardState[posY][posX].col === lookForCol)){res = true};
+            }
+        })
+        return res;
     }
 }
 
@@ -199,8 +205,8 @@ function checkCheckmate(boardState,isWhiteTurn){
     //3. For each move, check if the king is in check
     const movesets = new GenerateMoveset(isWhiteTurn);
     const lookForTurn = isWhiteTurn ? 'white' : 'black';
-    for (let j=0; j<boardState.length;j++){
-        for (let i=0; i<boardState[0].length;i++){
+    for (let j=0; j<Object.keys(boardState).length;j++){
+        for (let i=0; i<Object.keys(boardState[0]).length;i++){
             const piece = boardState[j][i];
             if ((piece) && (piece.col === lookForTurn)){
                 if(movesets[piece.type].some((move) => {
@@ -254,11 +260,12 @@ export class Piece{
 }
 
 //Find all the current-turn kings
+//This workflow exists in case we want to get rid of CSS move rule.1 (multiple kings)
 function findKings(boardState, isWhiteTurn){
     let kings = [];
     const turn = isWhiteTurn ? 'white' : 'black';
-    for (let j=0; j<boardState.length;j++){
-        for (let i=0; i<boardState[0].length;i++){
+    for (let j=0; j<Object.keys(boardState).length;j++){
+        for (let i=0; i<Object.keys(boardState[0]).length;i++){
             const piece = boardState[j][i];
             if ((piece) && (piece.type === 'king') && (piece.col === turn)){
                 kings.push([i,j]);
@@ -272,17 +279,42 @@ function cssModifyPieces(){
 
 }
 
-function cssModifyBoard(boardState){
-    const currentCSS = getCSS();
-    const lines = currentCSS.split('\n');
-    lines.forEach((line)=>{
-        if (line.includes('{')){
+
+function cssModifyBoardState(boardState){
+    const currentCss = getCss();//In later versions we will pass this in as a parameter
+    let resBoard = structuredClone(boardState);
+    const lines = currentCss.split('\n');
+    const validElements = ['td'];
+    for(let lineIdx = 0; lineIdx<lines.length; lineIdx++){
+        const line = lines[lineIdx];
+        //--Start creating CSS rules here--
+        if(line.startsWith('td')){
+            //generalise this into a function which accepts a function
             const selector = line.substring(0,line.indexOf('{'));
             const eles = document.querySelectorAll(selector);
-            console.log(eles);
+            let i = lineIdx+1;
+            while (!lines[i].startsWith('}')){
+                const styleArr = lines[i].split(": ");
+                if (lines[i].trim() == "display: none;"){
+                    eles.forEach((ele)=>{
+                        const j = ele.dataset.rank;
+                        const i = ele.dataset.fyle;
+                        delete resBoard[j][i];
+                    })
+                }
+                i++;
+            }
         }
-    })
+    }
+    console.log(resBoard);
+    return resBoard;
+
+    function selectorToBoard(selector, property, propertyValue, ruleCallback){
+
+    }
 }
-setTimeout(() => {
-    cssModifyBoard()
-}, 3000);
+
+// import {createDefaultBoard} from './main.js'
+// setTimeout(() => {
+//     cssModifyBoardState(createDefaultBoard())
+// }, 1000);

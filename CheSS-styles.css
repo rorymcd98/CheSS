@@ -2,6 +2,6 @@ td[data-fyle = "2"]{
   display: none;
 }
 
-td[data-rank = "7"]{
+tr[data-rank = "7"]{
   display: none;
 }

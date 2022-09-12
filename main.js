@@ -1,27 +1,29 @@
-import {turnHandler, Piece} from "./valid-move-checker.js"
-let isWhiteTurn = true;
+import {pieceTurnHandler, cssTurnHandler, Piece} from "./valid-move-checker.js"
+import {setCss, getCss} from "./editor.js"
+var gblIsWhiteTurn = true;
 var gblBoardState;
 var gblGameTurnList;
 
 //Doubly linked list of turn nodes
 class TurnNode{
-    constructor(savedBoardState, isWhiteTurn){
+    constructor(savedBoardState, isWhiteTurn, cssText){
         this.board = savedBoardState;
         this.turn = isWhiteTurn;
+        this.cssText = cssText;
         this.next = null;
         this.prev = null;
     }
 }
 
 class TurnList{
-    constructor(savedBoardState, isWhiteTurn){
-        this.head = new TurnNode(savedBoardState, isWhiteTurn);
+    constructor(savedBoardState, isWhiteTurn, cssText){
+        this.head = new TurnNode(savedBoardState, isWhiteTurn, cssText);
         // this.head.prev = null;
         this.tail = this.head;
         this.current = this.tail;
     }
-    append(savedBoardState, isWhiteTurn){
-        let newTurnNode = new TurnNode(savedBoardState, isWhiteTurn);
+    append(savedBoardState, isWhiteTurn, cssText){
+        let newTurnNode = new TurnNode(savedBoardState, isWhiteTurn, cssText);
         newTurnNode.prev = this.current;
         this.current.next = newTurnNode;
         this.current = this.current.next;
@@ -32,16 +34,18 @@ class TurnList{
             this.current = this.current.prev;
             const undoBoardState = this.current.board;
             const undoTurn = this.current.turn;
-            return [undoBoardState, undoTurn];
-        } else {return [null, null]}
+            const undoCssText = this.current.cssText;
+            return [undoBoardState, undoTurn, undoCssText];
+        } else {return [null, null, null]}
     }
     redo(){
         if (this.current.next !== null){
             this.current = this.current.next;
             const redoBoard = this.current.board;
             const redoTurn = this.current.turn;
-            return [redoBoard, redoTurn];
-        } else {return [null, null]}
+            const redoCssText = this.current.cssText;
+            return [redoBoard, redoTurn, redoCssText];
+        } else {return [null, null, null]}
     }
     debug(){
         let dummy = this.head;
@@ -49,44 +53,61 @@ class TurnList{
         while(dummy){
             if (dummy === this.current){console.log('current')}
             console.log(dummy.board);
-
             dummy = dummy.next;
         }
     }
 }
 
 //---Create the board---
-const defaultBoardState = createDefaultBoard();
-renderBoard(defaultBoardState, isWhiteTurn);//null for default board
-gblGameTurnList = new TurnList(structuredClone(defaultBoardState), isWhiteTurn);
+export function initBoard(){
+    const defaultBoardState = createDefaultBoard();
+    renderBoard(defaultBoardState, true);
+    gblGameTurnList = new TurnList(structuredClone(defaultBoardState), true, '');
+}
 
 //Create the event listeners for buttons
-let newGameButton = document.getElementById("new-game-button");
+const newGameButton = document.getElementById("new-game-button");
 newGameButton.addEventListener('click', ()=>{
-    renderBoard(createDefaultBoard(), true);
-    gblGameTurnList = new TurnList(structuredClone(defaultBoardState), true);
+    const defaultBoardState = createDefaultBoard();
+    renderBoard(defaultBoardState, true);
+    gblGameTurnList = new TurnList(structuredClone(defaultBoardState), true , '');
 });
-let undoButton = document.getElementById("undo-button");
+
+const undoButton = document.getElementById("undo-button");
 undoButton.addEventListener('click', ()=>{
-    const [undoBoard, undoTurn] = gblGameTurnList.undo();
+    const [undoBoard, undoTurn, undoCssText] = gblGameTurnList.undo();
     if (undoBoard !== null){
-        renderBoard(undoBoard, undoTurn);
-    }
-});
-let redoButton = document.getElementById("redo-button");
-redoButton.addEventListener('click', ()=>{
-    const [redoBoard, redoTurn] = gblGameTurnList.redo();
-    if (redoBoard != null){
-        renderBoard(redoBoard, redoTurn);
+        renderBoard(undoBoard, undoTurn, undoCssText);
     }
 });
 
-let saveButton = document.getElementById("save-button");
+const redoButton = document.getElementById("redo-button");
+redoButton.addEventListener('click', ()=>{
+    const [redoBoard, redoTurn, redoCssText] = gblGameTurnList.redo();
+    if (redoBoard != null){
+        renderBoard(redoBoard, redoTurn, redoCssText);
+    }
+});
+
+const saveButton = document.getElementById("save-button");
 saveButton.addEventListener('click', ()=>{
     gblGameTurnList.debug();
 });
 
-function renderBoard(boardState, isWhiteTurn = true){
+const submitCssButton = document.getElementById("submit-css-button");
+submitCssButton.addEventListener('click', ()=>{
+    const isValidCssMove = cssTurnHandler(gblBoardState);
+    if (isValidCssMove){
+        gblIsWhiteTurn = !gblIsWhiteTurn;
+        const currentCssText = getCss();
+        renderBoard(gblBoardState, gblIsWhiteTurn, currentCssText);
+        //Eventually we will add undo/redo functionality
+        const savedBoardState = structuredClone(gblBoardState);
+        gblGameTurnList.append(savedBoardState, gblIsWhiteTurn?true:false, currentCssText);
+    }
+});
+
+function renderBoard(boardState, isWhiteTurn = true, cssText = ''){
     //Update the global board state
     gblBoardState = structuredClone(boardState);
 
@@ -137,6 +158,19 @@ function renderBoard(boardState, isWhiteTurn = true){
         }
     }
 
+    //Renders CSS from the editor
+    renderCss(cssText)
+    setCss(cssText)
+
+    //Some text cases
+    // td[data-fyle = "2"]{
+    //     display: none;
+    //   }
+      
+    // tr[data-rank = "7"]{
+    //     display: none;
+    // }
+
     //Attach drag event listeners to draggables (pieces)
     const draggables = document.querySelectorAll('.draggable');
     draggables.forEach(draggable => {
@@ -163,39 +197,40 @@ function renderBoard(boardState, isWhiteTurn = true){
             e.preventDefault();
             const draggedPiece = document.querySelector('.dragging');
             const fromSquare = draggedPiece.parentElement;
-            const fromX = fromSquare.getAttribute('data-fyle');
-            const fromY = fromSquare.getAttribute('data-rank');
-            const toX = square.getAttribute('data-fyle');
-            const toY = square.getAttribute('data-rank');
+            const fromX = Number(fromSquare.getAttribute('data-fyle'));
+            const fromY = Number(fromSquare.getAttribute('data-rank'));
+            const toX = Number(square.getAttribute('data-fyle'));
+            const toY = Number(square.getAttribute('data-rank'));
             const curPiece = gblBoardState[fromY][fromX];
 
-            const [isValidMove, isCheckmate] = turnHandler(fromX, fromY, toX, toY, curPiece, gblBoardState, isWhiteTurn);
+            const [isValidMove, isCheckmate] = pieceTurnHandler(fromX, fromY, toX, toY, curPiece, gblBoardState, gblIsWhiteTurn);
             if (isValidMove){
                 const whiteTurnIndicatorEle = document.getElementById('white-turn-indicator');
                 const blackTurnIndicatorEle = document.getElementById('black-turn-indicator');
                 whiteTurnIndicatorEle.toggleAttribute('data-isWhiteTurn');
                 blackTurnIndicatorEle.toggleAttribute('data-isWhiteTurn');
-                isWhiteTurn = !isWhiteTurn;
+                gblIsWhiteTurn = !gblIsWhiteTurn;
 
                 gblBoardState[toY][toX] = boardState[fromY][fromX];
                 gblBoardState[fromY][fromX] = null;
                 const savedBoardState = structuredClone(gblBoardState);
-                gblGameTurnList.append(savedBoardState, isWhiteTurn);
+                gblGameTurnList.append(savedBoardState, gblIsWhiteTurn?true:false, cssText);
 
                 if (square.hasChildNodes()){
                     square.removeChild(square.firstChild);
                 }
                 square.appendChild(draggedPiece);
-            }
-            if (isValidMove && isCheckmate){
-                //
+                if (isCheckmate){
+                    //
+                }
             }
         })
     })    
 }
 
-function createDefaultBoard(){
-    let defaultBoard = Array.apply(null, Array(8)).map(()=>{return new Array(8)});
+export function createDefaultBoard(){
+    let defaultBoard = {}; //Array.apply(null, Array(8)).map(()=>{return new Array(8)});
+    for (let i = 0; i<8; i++) {defaultBoard[i] = {}}
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
     const pieceOrder = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
     //Draw the pieces
@@ -210,4 +245,28 @@ function createDefaultBoard(){
         defaultBoard[7][i] = new Piece('white', pieceOrder[i], true, fyles[i]);
     }
     return defaultBoard;
+}
+
+function renderCss(cssText){
+    const lines = cssText.split('\n');
+    const validElements = ['td'];
+    for(let i = 0; i<lines.length; i++){
+        const line = lines[i];
+        //--Start creating CSS rules here--
+        if(line.startsWith('td')){
+            //generalise this into a function which accepts a function
+            const selector = line.substring(0,line.indexOf('{'));
+            const eles = document.querySelectorAll(selector);
+            i++;
+            while (!lines[i].startsWith('}')){
+                const styleArr = lines[i].split(":");
+                eles.forEach((ele)=>{
+                    const styleProperty = (styleArr[0]).trim();
+                    const styleValue = (styleArr[1].replace(';','')).trim();
+                    ele.style[styleProperty] = styleValue;
+                })
+                i++;
+            }
+        }
+    }
 }

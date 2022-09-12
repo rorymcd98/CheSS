@@ -120,6 +120,19 @@ td:hover{
   cursor: pointer;
 }
 
+#submit-css-button{
+  position: absolute;
+  background-color: white;
+  color: black;
+  border: solid black;
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
 .piece{
   display: flex;
   justify-content: center;
@@ -242,3 +255,7 @@ td:hover{
   font-weight: normal;
   opacity: 100%;
 }
+
+/* tr[data-rank = "7"]{
+  rotate: 90deg;
+} */
