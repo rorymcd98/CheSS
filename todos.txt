@@ -1,21 +1,24 @@
+For now
+    Debug: Why is moving pieces broken, as well as submit css
+
+New workflow
+    Normal moves, no change to board
+    Css moves render board, before the board is rendered we modify the board state
+        This modified board state is obtained during the move checking
+        We save a copy of the actual board though
+
 Misc
     Get rid of is light turn for the baord ele
 
 Board state save, undo functions
     Create a function which generates a custom board layout / a saved board layout.
-    Create an undo button
 
 Code best practices
     Consider adding more debugging for which piece is putting the king in check "The king is in check due to: knight."
         Consider double checks
-    Consider changing != to !==
-    Is enemy piece function is ugly
-
 
 Functional CSS chess
     Html to board state needs to account for CSS in the board state
-    Board state needs to be used
-    Move the piece from id to class as well
 
 Making CSS nicer
     Fade animations for the switch turn buttons
@@ -28,3 +31,4 @@ Chess edge cases
 
 Bugs
     e4,d5,eXd undo redo
+

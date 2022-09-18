@@ -1,19 +1,22 @@
 :root{
-    --size:      800px;
-    --box-size:  calc(var(--size)/8);
+    --board-size:      800px;
+    --box-size:  calc(var(--board-size)/8);
     --dark:      grey;
     --light:     white;
-    --hover:     lightgreen
+    --hover:     lightgreen;
+    --leg-size:  25px;
   }
 body{
   background-color: rgb(36,44,48);
 }
 #text-editor{
   position: absolute;
-  left: 0%;
+  width:100%;
+  height: 100%;
+  /* left: 0%;
   right: 0%;
   top: 0%;
-  bottom: 0%;
+  bottom: 0%; */
 }
 #left-panel{
   position: absolute;
@@ -33,20 +36,35 @@ body{
 #board-container{
   position: absolute;
   left: 50%;
-  top: 20%;
+  top: 10%;
   transform: translate(-50%);
-  max-width: var(--size);
-  max-width: var(--size);
-  border-spacing: 0;
+  max-width: var(--board-size);
+  max-width: var(--board-size);
+  border: 50px solid rgb(36, 36, 59);
 }
 .board{
   position: relative;
   left: 50%;
   transform: translate(-50%);
-  max-width: var(--size);
-  max-width: var(--size);
+  max-width: var(--board-size);
+  max-width: var(--board-size);
   border-spacing: 0;
 }
+td.legend{
+  color: rgb(202, 202, 198);
+  box-sizing: border-box;
+  background-color: black;
+  text-align: center;
+}
+td.legend[data-leg-fyle]{
+  height: var(--leg-size);
+  width: var(--box-size);
+}
+td.legend[data-leg-rank]{
+  min-width: var(--leg-size);
+  height: var(--box-size);
+}
+
 .square{
   box-sizing: border-box;
   width: var(--box-size);
@@ -61,7 +79,7 @@ body{
 .dark{
   background: var(--dark)
 }
-td:hover{
+.square:hover{
   background: var(--hover);
   cursor: pointer
 }
@@ -72,7 +90,7 @@ td:hover{
   left: 50%;
   align-content: center;
   justify-content: center;
-  top: calc(22% + var(--size));
+  top: calc(22% + var(--board-size));
   transform: translate(-50%);
 }
 .turn-indicator-container{
@@ -150,112 +168,59 @@ td:hover{
   opacity: 0.1%;
 }
 
-/* Pawns */
-#white-A-pawn::after,
-#white-B-pawn::after,
-#white-C-pawn::after,
-#white-D-pawn::after,
-#white-E-pawn::after,
-#white-F-pawn::after,
-#white-G-pawn::after,
-#white-H-pawn::after{
-  content: "\2659";
+/* Pieces */
+.piece::after{
   font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
+}
+.piece[bold]::after{
+  font-weight: bold;
+}
+.piece[big]::after{
+  font-size: 6rem;
+}
+.piece[ghost]::after{
+  opacity: 50%;
 }
 
-#black-A-pawn::after,
-#black-B-pawn::after,
-#black-C-pawn::after,
-#black-D-pawn::after,
-#black-E-pawn::after,
-#black-F-pawn::after,
-#black-G-pawn::after,
-#black-H-pawn::after{
+/* Pawns */
+.white.pawn::after{
+  content: "\2659";
+}
+.black.pawn::after{
   content: "\265F";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
 }
 
 /* Rank one */
-#white-A-rook::after,
-#white-H-rook::after{
+.white.rook::after{
   content: "\2656";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
 }
-#white-B-knight::after,
-#white-G-knight::after{
+.white.knight::after{
   content: "\2658";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
 }
-#white-C-bishop::after,
-#white-F-bishop::after{
+.white.bishop::after{
   content: "\2657";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
 }
-#white-C-bishop::after,
-#white-F-bishop::after{
-  content: "\2657";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
-}
-#white-E-king::after{
+.white.king::after{
   content: "\2654";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
 }
-#white-D-queen::after{
+.white.queen::after{
   content: "\2655";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
 }
 
 /* Rank eight */
-#black-A-rook::after,
-#black-H-rook::after{
+.black.rook::after{
   content: "\265C";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
 }
-#black-B-knight::after,
-#black-G-knight::after{
+.black.knight::after{
   content: "\265E";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
-}
-#black-C-bishop::after,
-#black-F-bishop::after{
-  content: "\265D";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
-}
-#black-E-king::after{
-  content: "\265A";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
-}
-#black-D-queen::after{
-  content: "\265B";
-  font-size: 3rem;
-  font-weight: normal;
-  opacity: 100%;
-}
 
-/* tr[data-rank = "7"]{
-  rotate: 90deg;
-} */
+}
+.black.bishop::after{
+  content: "\265D";
+}
+.black.king::after{
+  content: "\265A";
+}
+.black.queen::after{
+  content: "\265B";
+}
