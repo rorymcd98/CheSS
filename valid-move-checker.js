@@ -1,11 +1,10 @@
 import {getCss} from './editor.js';
 
 //Passes the dom board to the valid move checker
-export function pieceTurnHandler(fromX, fromY, toX, toY, curPiece, boardState, isWhiteTurn){
+export function pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, boardState, isWhiteTurn){
     let isValidMove = false;
     let isCheckmate = false;
-    const boardArray = boardToArray(boardState);
-
+    const {boardArray, fromX, fromY, toX, toY} = boardToArray(boardState, fromFyle, fromRank, toFyle, toRank);
     if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardArray, isWhiteTurn)){
         isValidMove = true;
         let nextBoardArray = structuredClone(boardArray);
@@ -21,7 +20,7 @@ export function pieceTurnHandler(fromX, fromY, toX, toY, curPiece, boardState, i
 
 //Passes the dom board to the valid move checker
 export function cssTurnHandler(boardState, isWhiteTurn, currentCssText){
-    const boardArray = boardToArray(boardState);
+    const {boardArray} = boardToArray(boardState);
     if(checkNumberCssChanges(currentCssText) !== 1){
         console.log('CSS moves must change or create exactly one property!')
         return [false, null];
@@ -31,7 +30,8 @@ export function cssTurnHandler(boardState, isWhiteTurn, currentCssText){
         return [false, null];
     }
     const cssBoardState = cssUpdateBoardState(boardState);
-    const cssBoardArray = boardToArray(cssBoardState);
+    const {boardArray: cssBoardArray} = boardToArray(cssBoardState);
+    console.log(cssBoardArray)
     if(!(findKings(cssBoardArray, true).length === 1 && findKings(cssBoardArray, false).length === 1)){
         console.log('CSS moves can\'t create or destroy a king!')
         return [false, null];
@@ -333,17 +333,25 @@ function cssUpdateBoardState(boardState){
 }
 
 //Creates a 2D array from the board state, accounting for CSS induced changes (e.g., invisible ranks/fyles)
-function boardToArray(boardState){
+function boardToArray(boardState, fromFyle=-1, fromRank=-1, toFyle=-1, toRank=-1){
     let resArray = [];
+    let resObject = {boardArray: [], fromX: -1, fromY: -1, toX: -1, toY: -1};
+    let yCount = 0;
     Object.keys(boardState).forEach((rankNum)=>{
         let rank = [];
+        let xCount = 0;
         Object.keys(boardState[rankNum]).forEach((fyleNum)=>{
             const curSquare = boardState[rankNum][fyleNum];
             if (curSquare.square.display){
+                // console.log(fyleNum, fromFyle)
                 rank.push(curSquare.piece);
+                if(fyleNum == fromFyle && rankNum == fromRank){resObject.fromX = xCount; resObject.fromY = yCount};
+                if(fyleNum == toFyle && rankNum == toRank){resObject.toX = xCount; resObject.toY = yCount};
+                xCount++;
             }
         })
-        if(rank.length>0){resArray.push(rank)};
+        if(rank.length>0){resArray.push(rank);yCount++};
     })
-    return resArray;
+    resObject.boardArray = resArray;
+    return resObject;
 }

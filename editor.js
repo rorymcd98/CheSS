@@ -36,7 +36,7 @@ require(['vs/editor/editor.main'], function () {
 }\n`;
         } else if (drgEle.tagName === 'TD'){
             appendEditorText =
-`td[data-${drgEle.hasAttribute('data-rank')?`rank = "${drgEle.dataset.legRank}"]`:`fyle = "${drgEle.dataset.legFyle}"]`}{
+`td[data-${drgEle.hasAttribute('data-leg-rank')?`rank = "${drgEle.dataset.legRank}"]`:`fyle = "${drgEle.dataset.legFyle}"]`}{
     display: table-cell;
 }\n`
 }

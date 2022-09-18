@@ -168,12 +168,12 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
                 }         
             }
         })
-        boardElement.appendChild(rank)
+        rank.hasChildNodes() && boardElement.appendChild(rank);
     });
 
     document.getElementById("board-container").appendChild(boardElement);
 
-    //Render the board legend
+    //Render the board legend, also a draggable element
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
     let topLegend = document.createElement('tr');
     let bottomLegend = document.createElement('tr');
@@ -242,13 +242,13 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
             const draggedPiece = document.querySelector('.dragging');
             if(!draggedPiece.classList.contains('piece')){console.log("That's not a piece!"); return false};
             const fromSquare = draggedPiece.parentElement;
-            const fromX = Number(fromSquare.getAttribute('data-fyle'));
-            const fromY = Number(fromSquare.getAttribute('data-rank'));
-            const toX = Number(square.getAttribute('data-fyle'));
-            const toY = Number(square.getAttribute('data-rank'));
-            const curPiece = mainBoardState[fromY][fromX].piece;
+            const fromFyle = Number(fromSquare.getAttribute('data-fyle'));
+            const fromRank = Number(fromSquare.getAttribute('data-rank'));
+            const toFyle = Number(square.getAttribute('data-fyle'));
+            const toRank = Number(square.getAttribute('data-rank'));
+            const curPiece = mainBoardState[fromRank][fromFyle].piece;
 
-            const [isValidMove, isCheckmate] = pieceTurnHandler(fromX, fromY, toX, toY, curPiece, mainBoardState, mainIsWhiteTurn);
+            const [isValidMove, isCheckmate] = pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, mainBoardState, mainIsWhiteTurn);
             if (isValidMove){
                 const whiteTurnIndicatorEle = document.getElementById('white-turn-indicator');
                 const blackTurnIndicatorEle = document.getElementById('black-turn-indicator');
@@ -256,9 +256,9 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
                 blackTurnIndicatorEle.toggleAttribute('data-isWhiteTurn');
                 mainIsWhiteTurn = !mainIsWhiteTurn;
 
-                mainBoardState[toY][toX].piece = structuredClone(mainBoardState[fromY][fromX].piece);
-                mainBoardState[toY][toX].piece.unmoved = false;
-                mainBoardState[fromY][fromX].piece = null;
+                mainBoardState[toRank][toFyle].piece = structuredClone(mainBoardState[fromRank][fromFyle].piece);
+                mainBoardState[toRank][toFyle].piece.unmoved = false;
+                mainBoardState[fromRank][fromFyle].piece = null;
                 const nextBoardState = structuredClone(mainBoardState);
                 const nextCssText = mainGameTurnList.current.cssText;
                 setCss(nextCssText);
