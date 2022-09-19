@@ -1,4 +1,5 @@
 import {getCss} from './editor.js';
+const movesets = new GenerateMoveset();
 
 //Passes the dom board to the valid move checker
 export function pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, boardState, isWhiteTurn){
@@ -156,8 +157,9 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
                 xDir = 0;
                 yDir = (toY - fromY) > 0 ? 1 : -1;
             }
-            for (let i = 1; i<moveY;i++){
+            for (let i = 1; i<Math.max(moveY, moveX);i++){
                 const interPiece = boardArray[fromY+i*yDir][fromX+i*xDir];
+                if(debug){console.log(fromY+i*yDir,fromX+i*xDir)}
                 if(interPiece!==null || (interPiece && !interPiece.properties.ghost)){
                     if(debug){console.log("There's a piece in the way!")}
                     return false;
@@ -188,7 +190,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
 //Check if the king is in 'check' after the turn
 function isKingInCheck(boardArray, isWhiteTurn){
     const kings = findKings(boardArray, isWhiteTurn);
-    const movesets = new GenerateMoveset(isWhiteTurn);
+    const turn = isWhiteTurn ? 'white':'black';
     return(kings.some((king)=>{
         if(checkLineForPiece(king, 1, 0)){return true}
         if(checkLineForPiece(king, 0, 1)){return true}
@@ -198,13 +200,13 @@ function isKingInCheck(boardArray, isWhiteTurn){
         if(checkLineForPiece(king, 1, -1)){return true}
         if(checkLineForPiece(king, -1, 1)){return true}
         if(checkLineForPiece(king, -1, -1)){return true}
-        if(checkMovesetForPiece(king, movesets.pawnTake, 'pawn')){return true}
-        if(checkMovesetForPiece(king, movesets.pawnTake.big, 'pawn', ['big'])){return true}
-        if(checkMovesetForPiece(king, movesets.pawn, 'pawn', ['bold'])){return true}
-        if(checkMovesetForPiece(king, movesets.pawn.big, 'pawn', ['bold', 'big'])){return true}
-        if(checkMovesetForPiece(king, movesets.knight, 'knight')){return true}
-        if(checkMovesetForPiece(king, movesets.knight.big, 'knight', ['big'])){return true}
-        if(checkMovesetForPiece(king, movesets.king, 'king')){return true}
+        if(checkMovesetForPiece(king, movesets[turn].pawnTake, 'pawn')){return true}
+        if(checkMovesetForPiece(king, movesets[turn].pawnTake.big, 'pawn', ['big'])){return true}
+        if(checkMovesetForPiece(king, movesets[turn].pawn, 'pawn', ['bold'])){return true}
+        if(checkMovesetForPiece(king, movesets[turn].pawn.big, 'pawn', ['bold', 'big'])){return true}
+        if(checkMovesetForPiece(king, movesets[turn].knight, 'knight')){return true}
+        if(checkMovesetForPiece(king, movesets[turn].knight.big, 'knight', ['big'])){return true}
+        if(checkMovesetForPiece(king, movesets[turn].king, 'king')){return true}
     }))
 
     //Returns true if the line encounters a threatening bishop/rook/queen, false if not
@@ -247,10 +249,7 @@ function isKingInCheck(boardArray, isWhiteTurn){
 
 //Check if the board is in 'checkmate'
 function checkCheckmate(boardArray,isWhiteTurn){
-    //1. Iterate through all pieces that can currently move
-    //2. Generate all moves that that piece can do
-    //3. For each move, check if the king is in check
-    const movesets = new GenerateMoveset(isWhiteTurn);
+    //Iterate through all valid moves, if there's one that doesn't result in checkmate return false
     const lookForTurn = isWhiteTurn ? 'white' : 'black';
     for (let j=0; j<boardArray.length;j++){
         for (let i=0; i<boardArray[j].length;i++){
@@ -258,8 +257,8 @@ function checkCheckmate(boardArray,isWhiteTurn){
             if ((piece) && (piece.col === lookForTurn)){
                 let pieceMoveset;
                 if(piece.properties.big){
-                    pieceMoveset = movesets[piece.type].big;
-                } else {pieceMoveset = movesets[piece.type];}
+                    pieceMoveset = movesets[lookForTurn][piece.type].big;
+                } else {pieceMoveset = movesets[lookForTurn][piece.type];}
                 if(pieceMoveset.some((move) => {
                     //if(checkValidMove(i,j,i+move[0],j+move[1],piece,boardState,isWhiteTurn)){console.log(i,j,move, piece)} //Common debug
                     return checkValidMove(i,j,i+move[0],j+move[1],piece,boardArray,isWhiteTurn, false)})
@@ -275,12 +274,12 @@ function checkCheckmate(boardArray,isWhiteTurn){
 }
 
 export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, isWhiteTurn){
-    const movesets = new GenerateMoveset(isWhiteTurn);
     const {boardArray, fromX, fromY} = boardToArray(boardState, fromFyle, fromRank);
+    const turn = isWhiteTurn ? 'white' : 'black';
     let pieceMoveset;
     if(hoverPiece.properties.big){
-        pieceMoveset = movesets[hoverPiece.type].big;
-    } else {pieceMoveset = movesets[hoverPiece.type];}
+        pieceMoveset = movesets[turn][hoverPiece.type].big;
+    } else {pieceMoveset = movesets[turn][hoverPiece.type];}
 
     pieceMoveset.forEach((move) => {
         const toX = fromX+move[0];
@@ -295,20 +294,32 @@ export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, isW
 }
 
 //Generates an exhaustive list of moves a piece can perform
-function GenerateMoveset(isWhiteTurn){
-    const pawnDir = isWhiteTurn ? -1 : 1;
-    this.pawnTake =  [[1,1*pawnDir],[-1,1*pawnDir]];
-    this.pawnTake.big = [...this.pawnTake,...this.pawnTake.map((move)=>[2*move[0],2*move[1]])];
+function GenerateMoveset(){
+    let pawnDir =  -1;
+    this.white = {};
+    this.black = {};
+    this.white.pawnTake =  [[1,1*pawnDir],[-1,1*pawnDir]];
+    this.white.pawnTake.big = [...this.white.pawnTake,...this.white.pawnTake.map((move)=>[2*move[0],2*move[1]])];
 
-    this.pawn =  [[1,1*pawnDir],[-1,1*pawnDir],[0,pawnDir],[0,2*pawnDir]];
-    this.pawn.big = [...this.pawn,...this.pawn.map((move)=>[2*move[0],2*move[1]])];
+    this.white.pawn =  [[1,1*pawnDir],[-1,1*pawnDir],[0,pawnDir],[0,2*pawnDir]];
+    this.white.pawn.big = [...this.white.pawn,...this.white.pawn.map((move)=>[2*move[0],2*move[1]])];
+    
+    pawnDir =  1;
+    this.black.pawnTake =  [[1,1*pawnDir],[-1,1*pawnDir]];
+    this.black.pawnTake.big = [...this.black.pawnTake,...this.black.pawnTake.map((move)=>[2*move[0],2*move[1]])];
+
+    this.black.pawn =  [[1,1*pawnDir],[-1,1*pawnDir],[0,pawnDir],[0,2*pawnDir]];
+    this.black.pawn.big = [...this.black.pawn,...this.black.pawn.map((move)=>[2*move[0],2*move[1]])];
 
     let kf= 2; let ks = 1; //knight forward, knight side
-    this.knight = [[kf,ks],[-kf,ks],[kf,-ks],[-kf,-ks],[ks,kf],[-ks,kf],[ks,-kf],[-ks,-kf]];    
-    this.knight.big = [...this.knight,...this.knight.map((move)=>[2*move[0],2*move[1]]),...this.knight.map((move)=>[move[0],2*move[1]]),...this.knight.map((move)=>[2*move[0],move[1]])];
+    this.white.knight = [[kf,ks],[-kf,ks],[kf,-ks],[-kf,-ks],[ks,kf],[-ks,kf],[ks,-kf],[-ks,-kf]];    
+    this.white.knight.big = [...this.white.knight,...this.white.knight.map((move)=>[2*move[0],2*move[1]]),...this.white.knight.map((move)=>[move[0],2*move[1]]),...this.white.knight.map((move)=>[2*move[0],move[1]])];
+    this.black.knight = this.white.knight;    
+    this.black.knight.big = this.white.knight.big;
 
     let k = 1; //king step
-    this.king = [[k,k],[-k,k],[k,-k],[-k,-k],[k,0],[0,k],[-k,0],[0,-k]];
+    this.white.king = [[k,k],[-k,k],[k,-k],[-k,-k],[k,0],[0,k],[-k,0],[0,-k]];
+    this.black.king = [[k,k],[-k,k],[k,-k],[-k,-k],[k,0],[0,k],[-k,0],[0,-k]];
 
     let bishopMoveset = [];
     let rookMoveset = [];
@@ -319,9 +330,13 @@ function GenerateMoveset(isWhiteTurn){
         queenMoveset.push([i,i],[i,-i],[-i,i],[-i,-i]);
         queenMoveset.push([i,0],[0,i],[-i,0],[0,-i]);
     }
-    this.bishop = bishopMoveset;
-    this.rook = rookMoveset;
-    this.queen = queenMoveset;
+    this.white.bishop = bishopMoveset;
+    this.white.rook = rookMoveset;
+    this.white.queen = queenMoveset;
+    
+    this.black.bishop = this.white.bishop;
+    this.black.rook = this.white.rook;
+    this.black.queen = this.white.queen;
 }
 //Find all the current-turn kings
 //This workflow exists in case we want to get rid of CSS move rule.1 (multiple kings)
