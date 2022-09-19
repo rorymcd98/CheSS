@@ -83,6 +83,9 @@ td.legend[data-leg-rank]{
   background: var(--hover);
   cursor: pointer
 }
+.square.validMove{
+  background: red;
+}
 
 .turn-control-dashboard{
   position: relative;

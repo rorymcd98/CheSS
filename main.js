@@ -1,4 +1,4 @@
-import {pieceTurnHandler, cssTurnHandler} from "./valid-move-checker.js"
+import {pieceTurnHandler, cssTurnHandler, highlightSquares} from "./valid-move-checker.js"
 import {setCss, getCss} from "./editor.js"
 var mainIsWhiteTurn = true;
 var mainBoardState;
@@ -163,8 +163,8 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
                 pieceElement.setAttribute('draggable', true);
                 if(pieceObj.unmoved){pieceElement.setAttribute('unmoved','')}
                 if(pieceObj.properties.bold){pieceElement.setAttribute('bold','')};
-                if(pieceObj.properties.big){pieceElement.setAttribute('big','')}
-                if(pieceObj.properties.ghost){pieceElement.setAttribute('ghost','')}
+                if(pieceObj.properties.big){pieceElement.setAttribute('big','')};
+                if(pieceObj.properties.ghost){pieceElement.setAttribute('ghost','')};
                 pieceElement.id = pieceObj.objectId;
                 squareEle.appendChild(pieceElement);     
             }
@@ -233,6 +233,26 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
             e.preventDefault();
         })
     })
+
+    //Attach mouseover & mouseout event listeners for pieces for visualising potential moves
+    const pieces = document.querySelectorAll('.piece')
+    pieces.forEach(piece => {
+        piece.addEventListener('mouseover', ()=>{
+            const fromFyle = Number(piece.parentElement.getAttribute('data-fyle'));
+            const fromRank = Number(piece.parentElement.getAttribute('data-rank'));
+            const hoverPiece = mainBoardState[fromRank][fromFyle].piece;
+            if(hoverPiece.col === (mainIsWhiteTurn ? 'white':'black')){
+                highlightSquares(fromFyle, fromRank, hoverPiece, mainBoardState, mainIsWhiteTurn);
+            }
+        })
+    })
+    pieces.forEach(piece => {
+        piece.addEventListener('mouseout', ()=>{
+            const eles = document.querySelectorAll('.validMove');
+            eles.forEach((ele)=>ele.classList.remove('validMove'))
+            
+        })
+    })
     
     squares.forEach(square => {
         square.addEventListener('drop', (e)=>{
@@ -289,7 +309,6 @@ class DefaultBoard{
             this[5][i].piece = null;
             this[6][i].piece = new Piece('white', 'pawn', true, fyles[i]);
             this[7][i].piece = new Piece('white', pieceOrder[i], true, fyles[i]);
-            for (let j = 0; j<8; j++) {this[j][i].square.display = true}
         }
         this.ranks = [0,1,2,3,4,5,6,7];
         this.fyles = [0,1,2,3,4,5,6,7];
