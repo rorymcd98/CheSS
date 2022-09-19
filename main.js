@@ -142,34 +142,35 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
     }
 
     //Create the board as a table element
-    Object.keys(boardState).forEach((rankNum)=>{
+    for(let rankNum=0; rankNum<8; rankNum++){
         let rank = document.createElement('tr');
         rank.dataset.rank = rankNum;
-        Object.keys(boardState[rankNum]).forEach((fyleNum)=>{
-            if(boardState[rankNum][fyleNum].square.display){
-                let squareEle = document.createElement('td');
-                squareEle.dataset.fyle = fyleNum;
-                squareEle.dataset.rank = rankNum;
-                squareEle.className = (fyleNum%2 === rankNum%2) ? "light square" : "dark square";
-                rank.appendChild(squareEle);
-
-                //Create a piece on the square if one exists
-                const pieceObj = boardState[rankNum][fyleNum].piece;
-                if (pieceObj){
-                    const pieceElement = document.createElement('text');
-                    pieceElement.classList.add('piece', 'draggable', pieceObj.col, pieceObj.type);
-                    pieceElement.setAttribute('draggable', true);
-                    if(pieceObj.unmoved){pieceElement.setAttribute('unmoved','')}
-                    if(pieceObj.properties.bold){pieceElement.setAttribute('bold','')};
-                    if(pieceObj.properties.big){pieceElement.setAttribute('big','')}
-                    if(pieceObj.properties.ghost){pieceElement.setAttribute('ghost','')}
-                    pieceElement.id = pieceObj.objectId;
-                    squareEle.appendChild(pieceElement);
-                }         
+        for(let fyleNum=0; fyleNum<8; fyleNum++){
+            let squareEle = document.createElement('td');
+            squareEle.dataset.fyle = fyleNum;
+            squareEle.dataset.rank = rankNum;
+            squareEle.className = (fyleNum%2 === rankNum%2) ? 'light square' : 'dark square';
+            if(!(boardState.ranks.includes(rankNum)) || !(boardState.fyles.includes(fyleNum))){
+                squareEle.style.display = 'none';
             }
-        })
+            rank.appendChild(squareEle);
+            
+            //Create a piece on the square if one exists
+            const pieceObj = boardState[rankNum][fyleNum].piece;
+            if (pieceObj){
+                const pieceElement = document.createElement('text');
+                pieceElement.classList.add('piece', 'draggable', pieceObj.col, pieceObj.type);
+                pieceElement.setAttribute('draggable', true);
+                if(pieceObj.unmoved){pieceElement.setAttribute('unmoved','')}
+                if(pieceObj.properties.bold){pieceElement.setAttribute('bold','')};
+                if(pieceObj.properties.big){pieceElement.setAttribute('big','')}
+                if(pieceObj.properties.ghost){pieceElement.setAttribute('ghost','')}
+                pieceElement.id = pieceObj.objectId;
+                squareEle.appendChild(pieceElement);     
+            }
+        }
         rank.hasChildNodes() && boardElement.appendChild(rank);
-    });
+    };
 
     document.getElementById("board-container").appendChild(boardElement);
 
@@ -177,44 +178,41 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
     let topLegend = document.createElement('tr');
     let bottomLegend = document.createElement('tr');
-    [...boardElement.firstChild.children].forEach((ele)=>{
+    for(let fyleNum=0; fyleNum<9; fyleNum++){
         const legend = document.createElement('td');
-        const fyleNum = ele.dataset.fyle;
         legend.innerText = fyles[fyleNum];
         legend.classList.add('legend', 'draggable');
         legend.setAttribute('draggable', true);
         legend.dataset.legFyle = fyleNum;
+        if(!(boardState.fyles.includes(fyleNum))){
+            legend.style.display = 'none';
+        }
         topLegend.append(legend);
         bottomLegend.append(legend.cloneNode(true));
-    });
+    };
+
     boardElement.insertBefore(topLegend, boardElement.firstChild);
     boardElement.appendChild(bottomLegend);
-    [...boardElement.children].forEach((row)=>{
+    for(let rankNum=-1; rankNum<9; rankNum++){
+        const row = boardElement.children[rankNum+1];
         const legend = document.createElement('td');
-        if(row.firstChild.hasAttribute('data-rank')){
+        if(rankNum >= 0 && rankNum < 8){
             legend.classList.add('legend', 'draggable');
             legend.setAttribute('draggable', true);
-            const rankNum = row.firstChild.dataset.rank;
-            legend.innerText = 7-Number(rankNum)+1;
+            legend.innerText = 8-Number(rankNum);
             legend.dataset.legRank = rankNum;
+            if(!(boardState.ranks.includes(rankNum))){
+                legend.style.display = 'none';
+            }
         } else {legend.classList.add('legend', 'corner')}
         row.insertBefore(legend, row.firstChild);
         row.appendChild(legend.cloneNode(true));
-    });
+    };
 
 
     //Updates the editor text
     cssText = cssText ? cssText:defaultEditorText;
     setCss(cssText)
-
-    //Some text cases
-// td[data-fyle = "2"]{
-//     display: none;
-// }
-      
-    // tr[data-rank = "7"]{
-    //     display: none;
-    // }
 
     //Attach drag event listeners to draggables (pieces, legend)
     const draggables = document.querySelectorAll('.draggable');
@@ -293,6 +291,8 @@ class DefaultBoard{
             this[7][i].piece = new Piece('white', pieceOrder[i], true, fyles[i]);
             for (let j = 0; j<8; j++) {this[j][i].square.display = true}
         }
+        this.ranks = [0,1,2,3,4,5,6,7];
+        this.fyles = [0,1,2,3,4,5,6,7];
     }
 }
 

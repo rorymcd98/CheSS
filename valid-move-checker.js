@@ -31,7 +31,7 @@ export function cssTurnHandler(boardState, isWhiteTurn, currentCssText){
     }
     const cssBoardState = cssUpdateBoardState(boardState);
     const {boardArray: cssBoardArray} = boardToArray(cssBoardState);
-    console.log(cssBoardArray)
+
     if(!(findKings(cssBoardArray, true).length === 1 && findKings(cssBoardArray, false).length === 1)){
         console.log('CSS moves can\'t create or destroy a king!')
         return [false, null];
@@ -276,7 +276,7 @@ function findKings(boardArray, isWhiteTurn){
     return kings;
 }
 
-
+//Currently just a dummy function until we can count the number of changes
 function checkNumberCssChanges(currentCssText){
     const nextCssText = getCss();
     
@@ -292,13 +292,43 @@ function cssUpdateBoardState(boardState){
         const unicodeToPiece = {'\u2659':['white','pawn'],'\u2656':['white','rook'],'\u2658':['white','knight'],'\u2657':['white','bishop'],'\u2654':['white','king'],'\u2655':['white','queen'],
                                 '\u265F':['black','pawn'],'\u265C':['black','rook'],'\u265E':['black','knight'],'\u265D':['black','bishop'],'\u265A':['black','king'],'\u265B':['black','queen']};
         if(line.includes('{')){//At some point this will need to debug in case of invalid property.
-            selectorRules(i, ['td'], 'display', {'none':false,'table-cell':true}, (val,rN,fN)=>{resBoard[rN][fN].square.display = val});
-            selectorRules(i, ['#white', '#black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'opacity', {'100%':false,'50%':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.ghost = val});
-            selectorRules(i, ['#white', '#black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'content', unicodeToPiece, (val,rN,fN)=>{const pc = resBoard[rN][fN].piece; pc.col = val[0]; pc.type = val[1]});
+            lineSelectorRules(i, ['td[data-rank'], 'ranks', 'display', {'none':false,'table-cell':true});
+            lineSelectorRules(i, ['td[data-fyle'], 'fyles', 'display', {'none':false,'table-cell':true});
+            pieceSelectorRules(i, ['#white', '#black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'opacity', {'100%':false,'50%':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.ghost = val});
+            pieceSelectorRules(i, ['#white', '#black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'content', unicodeToPiece, (val,rN,fN)=>{const pc = resBoard[rN][fN].piece; pc.col = val[0]; pc.type = val[1]});
         }
     }
 
-    function selectorRules(j, selectorStarts, property, validValues, ruleCallback){
+    function lineSelectorRules(j, selectorStarts, lineType, property, validValues){
+        let line = nextCssText[j++];
+        if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return}
+        const lineValueArr = line.split(/"`'/)
+        const lineValue = Number(lineValueArr[1]);
+
+        line = nextCssText[j];
+        while(!line.includes('}')){
+            if(line.includes(':')){
+                const styleArr = line.split(':');
+                const candidateProperty = styleArr[0].trim();
+                const propertyValue = styleArr[1].trim().slice(0,-1);
+                if (candidateProperty === property){
+                    if (Object.keys(validValues).includes(propertyValue)){
+                        const isVisible = validValues[propertyValue];
+                        if (isVisible){
+                            if(!resBoard[lineType].indexOf(lineValue)){resBoard[lineType].push(lineValue);}
+                        } else {
+                            const idx = resBoard[lineType].indexOf(lineValue);
+                            if(idx>=0){resBoard[lineType].splice(idx, 1);}
+                        }                       
+                    } else {console.log("Invalid CSS styling value!")}
+                }
+            }
+            j++;
+            line = nextCssText[j];
+        }
+    }
+
+    function pieceSelectorRules(j, selectorStarts, property, validValues, ruleCallback){
         let line = nextCssText[j++];
         if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return}
         const selector = line.trim().slice(0,line.trim().indexOf('{'));
@@ -319,7 +349,6 @@ function cssUpdateBoardState(boardState){
                             }
                             const rankNum = ele.dataset.rank;
                             const rankFyle = ele.dataset.fyle;
-                            console.log(rankNum, rankFyle)
                             ruleCallback(boardStateProp, rankNum, rankFyle);
                         })
                     } else {console.log("Invalid CSS styling value!")}
@@ -337,10 +366,10 @@ function boardToArray(boardState, fromFyle=-1, fromRank=-1, toFyle=-1, toRank=-1
     let resArray = [];
     let resObject = {boardArray: [], fromX: -1, fromY: -1, toX: -1, toY: -1};
     let yCount = 0;
-    Object.keys(boardState).forEach((rankNum)=>{
+    for(let rankNum=0; rankNum<8; rankNum++){
         let rank = [];
         let xCount = 0;
-        Object.keys(boardState[rankNum]).forEach((fyleNum)=>{
+        for(let fyleNum=0; fyleNum<8; fyleNum++){
             const curSquare = boardState[rankNum][fyleNum];
             if (curSquare.square.display){
                 // console.log(fyleNum, fromFyle)
@@ -349,9 +378,9 @@ function boardToArray(boardState, fromFyle=-1, fromRank=-1, toFyle=-1, toRank=-1
                 if(fyleNum == toFyle && rankNum == toRank){resObject.toX = xCount; resObject.toY = yCount};
                 xCount++;
             }
-        })
+        }
         if(rank.length>0){resArray.push(rank);yCount++};
-    })
+    }
     resObject.boardArray = resArray;
     return resObject;
 }
