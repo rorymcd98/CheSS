@@ -1,24 +1,12 @@
 For now
-    Debug: Why is moving pieces broken, as well as submit css
-
-New workflow
-    Normal moves, no change to board
-    Css moves render board, before the board is rendered we modify the board state
-        This modified board state is obtained during the move checking
-        We save a copy of the actual board though
-
-Misc
-    Get rid of is light turn for the baord ele
+    Debug: Hoverpiece move suggestions isn't working when the ranks and fyles are altered
+    Then work on multiplayer implementation
+    Then add save game load game functionality
+        And cookies
+    Then make everything look nice
 
 Board state save, undo functions
     Create a function which generates a custom board layout / a saved board layout.
-
-Code best practices
-    Consider adding more debugging for which piece is putting the king in check "The king is in check due to: knight."
-        Consider double checks
-
-Functional CSS chess
-    Html to board state needs to account for CSS in the board state
 
 Making CSS nicer
     Fade animations for the switch turn buttons
@@ -30,5 +18,5 @@ Chess edge cases
     Castling
 
 Bugs
-    e4,d5,eXd undo redo
+    
 

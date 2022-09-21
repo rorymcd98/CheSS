@@ -161,7 +161,6 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
                 const pieceElement = document.createElement('text');
                 pieceElement.classList.add('piece', 'draggable', pieceObj.col, pieceObj.type);
                 pieceElement.setAttribute('draggable', true);
-                if(pieceObj.unmoved){pieceElement.setAttribute('unmoved','')}
                 if(pieceObj.properties.bold){pieceElement.setAttribute('bold','')};
                 if(pieceObj.properties.big){pieceElement.setAttribute('big','')};
                 if(pieceObj.properties.ghost){pieceElement.setAttribute('ghost','')};
