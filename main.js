@@ -1,5 +1,9 @@
 import {pieceTurnHandler, cssTurnHandler, highlightSquares} from "./valid-move-checker.js"
 import {setCss, getCss} from "./editor.js"
+import {b} from "./game-sockets.js"
+
+console.log(b)
+
 var mainIsWhiteTurn = true;
 var mainBoardState;
 var mainGameTurnList;
