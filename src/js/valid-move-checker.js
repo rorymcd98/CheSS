@@ -371,10 +371,11 @@ function findKings(boardArray, isWhiteTurn){
 //Currently just a dummy function until we can count the number of changes
 function checkNumberCssChanges(currentCssText){
     const nextCssText = getCss();
-    
+ 
     return 1;
     return numberCssChanges;
 }
+
 //Updates the board state with any CSS changes
 function cssUpdateBoardState(boardState){
     let resBoard = structuredClone(boardState);
@@ -392,7 +393,7 @@ function cssUpdateBoardState(boardState){
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-weight', {'normal':false,'bold':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.bold = val});
         }
     }
-    console.log(resBoard)
+
     return resBoard;
     function lineSelectorRules(j, selectorStarts, lineType, property, validValues){
         let line = nextCssText[j++];

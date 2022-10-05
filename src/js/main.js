@@ -1,83 +1,13 @@
 import {pieceTurnHandler, cssTurnHandler, highlightSquares} from "./valid-move-checker.js"
-import {setCss, getCss} from "./editor.js"
-import {b} from "./game-sockets.js"
+import {initEditor, setCss, getCss} from "./editor.js"
+import {DefaultBoard, TurnList} from "./turn-handler.js"
 
-console.log(b)
-
-var mainIsWhiteTurn = true;
-var mainBoardState;
-var mainGameTurnList;
+window.mainGameTurnList;
 const defaultEditorText = "/*Here are the white pieces [\u2659,\u2656,\u2658,\u2657,\u2654,\u2655]*/\n/*Here are the black pieces [\u265F,\u265C,\u265E,\u265D,\u265A,\u265B]*/\n";
-//Doubly linked list of turn nodes
-class TurnNode{
-    constructor(savedBoardState, savedIsWhiteTurn, savedCssText){
-        this.boardState = savedBoardState;
-        this.turn = savedIsWhiteTurn;
-        this.cssText = savedCssText;
-        this.next = null;
-        this.prev = null;
-    }
-}
-
-class TurnList{
-    constructor(savedBoardState, savedIsWhiteTurn, savedCssText){
-        this.head = new TurnNode(savedBoardState, savedIsWhiteTurn, savedCssText);
-        // this.head.prev = null;
-        this.tail = this.head;
-        this.current = this.tail;
-    }
-    append(savedBoardState, savedIsWhiteTurn, savedCssText){
-        let newTurnNode = new TurnNode(savedBoardState, savedIsWhiteTurn, savedCssText);
-        newTurnNode.prev = this.current;
-        this.current.next = newTurnNode;
-        this.current = this.current.next;
-        this.tail = newTurnNode;
-    }
-    undo(){
-        if (this.current.prev !== null){
-            this.current = this.current.prev;
-            const undoBoardState = this.current.boardState;
-            const undoTurn = this.current.turn;
-            const undoCssText = this.current.cssText;
-            return [undoBoardState, undoTurn, undoCssText];
-        } else {return [null, null, null]}
-    }
-    redo(){
-        if (this.current.next !== null){
-            this.current = this.current.next;
-            const redoBoard = this.current.boardState;
-            const redoTurn = this.current.turn;
-            const redoCssText = this.current.cssText;
-            return [redoBoard, redoTurn, redoCssText];
-        } else {return [null, null, null]}
-    }
-    debug(){
-        let dummy = this.head;
-        console.log("debug")
-        while(dummy){
-            if (dummy === this.current){console.log('current')}
-            print(dummy.boardState);
-            dummy = dummy.next;
-        }
-    }
-}
-
-//Creates a piece object
-export class Piece{
-    constructor (col, type, unmoved, fyle, properties = {bold: false, big: false, ghost: false}) {
-        this.col = col;
-        this.type = type;
-        this.unmoved = unmoved;
-        this.fyle = fyle;
-        this.properties = properties;
-        this.objectId = this.col + '-' + this.fyle + '-' + this.type;
-    }
-}
 
 //---Create the board---
-export function initBoard(){
-    newGame();
-}
+initEditor(newGame);
+
 
 //Create the event listeners for buttons
 const newGameButton = document.getElementById("new-game-button");
@@ -87,7 +17,7 @@ newGameButton.addEventListener('click', ()=>{
 
 function newGame(){
     const defaultBoardState = new DefaultBoard();
-    renderBoard(defaultBoardState, true, null);
+    renderTurn(defaultBoardState, true, null);
     mainGameTurnList = new TurnList(structuredClone(defaultBoardState), true, defaultEditorText);
 }
 
@@ -95,7 +25,7 @@ const undoButton = document.getElementById("undo-button");
 undoButton.addEventListener('click', ()=>{
     const [undoBoard, undoTurn, undoCssText] = mainGameTurnList.undo();
     if (undoBoard !== null){
-        renderBoard(undoBoard, undoTurn, undoCssText);
+        renderTurn(undoBoard, undoTurn, undoCssText);
     }
 });
 
@@ -103,7 +33,7 @@ const redoButton = document.getElementById("redo-button");
 redoButton.addEventListener('click', ()=>{
     const [redoBoard, redoTurn, redoCssText] = mainGameTurnList.redo();
     if (redoBoard != null){
-        renderBoard(redoBoard, redoTurn, redoCssText);
+        renderTurn(redoBoard, redoTurn, redoCssText);
     }
 });
 
@@ -116,20 +46,17 @@ const submitCssButton = document.getElementById("submit-css-button");
 submitCssButton.addEventListener('click', ()=>{
     const currentCssText = mainGameTurnList.current.cssText;
     const currentBoardState = structuredClone(mainGameTurnList.current.boardState);
-    const [isValidCssMove, nextBoardState] = cssTurnHandler(currentBoardState, mainIsWhiteTurn, currentCssText);
+    const currentIsWhiteTurn = mainGameTurnList.current.isWhiteTurn;
+    const [isValidCssMove, nextBoardState] = cssTurnHandler(currentBoardState, currentIsWhiteTurn, currentCssText);
     if (isValidCssMove){
-        mainIsWhiteTurn = !mainIsWhiteTurn;
+        const nextIsWhiteTurn = !currentIsWhiteTurn;
         const nextCssText = getCss();
-        renderBoard(nextBoardState, mainIsWhiteTurn, nextCssText);
-        mainGameTurnList.append(nextBoardState, mainIsWhiteTurn?true:false, nextCssText);
+        renderTurn(nextBoardState, nextIsWhiteTurn, nextCssText);
+        mainGameTurnList.append(nextBoardState, nextIsWhiteTurn, nextCssText);
     }
 });
 
-function renderBoard(boardState, isWhiteTurn = true, cssText = null){
-    //Update the global board state
-    mainBoardState = structuredClone(boardState);
-    mainIsWhiteTurn = isWhiteTurn;
-
+function renderTurn(boardState, isWhiteTurn = true, cssText = null){
     let exists = document.getElementById('board');
     if (exists){exists.remove()}
     const boardElement = document.createElement("table");
@@ -243,9 +170,11 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
         piece.addEventListener('mouseover', ()=>{
             const fromFyle = Number(piece.parentElement.getAttribute('data-fyle'));
             const fromRank = Number(piece.parentElement.getAttribute('data-rank'));
-            const hoverPiece = mainBoardState[fromRank][fromFyle].piece;
-            if(hoverPiece.col === (mainIsWhiteTurn ? 'white':'black')){
-                highlightSquares(fromFyle, fromRank, hoverPiece, mainBoardState, mainIsWhiteTurn);
+            const currentBoardState = mainGameTurnList.current.boardState;
+            const currentIsWhiteTurn = mainGameTurnList.current.isWhiteTurn;
+            const hoverPiece = currentBoardState[fromRank][fromFyle].piece;
+            if(hoverPiece.col === (currentIsWhiteTurn ? 'white':'black')){
+                highlightSquares(fromFyle, fromRank, hoverPiece, currentBoardState, currentIsWhiteTurn);
             }
         })
     })
@@ -267,23 +196,25 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
             const fromRank = Number(fromSquare.getAttribute('data-rank'));
             const toFyle = Number(square.getAttribute('data-fyle'));
             const toRank = Number(square.getAttribute('data-rank'));
-            const curPiece = mainBoardState[fromRank][fromFyle].piece;
+            const boardState = mainGameTurnList.current.boardState;
+            const isWhiteTurn = mainGameTurnList.current.isWhiteTurn;
+            const curPiece = boardState[fromRank][fromFyle].piece;
 
-            const [isValidMove, isCheckmate] = pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, mainBoardState, mainIsWhiteTurn);
+            const [isValidMove, isCheckmate] = pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, boardState, isWhiteTurn);
             if (isValidMove){
                 const whiteTurnIndicatorEle = document.getElementById('white-turn-indicator');
                 const blackTurnIndicatorEle = document.getElementById('black-turn-indicator');
                 whiteTurnIndicatorEle.toggleAttribute('data-isWhiteTurn');
                 blackTurnIndicatorEle.toggleAttribute('data-isWhiteTurn');
-                mainIsWhiteTurn = !mainIsWhiteTurn;
+                isWhiteTurn = !isWhiteTurn;
 
-                mainBoardState[toRank][toFyle].piece = structuredClone(mainBoardState[fromRank][fromFyle].piece);
-                mainBoardState[toRank][toFyle].piece.unmoved = false;
-                mainBoardState[fromRank][fromFyle].piece = null;
-                const nextBoardState = structuredClone(mainBoardState);
+                boardState[toRank][toFyle].piece = structuredClone(boardState[fromRank][fromFyle].piece);
+                boardState[toRank][toFyle].piece.unmoved = false;
+                boardState[fromRank][fromFyle].piece = null;
+                const nextBoardState = structuredClone(boardState);
                 const nextCssText = mainGameTurnList.current.cssText;
                 setCss(nextCssText);
-                mainGameTurnList.append(nextBoardState, mainIsWhiteTurn?true:false, nextCssText);
+                mainGameTurnList.append(nextBoardState, isWhiteTurn?true:false, nextCssText);
 
                 if (square.hasChildNodes()){
                     square.removeChild(square.firstChild);
@@ -295,52 +226,4 @@ function renderBoard(boardState, isWhiteTurn = true, cssText = null){
             }
         })
     })    
-}
-
-class DefaultBoard{
-    constructor(){
-        for (let j = 0; j<8; j++) {this[j] = {}; for (let i = 0; i<8; i++){this[j][i] = {square:{},piece:{}}}}
-        const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
-        const pieceOrder = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
-        //Draw the pieces
-        for (let i = 0; i<8; i++) {
-            this[0][i].piece = new Piece('black', pieceOrder[i], true, fyles[i]);
-            this[1][i].piece = new Piece('black', 'pawn', true, fyles[i]);
-            this[2][i].piece = null;
-            this[3][i].piece = null;
-            this[4][i].piece = null;
-            this[5][i].piece = null;
-            this[6][i].piece = new Piece('white', 'pawn', true, fyles[i]);
-            this[7][i].piece = new Piece('white', pieceOrder[i], true, fyles[i]);
-        }
-        this.ranks = [0,1,2,3,4,5,6,7];
-        this.fyles = [0,1,2,3,4,5,6,7];
-    }
-}
-
-//Prints the board (if css = true, it takes into account some CSS changes)
-function print(boardState, css = true){
-    const pieceToUnicode = {'white':{'pawn':'\u2659','rook':'\u2656','knight':'\u2658','bishop':'\u2657','king':'\u2654','queen':'\u2655'},
-                            'black':{'pawn':'\u265F','rook':'\u265C','knight':'\u265E','bishop':'\u265D','king':'\u265A','queen':'\u265B'}};
-    let resText = "";
-    for(let j = 0; j<8; j++){
-        resText += "\n|"
-        for(let i = 0; i<8; i++){
-            const pieceObj = boardState[j][i].piece;
-            if(pieceObj){ 
-                resText+=pieceToUnicode[pieceObj.col][pieceObj.type] + '\t|';
-            } else {
-                resText+='\t|';
-            }
-        }
-    }
-    console.log(resText)
-}
-
-export function getCurrentTurnCssText(){
-    return mainGameTurnList.current.cssText;
-}
-
-export function getCurrentTurnBoardState(){
-    return mainGameTurnList.current.boardState;
 }
