@@ -9,6 +9,6 @@ node index.js
 
 Then goto: 
 
-localhost:5000 
+localhost:3000 
 
 in your browser
