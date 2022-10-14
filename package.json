@@ -2,12 +2,12 @@
   "name": "chess",
   "version": "0.1.0",
   "description": "A realtime online multiplayer game.",
-  "main": "index.js",
+  "main": "./src/server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "nodemon production-server.js",
     "build": "webpack",
-    "dev": "webpack server"
+    "dev": "node ./src/server/server.js"
   },
   "author": "Rory McDonald",
   "license": "MIT",
@@ -22,18 +22,21 @@
     "socket.io": "^1.7.4"
   },
   "devDependencies": {
-    "style-loader": "^3.3.1",
-    "css-loader": "^6.7.1",
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
     "babel-loader": "^8.2.5",
+    "css-loader": "^6.7.1",
     "eslint": "^4.6.1",
     "eslint-config-airbnb-base": "^12.0.0",
     "eslint-plugin-import": "^2.7.0",
     "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.1",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-middleware": "^5.3.3",
+    "webpack-dev-server": "^4.11.1",
+    "webpack-hot-middleware": "^2.25.2"
   },
   "repository": {
     "type": "git",

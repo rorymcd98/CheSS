@@ -1,7 +1,7 @@
 :root{
     --board-size:      800px;
     --box-size:  calc(var(--board-size)/8);
-    --dark:      grey;
+    --dark:      rgb(97, 97, 97);
     --light:     white;
     --hover:     lightgreen;
     --leg-size:  25px;
@@ -29,6 +29,44 @@ body{
   top: 0%;
   bottom: 0%;
 }
+
+#room-list-container{
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  transform: translate(-50%);
+  width: 10rem;
+  height: 40rem;
+  background: rgb(240, 104, 104);
+}
+
+#create-room-button{
+  position: absolute;
+  background-color: white;
+  color: black;
+  border: solid black;
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+#play-local-button{
+  position: absolute;
+  background-color: white;
+  color: black;
+  border: solid black;
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  bottom: 10px;
+  left: 10px;
+  cursor: pointer;
+}
+
+
 #board-container{
   position: absolute;
   left: 50%;
@@ -125,7 +163,10 @@ td.legend[data-leg-rank]{
 #black-turn-indicator[data-isWhiteTurn]{
   opacity: 20%;
 }
-#undo-button{
+#undo-button,
+#redo-button,
+#new-game-button,
+#view-games-button{
   display: inline-block;
   position: relative;
   background-color: white;
@@ -136,7 +177,6 @@ td.legend[data-leg-rank]{
   border-radius: 20px;
   cursor: pointer;
 }
-
 #submit-css-button{
   position: absolute;
   background-color: white;
@@ -149,6 +189,8 @@ td.legend[data-leg-rank]{
   right: 10px;
   cursor: pointer;
 }
+
+
 
 .piece{
   display: flex;

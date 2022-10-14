@@ -2,7 +2,7 @@
 class TurnNode{
     constructor(savedBoardState, savedIsWhiteTurn, savedCssText){
         this.boardState = savedBoardState;
-        this.turn = savedIsWhiteTurn;
+        this.isWhiteTurn = savedIsWhiteTurn;
         this.cssText = savedCssText;
         this.next = null;
         this.prev = null;
@@ -16,7 +16,7 @@ export class TurnList{
         this.tail = this.head;
         this.current = this.tail;
     }
-    append(savedBoardState, savedIsWhiteTurn, savedCssText){
+    appendTurn(savedBoardState, savedIsWhiteTurn, savedCssText){
         let newTurnNode = new TurnNode(savedBoardState, savedIsWhiteTurn, savedCssText);
         newTurnNode.prev = this.current;
         this.current.next = newTurnNode;
@@ -27,7 +27,7 @@ export class TurnList{
         if (this.current.prev !== null){
             this.current = this.current.prev;
             const undoBoardState = this.current.boardState;
-            const undoTurn = this.current.turn;
+            const undoTurn = this.current.isWhiteTurn;
             const undoCssText = this.current.cssText;
             return [undoBoardState, undoTurn, undoCssText];
         } else {return [null, null, null]}
@@ -36,7 +36,7 @@ export class TurnList{
         if (this.current.next !== null){
             this.current = this.current.next;
             const redoBoard = this.current.boardState;
-            const redoTurn = this.current.turn;
+            const redoTurn = this.current.isWhiteTurn;
             const redoCssText = this.current.cssText;
             return [redoBoard, redoTurn, redoCssText];
         } else {return [null, null, null]}
@@ -65,7 +65,7 @@ class Piece{
 }
 
 //Creates the default board, constructed once per new-game
-class DefaultBoard{
+export class DefaultBoard{
     constructor(){
         for (let j = 0; j<8; j++) {this[j] = {}; for (let i = 0; i<8; i++){this[j][i] = {square:{},piece:{}}}}
         const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
@@ -86,7 +86,6 @@ class DefaultBoard{
     }
 }
 
-export const defaultBoardState = new DefaultBoard();
 //Prints the board (if css = true, it takes into account some CSS changes)
 function print(boardState, css = true){
     const pieceToUnicode = {'white':{'pawn':'\u2659','rook':'\u2656','knight':'\u2658','bishop':'\u2657','king':'\u2654','queen':'\u2655'},

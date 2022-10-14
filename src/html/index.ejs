@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Document</title>
+</head>
+<body>
+    <div id="left-panel">
+        <div id = "board-container"></div>
+        <div class = "turn-control-dashboard">
+            <span class ="turn-indicator-container">
+                <span class ="turn-indicator" id="white-turn-indicator" data-isWhiteTurn>White Turn</span>
+                <span class ="turn-indicator" id="black-turn-indicator" data-isWhiteTurn>Black Turn</span>
+            </span>
+            <button id = "undo-button">Undo</button>
+            <button id = "redo-button">Redo</button>
+            <button id = "new-game-button">New game</button>
+            <span id = "save-load-buttons">
+                <button id = "save-button">Save game</button>
+                <button id = "load-button">Load game</button>
+            </span>
+        </div>
+    </div>
+
+    <div id="right-panel">
+        <div id="text-editor" style="border:1px solid grey"></div>
+        <button id="submit-css-button">Submit CSS</button>
+    </div>
+</body>
+</html>

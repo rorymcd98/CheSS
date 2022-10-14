@@ -1,3 +1,13 @@
+Web sockets:
+    Fix bug with opponent colour assignment
+    When player joins show them all the lobbies
+    Create a function that updates the lobby list when a change occurs (new lobby, player joining or leaving)
+        Create a room for 'people viewing the lobby'
+
+    bring the 'leave' function inside the scope of the socket
+
+
+
 For now
     Debug: Hoverpiece move suggestions isn't working when the ranks and fyles are altered
     Then work on multiplayer implementation

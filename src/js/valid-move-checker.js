@@ -287,13 +287,13 @@ function checkCheckmate(boardArray,isWhiteTurn){
     return true;
 }
 
-export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, isWhiteTurn){
+export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, pieceCol){
     const {boardArray, fromX, fromY} = boardToArray(boardState, fromFyle, fromRank);
-    const turn = isWhiteTurn ? 'white' : 'black';
+    const isWhiteTurn = pieceCol === 'white' ? true : false;
     let pieceMoveset;
     if(hoverPiece.properties.big){
-        pieceMoveset = movesets[turn][hoverPiece.type].big;
-    } else {pieceMoveset = movesets[turn][hoverPiece.type];}
+        pieceMoveset = movesets[pieceCol][hoverPiece.type].big;
+    } else {pieceMoveset = movesets[pieceCol][hoverPiece.type];}
 
     pieceMoveset.forEach((move) => {
         const toX = fromX+move[0];
