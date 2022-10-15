@@ -1,8 +1,10 @@
 
-function renderTurn(boardState, isWhiteTurn = true, cssText = null, whitePerspective = true){
+import {setCss} from "./editor.js"
+import {pieceTurnHandler, highlightSquares} from "./valid-move-checker.js"
+
+export function renderTurn(boardState, isWhiteTurn = true, cssText, whitePerspective = true){
     let exists = document.getElementById('board');
     if (exists){exists.remove()}
-
     const boardElement = document.createElement("table");
     boardElement.className = "board";
     boardElement.id = "board";
@@ -93,7 +95,6 @@ function renderTurn(boardState, isWhiteTurn = true, cssText = null, whitePerspec
 
 
     //Updates the editor text
-    cssText = cssText ? cssText:defaultEditorText;
     setCss(cssText)
 
     //Attach drag event listeners to draggables (pieces, legend)
@@ -107,7 +108,7 @@ function renderTurn(boardState, isWhiteTurn = true, cssText = null, whitePerspec
             draggable.classList.remove('dragging');
         })
     })
-      
+    
     //Attach dragover & drop event listeners to squares 
     const squares = document.querySelectorAll('.square')
     squares.forEach(square => {
@@ -128,7 +129,6 @@ function renderTurn(boardState, isWhiteTurn = true, cssText = null, whitePerspec
             highlightSquares(fromFyle, fromRank, hoverPiece, currentBoardState, pieceCol);
         })
     })
-    
     pieces.forEach(piece => {
         piece.addEventListener('mouseout', ()=>{
             const eles = document.querySelectorAll('.validMove');
@@ -179,5 +179,5 @@ function renderTurn(boardState, isWhiteTurn = true, cssText = null, whitePerspec
                 }
             }
         })
-    })
+    })    
 }
