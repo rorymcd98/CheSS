@@ -2,9 +2,13 @@
 import {setCss} from "./editor.js"
 import {pieceTurnHandler, highlightSquares} from "./valid-move-checker.js"
 
+//Renders a turn and attaches event listeners to everything
+//Occurs when: A game is started or joined, when Submit CSS is pressed, when a multiplayer opponent makes a css/regular move
 export function renderTurn(boardState, isWhiteTurn = true, cssText, whitePerspective = true){
+    
     let exists = document.getElementById('board');
     if (exists){exists.remove()}
+
     const boardElement = document.createElement("table");
     boardElement.className = "board";
     boardElement.id = "board";
@@ -18,41 +22,7 @@ export function renderTurn(boardState, isWhiteTurn = true, cssText, whitePerspec
         blackTurnIndicatorEle.removeAttribute('data-isWhiteTurn');
     }
 
-    //Create the board as a table element
-    for(let rankCount=0; rankCount<8; rankCount++){
-        let rankNum = rankCount;
-        if(!whitePerspective){rankNum = 7 - rankCount};
-        let rank = document.createElement('tr');
-        rank.dataset.rank = rankNum;
-        for(let fyleCount=0; fyleCount<8; fyleCount++){
-            let fyleNum = fyleCount;
-            if(!whitePerspective){fyleNum = 7 - fyleCount};
-            let squareEle = document.createElement('td');
-            squareEle.dataset.fyle = fyleNum;
-            squareEle.dataset.rank = rankNum;
-            squareEle.className = (fyleNum%2 === rankNum%2) ? 'light square' : 'dark square';
-            if(!(boardState.ranks.includes(rankNum)) || !(boardState.fyles.includes(fyleNum))){
-                squareEle.style.display = 'none';
-            }
-            rank.appendChild(squareEle);
-            
-            //Create a piece on the square if one exists
-            const pieceObj = boardState[rankNum][fyleNum].piece;
-            if (pieceObj){
-                const pieceElement = document.createElement('text');
-                pieceElement.classList.add('piece', 'draggable', pieceObj.col, pieceObj.type);
-                pieceElement.setAttribute('draggable', true);
-                if(pieceObj.properties.bold){pieceElement.setAttribute('bold','')};
-                if(pieceObj.properties.big){pieceElement.setAttribute('big','')};
-                if(pieceObj.properties.ghost){pieceElement.setAttribute('ghost','')};
-                pieceElement.id = pieceObj.objectId;
-                squareEle.appendChild(pieceElement);     
-            }
-        }
-        rank.hasChildNodes() && boardElement.appendChild(rank);
-    };
-
-    document.getElementById("board-container").appendChild(boardElement);
+    
 
     //Render the board legend, also a draggable element
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
@@ -137,7 +107,40 @@ export function renderTurn(boardState, isWhiteTurn = true, cssText, whitePerspec
         })
     })
     
-    squares.forEach(square => {
+    squares.forEach(square => {    //Create the board as a table element
+    for(let rankCount=0; rankCount<8; rankCount++){
+        let rankNum = rankCount;
+        if(!whitePerspective){rankNum = 7 - rankCount};
+        let rank = document.createElement('tr');
+        rank.dataset.rank = rankNum;
+        for(let fyleCount=0; fyleCount<8; fyleCount++){
+            let fyleNum = fyleCount;
+            if(!whitePerspective){fyleNum = 7 - fyleCount};
+            let squareEle = document.createElement('td');
+            squareEle.dataset.fyle = fyleNum;
+            squareEle.dataset.rank = rankNum;
+            squareEle.className = (fyleNum%2 === rankNum%2) ? 'light square' : 'dark square';
+            if(!(boardState.ranks.includes(rankNum)) || !(boardState.fyles.includes(fyleNum))){
+                squareEle.style.display = 'none';
+            }
+            rank.appendChild(squareEle);
+            
+            //Create a piece on the square if one exists
+            const pieceObj = boardState[rankNum][fyleNum].piece;
+            if (pieceObj){
+                const pieceElement = document.createElement('text');
+                pieceElement.classList.add('piece', 'draggable', pieceObj.col, pieceObj.type);
+                pieceElement.setAttribute('draggable', true);
+                if(pieceObj.properties.bold){pieceElement.setAttribute('bold','')};
+                if(pieceObj.properties.big){pieceElement.setAttribute('big','')};
+                if(pieceObj.properties.ghost){pieceElement.setAttribute('ghost','')};
+                pieceElement.id = pieceObj.objectId;
+                squareEle.appendChild(pieceElement);     
+            }
+        }
+        rank.hasChildNodes() && boardElement.appendChild(rank);
+    };
+    document.getElementById("board-container").appendChild(boardElement);
         square.addEventListener('drop', (e)=>{
             e.preventDefault();
             const draggedPiece = document.querySelector('.dragging');
@@ -180,4 +183,42 @@ export function renderTurn(boardState, isWhiteTurn = true, cssText, whitePerspec
             }
         })
     })    
+}
+
+
+function renderBoard(){
+        //Create the board as a table element
+    for(let rankCount=0; rankCount<8; rankCount++){
+        let rankNum = rankCount;
+        if(!whitePerspective){rankNum = 7 - rankCount};
+        let rank = document.createElement('tr');
+        rank.dataset.rank = rankNum;
+        for(let fyleCount=0; fyleCount<8; fyleCount++){
+            let fyleNum = fyleCount;
+            if(!whitePerspective){fyleNum = 7 - fyleCount};
+            let squareEle = document.createElement('td');
+            squareEle.dataset.fyle = fyleNum;
+            squareEle.dataset.rank = rankNum;
+            squareEle.className = (fyleNum%2 === rankNum%2) ? 'light square' : 'dark square';
+            if(!(boardState.ranks.includes(rankNum)) || !(boardState.fyles.includes(fyleNum))){
+                squareEle.style.display = 'none';
+            }
+            rank.appendChild(squareEle);
+            
+            //Create a piece on the square if one exists
+            const pieceObj = boardState[rankNum][fyleNum].piece;
+            if (pieceObj){
+                const pieceElement = document.createElement('text');
+                pieceElement.classList.add('piece', 'draggable', pieceObj.col, pieceObj.type);
+                pieceElement.setAttribute('draggable', true);
+                if(pieceObj.properties.bold){pieceElement.setAttribute('bold','')};
+                if(pieceObj.properties.big){pieceElement.setAttribute('big','')};
+                if(pieceObj.properties.ghost){pieceElement.setAttribute('ghost','')};
+                pieceElement.id = pieceObj.objectId;
+                squareEle.appendChild(pieceElement);     
+            }
+        }
+        rank.hasChildNodes() && boardElement.appendChild(rank);
+    };
+    document.getElementById("board-container").appendChild(boardElement);
 }
