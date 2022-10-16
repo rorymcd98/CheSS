@@ -1,9 +1,10 @@
 :root{
-    --board-size:      75vh;
+    --board-size:      60vh;
     --box-size:  calc(var(--board-size)/8);
     --leg-size:  calc(var(--board-size)/28);
     --button-width: calc(var(--board-size)/8);
     --button-height: calc(var(--board-size)/8);
+    --piece-size: 5vh;
 
     --dark:      rgb(97, 97, 97);
     --light:     rgb(222, 222, 222);
@@ -103,12 +104,22 @@ body{
 
 #board-container{
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   top: 2%;
   left: 50%;
+  transform: translate(-50%);
+  max-width: var(--board-size);
+  max-height: var(--board-size);
+  padding: 4%;
+    background-color: rgb(42, 41, 46);
+  border: 0.1vh solid black;
+  border-radius: 2vh;
+  cursor: move;
 }
 .board{
   position: relative;
-  transform: translate(-50%);
   width: var(--board-size);
   height: var(--board-size);
   border-spacing: 0;
@@ -261,13 +272,13 @@ button{
 
 /* Pieces */
 .piece::after{
-  font-size: 7vh;
+  font-size: var(--piece-size);
 }
 .piece[bold]::after{
   font-weight: bold;
 }
 .piece[big]::after{
-  font-size: 14vh;
+  font-size: calc(var(--piece-size)*2);
 }
 .piece[ghost]::after{
   opacity: 50%;
