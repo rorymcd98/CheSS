@@ -68,7 +68,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
     };
     document.getElementById("board-container").appendChild(boardElement);
 
-    //Render the board legend, also a draggable element
+    //Render the board legend (these are able to be dragged into the editor)
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
     let topLegend = document.createElement('tr');
     let bottomLegend = document.createElement('tr');
@@ -137,7 +137,6 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
             highlightSquares(fromFyle, fromRank, hoverPiece, currentBoardState, pieceCol);
         })
     })
-    
     pieces.forEach(piece => {
         piece.addEventListener('mouseout', ()=>{
             const eles = document.querySelectorAll('.validMove');
@@ -154,6 +153,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
         })
     })
     
+    //Drop events for squares handle the logic for regular chess moves
     squares.forEach(square => {
         square.addEventListener('drop', (e)=>{
             e.preventDefault();

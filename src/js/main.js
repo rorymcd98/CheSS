@@ -5,12 +5,7 @@ import {factoryRenderBoard} from "./board-rendering.js"
 import io from "socket.io-client";
 import "../css/main-styles.css"
 
-
-
-import {setCss} from "./editor.js"
-import {pieceTurnHandler, highlightSquares} from "./valid-move-checker.js"
-
-//ws stuff below
+//Global gameData vars are: playerId, multiplayer, roomId, gameTurnList
 window.gameData = {};
 window.gameData.multiplayer = true;
 const gameSocket = io('http://localhost:3000/');
@@ -18,9 +13,14 @@ const renderBoard = factoryRenderBoard(gameSocket);
 initEditor(initMain);
 
 function initMain(){
+    //---websockets---
     //Logs all socket errors
     gameSocket.on('err', (data)=>{
         console.log(data.errMessage);
+    })
+
+    gameSocket.on('clientNewGame',()=>{
+        newGame();
     })
 
     //Assigns a playerId if they don't have one in cookies
@@ -99,18 +99,17 @@ function initMain(){
         playerIdTextEle.style.display = displayValue;
         playerColTextEle.style.display = displayValue;
         roomIdTextEle.style.display = displayValue;
+
+
     }
 
-    //Player chess actions
+    //Render a board when the opponent makes a move
     gameSocket.on('clientMove',(data)=>{
         renderBoard(data.boardState, data.isWhiteTurn, data.cssText, gameData.playerIsWhite);
         gameData.gameTurnList.appendTurn(data.boardState, data.isWhiteTurn, data.cssText);
     })
 
-    gameSocket.on('clientNewGame',()=>{
-        newGame();
-    })
-
+    //---buttons---
     //Create the event listeners for buttons
     const newGameButton = document.getElementById("new-game-button");
     newGameButton.addEventListener('click', ()=>{
@@ -126,6 +125,7 @@ function initMain(){
         gameData.gameTurnList = new TurnList(defaultBoardState, true, defaultEditorText);
     }
 
+    //Undo (local only)
     const undoButton = document.getElementById("undo-button");
     undoButton.addEventListener('click', ()=>{
         const [undoBoard, undoTurn, undoCssText] = gameData.gameTurnList.undo();
@@ -134,6 +134,7 @@ function initMain(){
         }
     });
 
+    //Redo (local only)
     const redoButton = document.getElementById("redo-button");
     redoButton.addEventListener('click', ()=>{
         const [redoBoard, redoTurn, redoCssText] = gameData.gameTurnList.redo();
@@ -142,6 +143,7 @@ function initMain(){
         }
     });
 
+    //Interprets the current CSS to make changes to the board state, appends this as a turn in the turn list
     const submitCssButton = document.getElementById("submit-css-button");
     submitCssButton.addEventListener('click', ()=>{
         const currentCssText = gameData.gameTurnList.current.cssText;
