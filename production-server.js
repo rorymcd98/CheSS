@@ -169,8 +169,11 @@ io.on('connection', (socket)=>{
     socket.on('newGame', (data)=>{
         socket.broadcast.to(data.roomId).emit('clientNewGame');
     })
+    socket.on('checkmate', (data)=>{
+        socket.broadcast.to(data.roomId).emit('clientCheckmate', data);
+    })
 });
 
 server.listen(3000, ()=>{
-    console.log('Server is listening')
+    console.log('CheSS app - Web socket listening');
 })

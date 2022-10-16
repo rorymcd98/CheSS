@@ -7,7 +7,6 @@ import "../css/main-styles.css"
 
 //Global gameData vars are: playerId, multiplayer, roomId, gameTurnList
 window.gameData = {};
-window.gameData.multiplayer = true;
 const gameSocket = io('http://localhost:3000/');
 const renderBoard = factoryRenderBoard(gameSocket);
 initEditor(initMain);
@@ -99,8 +98,11 @@ function initMain(){
         playerIdTextEle.style.display = displayValue;
         playerColTextEle.style.display = displayValue;
         roomIdTextEle.style.display = displayValue;
-
-
+        
+        undoButton.disable = setVal;
+        redoButton.disable = setVal;
+        undoButton.style.opacity = setVal ? '50%':"100%";
+        redoButton.style.opacity = setVal ? '50%':"100%";
     }
 
     //Render a board when the opponent makes a move
@@ -109,13 +111,29 @@ function initMain(){
         gameData.gameTurnList.appendTurn(data.boardState, data.isWhiteTurn, data.cssText);
     })
 
+    gameSocket.on('clientCheckmate', (data)=>{
+        console.log('client here')
+        const checkmateOverlay = document.getElementById('checkmate-overlay');
+        const checkmateText = document.getElementById('checkmate-text');
+        
+        checkmateText.innerText = `Checkmate, ${data.winnerCol} wins!`
+        checkmateOverlay.style.display = 'block';
+    })
+
     //---buttons---
     //Create the event listeners for buttons
+    
     const newGameButton = document.getElementById("new-game-button");
     newGameButton.addEventListener('click', ()=>{
         newGame();
-        gameSocket.emit('newGame', {roomId: gameData.roomId})
+        if(gameData.multiplayer){gameSocket.emit('newGame', {roomId: gameData.roomId})};
     });
+    const playAgainButton = document.getElementById("play-again-button");
+    playAgainButton.addEventListener('click', ()=>{
+        newGame();
+        if(gameData.multiplayer){gameSocket.emit('newGame', {roomId: gameData.roomId})};
+    });
+
 
     //Renders a new board from white's perspective, sets the global turnlist variable
     function newGame(){
@@ -123,6 +141,8 @@ function initMain(){
         const defaultEditorText = "/*Here are the white pieces [\u2659,\u2656,\u2658,\u2657,\u2654,\u2655]*/\n/*Here are the black pieces [\u265F,\u265C,\u265E,\u265D,\u265A,\u265B]*/\n";
         renderBoard(defaultBoardState, true, defaultEditorText, gameData.playerIsWhite);
         gameData.gameTurnList = new TurnList(defaultBoardState, true, defaultEditorText);
+        const checkmateOverlay = document.getElementById('checkmate-overlay');
+        checkmateOverlay.style.display = 'none';
     }
 
     //Undo (local only)
@@ -161,7 +181,10 @@ function initMain(){
         }
     });
 
+
+
     //Create
+    setMultiplayer(true);
     newGame();
 }
 

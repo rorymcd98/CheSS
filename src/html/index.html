@@ -8,9 +8,13 @@
     <title>Document</title>
 </head>
 <body>
-    <header id="player-id-text"></header>
-    <header id="player-col-text"></header>
-    <header id="room-id-text"></header>
+    <div id="checkmate-overlay">
+        <h1 id="checkmate-text">Checkmate!</h1>
+        <button id="play-again-button">Play Again</button>
+    </div> 
+    <h2 id="player-id-text"></h2>
+    <h2 id="player-col-text"></h2>
+    <h2 id="room-id-text"></h2>
     <div id="left-panel">
         <div id = "board-container"></div>
         <div class = "turn-control-dashboard">
@@ -20,7 +24,7 @@
             </span>
             <button id = "undo-button">Undo</button>
             <button id = "redo-button">Redo</button>
-            <button id = "new-game-button">New game</button>
+            <button id = "new-game-button">New Game</button>
             <button id = "view-games-button">View Games</button>
         </div>
     </div>
@@ -34,7 +38,7 @@
         <ul id = "room-list">     
         </ul>
         <button id = "play-local-button">Play Local</button>
-        <button id = "create-room-button">Create room</button>
+        <button id = "create-room-button">Create Room</button>
     </div>
 </body>
 </html>

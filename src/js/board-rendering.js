@@ -22,6 +22,11 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
         whiteTurnIndicatorEle.removeAttribute('data-isWhiteTurn');
         blackTurnIndicatorEle.removeAttribute('data-isWhiteTurn');
     }
+    const submitCssButton = document.getElementById('submit-css-button');
+    if(window.gameData.multiplayer){
+        const myTurn = window.gameData.playerIsWhite === isWhiteTurn;
+        submitCssButton.style.opacity = myTurn ? "100%" : "50%" 
+    }
 
     //Create the board as a table element
     const boardElement = document.createElement("table");
@@ -184,15 +189,25 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
                 setCss(nextCssText);
                 const nextIsWhiteTurn = isWhiteTurn?false:true
                 window.gameData.gameTurnList.appendTurn(nextBoardState, nextIsWhiteTurn, nextCssText);
-                
-                if(window.gameData.multiplayer){gameSocket.emit('move', {roomId: window.gameData.roomId, boardState: nextBoardState, isWhiteTurn: nextIsWhiteTurn, cssText: nextCssText})};
+
+                if(window.gameData.multiplayer){
+                    gameSocket.emit('move', {roomId: window.gameData.roomId, boardState: nextBoardState, isWhiteTurn: nextIsWhiteTurn, cssText: nextCssText})
+                    const myTurn = window.gameData.playerIsWhite === nextIsWhiteTurn;
+                    submitCssButton.style.opacity = myTurn ? "100%" : "50%";
+                };
 
                 if (square.hasChildNodes()){
                     square.removeChild(square.firstChild);
                 }
                 square.appendChild(draggedPiece);
                 if (isCheckmate){
-                    //
+                    const checkmateOverlay = document.getElementById('checkmate-overlay');
+                    const checkmateText = document.getElementById('checkmate-text');
+                    const winnerCol = isWhiteTurn ? 'white' : 'black';
+
+                    checkmateText.innerText = `Checkmate, ${winnerCol} wins!`
+                    checkmateOverlay.style.display = 'block';
+                    if(window.gameData.multiplayer){gameSocket.emit('checkmate', {roomId: window.gameData.roomId, winnerCol: winnerCol})};
                 }
             }
         })

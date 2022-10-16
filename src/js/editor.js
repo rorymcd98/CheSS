@@ -15,13 +15,14 @@ export function initEditor(callback){
         fontSize: 20
     });
 
+    //Allows for pieces, legend to be dropped into the text editor for automatic text rendering
     const textEditorEle = document.getElementById('text-editor');
-
     textEditorEle.addEventListener('drop', (e)=>{
         e.preventDefault();
-        const currentCssText = window.gameTurnList.current.cssText;
-        const currentBoardState = window.gameTurnList.current.boardState;
-        const drgEle = document.querySelector('.dragging');//dragged Element
+        const currentCssText = window.gameData.gameTurnList.current.cssText;
+        const currentBoardState = window.gameData.gameTurnList.current.boardState;
+        const drgEle = document.querySelector('.dragging');
+        
         let appendEditorText = "";
         if(drgEle.tagName === 'TEXT'){
             const rankNum = drgEle.parentElement.dataset.rank;
@@ -32,17 +33,17 @@ export function initEditor(callback){
                                     'black':{'pawn':'\u265F','rook':'\u265C','knight':'\u265E','bishop':'\u265D','king':'\u265A','queen':'\u265B'}}
 
             appendEditorText =
-    `#${drgEle.id}{
-        content: ${pieceToUnicode[pieceObj.col][pieceObj.type]};
-        font-size: ${pieceProps.big ? '6rem' : '3rem'};
-        font-weight: ${pieceProps.bold ? 'bold' : 'normal'};
-        opacity: ${pieceProps.ghost ? '50%' : '100%'};
-    }\n`;
-        } else if (drgEle.tagName === 'TD'){
-            appendEditorText =
-    `td[data-${drgEle.hasAttribute('data-leg-rank')?`rank = "${drgEle.dataset.legRank}"]`:`fyle = "${drgEle.dataset.legFyle}"]`}{
-        display: table-cell;
-    }\n`
+`#${drgEle.id}{
+    content: ${pieceToUnicode[pieceObj.col][pieceObj.type]};
+    font-size: ${pieceProps.big ? '6rem' : '3rem'};
+    font-weight: ${pieceProps.bold ? 'bold' : 'normal'};
+    opacity: ${pieceProps.ghost ? '50%' : '100%'};
+}\n`;
+    } else if (drgEle.tagName === 'TD'){
+        appendEditorText =
+`td[data-${drgEle.hasAttribute('data-leg-rank')?`rank = "${drgEle.dataset.legRank}"]`:`fyle = "${drgEle.dataset.legFyle}"]`}{
+    display: table-cell;
+}\n`
     }
         let nextEditorText = currentCssText + appendEditorText;
         setCss(nextEditorText);
