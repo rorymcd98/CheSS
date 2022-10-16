@@ -389,7 +389,7 @@ function cssUpdateBoardState(boardState){
             lineSelectorRules(i, ['td[data-fyle'], 'fyles', 'display', {'none':false,'table-cell':true});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'content', unicodeToPiece, (val,rN,fN)=>{const pc = resBoard[rN][fN].piece; pc.col = val[0]; pc.type = val[1]});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'opacity', {'100%':false,'50%':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.ghost = val});
-            pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-size', {'3rem':false,'6rem':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.big = val});
+            pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-size', {'3vw':false,'6vw':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.big = val});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-weight', {'normal':false,'bold':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.bold = val});
         }
     }

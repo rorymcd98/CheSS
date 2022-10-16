@@ -1,4 +1,3 @@
-import {getCurrentTurnCssText, getCurrentTurnBoardState} from './main.js'
 //Create the monaco text editor element
 import * as monaco from 'monaco-editor';
 
@@ -35,7 +34,7 @@ export function initEditor(callback){
             appendEditorText =
 `#${drgEle.id}{
     content: ${pieceToUnicode[pieceObj.col][pieceObj.type]};
-    font-size: ${pieceProps.big ? '6rem' : '3rem'};
+    font-size: ${pieceProps.big ? '6vw' : '3vw'};
     font-weight: ${pieceProps.bold ? 'bold' : 'normal'};
     opacity: ${pieceProps.ghost ? '50%' : '100%'};
 }\n`;
@@ -53,7 +52,6 @@ export function initEditor(callback){
 export function setCss(cssText){
     monaco.editor.getModels()[0].setValue(cssText);
 }
-
 export function getCss(){
     return monaco.editor.getModels()[0].getValue();
 }

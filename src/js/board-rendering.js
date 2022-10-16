@@ -26,6 +26,8 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
     if(window.gameData.multiplayer){
         const myTurn = window.gameData.playerIsWhite === isWhiteTurn;
         submitCssButton.style.opacity = myTurn ? "100%" : "50%" 
+    } else {
+        submitCssButton.style.opacity = "100%";
     }
 
     //Create the board as a table element
@@ -110,7 +112,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
             if(!(boardState.ranks.includes(rankNum))){
                 legend.style.display = 'none';
             }
-        } else {legend.classList.add('legend', 'corner')}
+        } else {legend.classList.add('legend', 'corner', rankCount === -1 ? 'top' : 'bottom')}//shim
         row.insertBefore(legend, row.firstChild);
         row.appendChild(legend.cloneNode(true));
     };

@@ -1,10 +1,13 @@
 :root{
-    --board-size:      800px;
+    --board-size:      35vw;
+    --board-size-limit: 40vh;
     --box-size:  calc(var(--board-size)/8);
     --dark:      rgb(97, 97, 97);
-    --light:     white;
-    --hover:     lightgreen;
-    --leg-size:  25px;
+    --light:     rgb(222, 222, 222);
+    --hover:     rgb(212, 203, 128);
+    --leg-size:  1vw;
+    --valid-move-light: #e7df9a;
+    --valid-move-dark: rgb(171, 167, 103);
   }
 body{
   background-color: rgb(36,44,48);
@@ -22,7 +25,7 @@ body{
   z-index: 2;
 }
 #checkmate-text,
-#checkmate-play-again{
+#play-again-button{
   position: relative;
   top: 50%;
   left: 50%;
@@ -34,6 +37,7 @@ body{
   font-size: 6rem;
 }
 
+
 #text-editor{
   position: absolute;
   width:100%;
@@ -41,6 +45,8 @@ body{
 }
 #left-panel{
   position: absolute;
+  display: flex;
+  flex-direction: column;
   left: 0%;
   right: 50%;
   top: 0%;
@@ -91,22 +97,27 @@ body{
   cursor: pointer;
 }
 
-
 #board-container{
-  position: absolute;
+  position: relative;
+  top: 5%;
   left: 50%;
-  top: 10%;
+  justify-content: center;
   transform: translate(-50%);
-  max-width: var(--board-size);
-  max-width: var(--board-size);
-  border: 50px solid rgb(36, 36, 59);
+  width: var(--board-size);
+  height: var(--board-size);
+  max-width: var(--board-size-limit);
+  max-height: var(--board-size-limit);
+  background-color:  rgb(255, 255, 255);
+  padding-bottom: 10vw;
 }
 .board{
   position: relative;
-  left: 50%;
-  transform: translate(-50%);
-  max-width: var(--board-size);
-  max-width: var(--board-size);
+  top: 0%;
+  left: 0%;
+  width: var(--board-size);
+  height: var(--board-size);
+  max-width: var(--board-size-limit);
+  max-height: var(--board-size-limit);
   border-spacing: 0;
 }
 td.legend{
@@ -114,6 +125,7 @@ td.legend{
   box-sizing: border-box;
   background-color: black;
   text-align: center;
+  font-size: calc(0.7*var(--leg-size));
 }
 td.legend[data-leg-fyle]{
   height: var(--leg-size);
@@ -124,6 +136,19 @@ td.legend[data-leg-rank]{
   height: var(--box-size);
 }
 
+td.legend.top:first-child{
+  border-radius: 50% 0 0 0;
+}
+td.legend.top:last-child{
+  border-radius: 0 50% 0 0;
+}
+td.legend.bottom:first-child{
+  border-radius: 0 0 0 50%;
+}
+td.legend.bottom:last-child{
+  border-radius: 0 0 50% 0;
+}
+
 .square{
   box-sizing: border-box;
   width: var(--box-size);
@@ -131,29 +156,32 @@ td.legend[data-leg-rank]{
   min-width: var(--box-size);
   min-height: var(--box-size);
   padding: 0;
+  transition: background-color 0.2s; 
 }
 .light{
-  background: var(--light);
+  background-color: var(--light);
 }
 .dark{
-  background: var(--dark)
+  background-color: var(--dark)
 }
 .square:hover{
-  background: var(--hover);
+  background-color: var(--hover);
   cursor: pointer
 }
-.square.validMove{
-  background: red;
+.square.dark.validMove{
+  background-color: var(--valid-move-dark);
+}
+.square.light.validMove{
+  background-color: var(--valid-move-light);
 }
 
+/* the butttons below the board */
 .turn-control-dashboard{
   position: relative;
-  display: flex;
   left: 50%;
-  align-content: center;
   justify-content: center;
-  top: calc(22% + var(--board-size));
   transform: translate(-50%);
+  display: inline-flex;
 }
 .turn-indicator-container{
   display: inline-block;
@@ -197,7 +225,7 @@ button{
   height: 100px;
   border-radius: 20px;
   cursor: pointer;
-  transition: opacity 0.5s linear;
+  transition: opacity 0.5s;
 }
 #undo-button,
 #redo-button,
@@ -233,13 +261,13 @@ button{
 
 /* Pieces */
 .piece::after{
-  font-size: 3rem;
+  font-size: 3vw;
 }
 .piece[bold]::after{
   font-weight: bold;
 }
 .piece[big]::after{
-  font-size: 6rem;
+  font-size: 6vw;
 }
 .piece[ghost]::after{
   opacity: 50%;
