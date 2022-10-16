@@ -11,7 +11,8 @@ export function initEditor(callback){
         language: 'css',
         theme: 'vs-dark',
         automaticLayout: true,
-        fontSize: 20
+        fontSize: 20,
+        overflow: 'hidden'
     });
 
     //Allows for pieces, legend to be dropped into the text editor for automatic text rendering

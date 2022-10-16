@@ -39,11 +39,12 @@ body{
   font-size: 6vh;
 }
 
-
 #text-editor{
   position: absolute;
-  width:100%;
-  height: 100%;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;  
 }
 #left-panel{
   position: absolute;
@@ -148,7 +149,6 @@ td.legend.bottom:last-child{
   height: var(--box-size);
   min-width: var(--box-size);
   min-height: var(--box-size);
-  padding: 0;
   transition: background-color 0.2s; 
 }
 .light{
