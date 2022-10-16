@@ -99,8 +99,8 @@ function initMain(){
         playerColTextEle.style.display = displayValue;
         roomIdTextEle.style.display = displayValue;
         
-        undoButton.disable = setVal;
-        redoButton.disable = setVal;
+        undoButton.disabled = setVal;
+        redoButton.disabled = setVal;
         undoButton.style.opacity = setVal ? '50%':"100%";
         redoButton.style.opacity = setVal ? '50%':"100%";
     }
@@ -183,7 +183,7 @@ function initMain(){
 
 
 
-    //Create
+    //Create the board
     setMultiplayer(true);
     newGame();
 }
