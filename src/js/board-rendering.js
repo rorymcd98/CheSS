@@ -125,6 +125,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
     draggables.forEach(draggable => {
         draggable.addEventListener('dragstart', (e) => {
             draggable.classList.add('dragging');
+            e.stopPropagation();
         })
     
         draggable.addEventListener('dragend', () => {

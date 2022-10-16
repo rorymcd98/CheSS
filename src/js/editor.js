@@ -44,7 +44,12 @@ export function initEditor(callback){
 `td[data-${drgEle.hasAttribute('data-leg-rank')?`rank = "${drgEle.dataset.legRank}"]`:`fyle = "${drgEle.dataset.legFyle}"]`}{
     display: table-cell;
 }\n`
-    }
+    } else if (drgEle.id === 'board-container'){
+        appendEditorText = 
+`#board-container{
+    transform: rotate(${currentBoardState.rotation}deg);
+}`
+    } else {console.log('You can\'t drag that into the editor')}
         let nextEditorText = currentCssText + appendEditorText;
         setCss(nextEditorText);
     })

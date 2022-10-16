@@ -1,5 +1,5 @@
 For now
-    Debug: Error when hovering over rooks
+    Debug: Error when hovering over rooks - this is only when they're big
 
 Board state save, undo functions
     Create a function which generates a custom board layout / a saved board layout.
