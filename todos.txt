@@ -1,11 +1,9 @@
 For now
+    Working on board rotate - line 468 of valid move checker
     Debug: Error when hovering over rooks - this is only when they're big
 
-Board state save, undo functions
-    Create a function which generates a custom board layout / a saved board layout.
 
 Making CSS nicer
-    Fade animations for the switch turn buttons
     Sounds for pieces moving and so on
 
 Chess edge cases

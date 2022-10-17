@@ -287,6 +287,7 @@ function checkCheckmate(boardArray,isWhiteTurn){
     return true;
 }
 
+//Highlights squares each piece can move to when they are hovered over
 export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, pieceCol){
     const {boardArray, fromX, fromY} = boardToArray(boardState, fromFyle, fromRank);
     const isWhiteTurn = pieceCol === 'white' ? true : false;
@@ -376,7 +377,7 @@ function checkNumberCssChanges(currentCssText){
     return numberCssChanges;
 }
 
-//Updates the board state with any CSS changes
+//Updates the board state with CSS changes
 function cssUpdateBoardState(boardState){
     let resBoard = structuredClone(boardState);
     const nextCssText = getCss().split('\n');
@@ -384,20 +385,21 @@ function cssUpdateBoardState(boardState){
         let line = nextCssText[i];
         const unicodeToPiece = {'\u2659':['white','pawn'],'\u2656':['white','rook'],'\u2658':['white','knight'],'\u2657':['white','bishop'],'\u2654':['white','king'],'\u2655':['white','queen'],
                                 '\u265F':['black','pawn'],'\u265C':['black','rook'],'\u265E':['black','knight'],'\u265D':['black','bishop'],'\u265A':['black','king'],'\u265B':['black','queen']};
-        if(line.includes('{')){//At some point this will need to debug in case of invalid property.
+        if(line.includes('{')){//Todo: At some point this will need to debug in case of invalid property.
             lineSelectorRules(i, ['td[data-rank'], 'ranks', 'display', {'none':false,'table-cell':true});
             lineSelectorRules(i, ['td[data-fyle'], 'fyles', 'display', {'none':false,'table-cell':true});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'content', unicodeToPiece, (val,rN,fN)=>{const pc = resBoard[rN][fN].piece; pc.col = val[0]; pc.type = val[1]});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'opacity', {'100%':false,'50%':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.ghost = val});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-size', {'3vw':false,'6vw':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.big = val});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-weight', {'normal':false,'bold':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.bold = val});
+            boardSelectorRules(i, ['#board-container'], 'transform', {'0deg':0, '90deg':90, '180deg':180, '270deg':270, '360deg':0}, (val)=>{resBoard.rotation = val})
         }
     }
 
     return resBoard;
     function lineSelectorRules(j, selectorStarts, lineType, property, validValues){
         let line = nextCssText[j++];
-        if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return}
+        if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return};
         const lineValueArr = line.split(/["`']/)
         const lineValue = Number(lineValueArr[1]);
 
@@ -406,10 +408,10 @@ function cssUpdateBoardState(boardState){
             if(line.includes(':')){
                 const styleArr = line.split(':');
                 const candidateProperty = styleArr[0].trim();
-                const propertyValue = styleArr[1].trim().slice(0,-1);
+                const candidateValue = styleArr[1].trim().slice(0,-1);
                 if (candidateProperty === property){
-                    if (Object.keys(validValues).includes(propertyValue)){
-                        const isVisible = validValues[propertyValue];
+                    if (Object.keys(validValues).includes(candidateValue)){
+                        const isVisible = validValues[candidateValue];
                         if (isVisible){
                             if(resBoard[lineType].indexOf(lineValue)<=0){resBoard[lineType].push(lineValue);resBoard[lineType].sort()}
                         } else {
@@ -426,7 +428,7 @@ function cssUpdateBoardState(boardState){
 
     function pieceSelectorRules(j, selectorStarts, property, validValues, ruleCallback){
         let line = nextCssText[j++];
-        if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return}
+        if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return};
         const selector = line.trim().slice(0,line.trim().indexOf('{'));
         const eles = document.querySelectorAll(selector);
         if ([...eles].some((ele)=>ele.classList.contains('king'))){console.log("CSS moves cannot effect kings!"); return};
@@ -435,10 +437,10 @@ function cssUpdateBoardState(boardState){
             if(line.includes(':')){
                 const styleArr = line.split(':');
                 const candidateProperty = styleArr[0].trim();
-                const propertyValue = styleArr[1].trim().slice(0,-1);
+                const candidateValue = styleArr[1].trim().slice(0,-1);
                 if (candidateProperty === property){
-                    if (Object.keys(validValues).includes(propertyValue)){
-                        const boardStateProp = validValues[propertyValue]
+                    if (Object.keys(validValues).includes(candidateValue)){
+                        const boardStateProp = validValues[candidateValue]
                         eles.forEach((ele)=>{
                             if (ele.classList.contains('piece')){
                                 ele = ele.parentElement;
@@ -447,6 +449,27 @@ function cssUpdateBoardState(boardState){
                             const rankFyle = ele.dataset.fyle;
                             ruleCallback(boardStateProp, rankNum, rankFyle);
                         })
+                    } else {console.log("Invalid CSS styling value!")}
+                }
+            }
+            j++;
+            line = nextCssText[j];
+        }
+    }
+
+    function boardSelectorRules(j, selectorStarts, property, validValues, ruleCallback){
+        let line = nextCssText[j++];
+        if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return};
+        line = nextCssText[j];
+        while(!line.includes('}')){
+            if(line.includes(':')){
+                const styleArr = line.split(':');
+                const candidateProperty = styleArr[0].trim();
+                const candidateValue = line.slice(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
+                if (candidateProperty === property){
+                    if (Object.keys(validValues).includes(candidateValue)){
+                        const boardStateProp = validValues[candidateValue];
+                        ruleCallback(boardStateProp);
                     } else {console.log("Invalid CSS styling value!")}
                 }
             }

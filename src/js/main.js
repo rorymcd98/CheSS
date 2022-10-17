@@ -103,6 +103,7 @@ function initMain(){
         redoButton.disabled = setVal;
         undoButton.style.opacity = setVal ? '50%':"100%";
         redoButton.style.opacity = setVal ? '50%':"100%";
+        if(!setVal){submitCssButton.style.opacity = "100%"}
     }
 
     //Render a board when the opponent makes a move

@@ -116,7 +116,6 @@ body{
     background-color: rgb(42, 41, 46);
   border: 0.1vh solid black;
   border-radius: 2vh;
-  z-index: 1;
 }
 .board{
   position: relative;
