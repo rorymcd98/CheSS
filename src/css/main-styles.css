@@ -2,11 +2,11 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 :root{
-    --board-size:      60vh;
+    --board-size:      62vh;
     --box-size:  calc(var(--board-size)/8);
     --leg-size:  calc(var(--board-size)/28);
-    --button-width: calc(var(--board-size)/8);
-    --button-height: calc(var(--board-size)/8);
+    --button-width: calc(var(--board-size)/9);
+    --button-height: calc(var(--board-size)/9);
     --piece-size: 5vh;
 
     --dark:      rgb(97, 97, 97);
@@ -71,43 +71,70 @@ body{
 
 #room-list-container{
   position: absolute;
-  /* display: flex;
-  flex-direction: column; */
   left: 50%;
-  top: 10%;
+  top: 25%;
+  bottom: 25%;
   transform: translate(-50%);
-  width: 50%;
-  height: 80%;
+  width: 20%;
   background-color: rgb(48, 56, 60);
-  border: 0.25vh solid black;
-  border-radius: 2vh;
+  border: 0.3vh solid black;
+  border-radius: 1vh;
   z-index: 5;
+}
+
+#room-list{
+  position: relative;
+  list-style: none;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 20%;
   align-items: center;
+  padding: 0;
+  padding-left: 5%;
+
+  overflow-y: scroll;
+  height: 80%;
 }
 
 .join-room-button{
   position: relative;
-  width: 90%;
-  border-radius: 3vh;
+  width: 95%;
+  height: 3vh;
+  border-radius: 0.4vh;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.25vh;
+}
+
+#room-list > li:nth-of-type(odd) > button:first-child{
+  background-color: rgb(48, 48, 57);
+  color: white;
+}
+
+#room-list > li:nth-of-type(even) > button:first-child{
+  background-color: rgb(60, 61, 70);
+  color: rgb(213, 213, 213);
 }
 
 #create-room-button{
   position: absolute;
-  bottom: 2vh;
-  right: 2vh;
+  height: 5vh;
+  width: 46.5%;
+
+  border-radius: 1vh;
+  bottom: 2%;
+  right: 2%;
 }
 
-#play-local-button{
+#roomlist-play-local-button{
   position: absolute;
-  background-color: white;
-  color: black;
-  border: solid black;
-  width: 100px;
-  height: 100px;
-  border-radius: 20px;
-  bottom: 10px;
-  left: 10px;
-  cursor: pointer;
+  height: 5vh;
+  width: 46.5%;
+
+  border-radius: 1vh;
+  bottom: 2%;
+  left: 2%;
 }
 
 #board-container{
@@ -138,6 +165,7 @@ td.legend{
   background-color: black;
   text-align: center;
   font-size: calc(0.7*var(--leg-size));
+  font-weight: bold;
 }
 td.legend[data-leg-fyle]{
   max-height: var(--leg-size);
@@ -209,20 +237,20 @@ td.legend.bottom:last-child{
 }
 .turn-indicator{
   display: inline-flex;
-  width: 15vh;
-  height: 5vh;
+  width: 13vh;
+  height: 4vh;
   margin: 0.2vh;
   border-radius: inherit;
   justify-content: center;
   align-items: center;
   border: 0.2vh solid black;
-  font-size: 2.5vh;
+  font-size: 2.2vh;
   font-weight: bold;
 }
 #white-turn-indicator{
   opacity: 20%;
-  color: black;
-  background-color: rgb(237, 237, 237);
+  color: rgb(21, 21, 21);
+  background-color: rgb(220, 220, 220);
 }
 #black-turn-indicator{
   opacity: 100%;
@@ -243,12 +271,17 @@ button{
   width: var(--button-width);
   height: var(--button-height);
   border-radius: 20%;
-  transition: opacity 0.5s;
+  transition: opacity 0.3s;
   margin-inline: 0.4%;
   font-size: 1.6vh;
   font-weight: bold;
   cursor: pointer;
+  transition: filter 0.15s;
 }
+button:hover{
+  filter: brightness(120%);
+}
+
 #undo-button,
 #redo-button,
 #new-game-button,
@@ -258,8 +291,11 @@ button{
 }
 #submit-css-button{
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 2%;
+  right: 3%;
+  height: 13vh;
+  width: 13vh;
+  font-size: 2.2vh;
 }
 
 
@@ -336,4 +372,21 @@ button{
 }
 .black.queen::after{
   content: "\265B";
+}
+
+/* Scrollbar from https://dev.to/xtrp/how-to-create-a-beautiful-custom-scrollbar-for-your-site-in-plain-css-1mjg */
+::-webkit-scrollbar {
+  width: 20px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #d6dee1;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a8bbbf;
 }

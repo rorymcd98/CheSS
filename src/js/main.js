@@ -31,10 +31,11 @@ function initMain(){
     })
 
     //Updates the rendering of rooms if a room is created or joined by another player
-    const roomList = document.getElementById('room-list-container');
+    const roomListContainerEle = document.getElementById('room-list-container');
+    const roomListEle = document.getElementById('room-list');
     gameSocket.on('clientViewRooms', (rooms)=>{
-        const existingViewRoomButtons = document.querySelectorAll('.join-room-button');
-        existingViewRoomButtons.forEach((ele)=>ele.remove())
+        const existingListEles = document.querySelectorAll('.join-room-li');
+        existingListEles.forEach((ele)=>ele.remove())
 
         const roomIds = Object.keys(rooms);
         roomIds.forEach((roomId)=>{
@@ -43,10 +44,14 @@ function initMain(){
         })
     })
     function addRoomButton(roomId, playerCount){
+        const joinRoomLi = document.createElement('li');
+        joinRoomLi.classList.add('join-room-li');
+
         const joinRoomButton = document.createElement('button');
         joinRoomButton.innerText = `Room #${roomId} (${playerCount}/2)`;
         joinRoomButton.classList.add('join-room-button');
 
+        joinRoomLi.appendChild(joinRoomButton);
         joinRoomButton.addEventListener('click', ()=>{
             const resData = {};
             resData.roomId = roomId;
@@ -54,7 +59,7 @@ function initMain(){
 
             gameSocket.emit('joinRoom', resData);
         })
-        roomList.appendChild(joinRoomButton);
+        roomListEle.appendChild(joinRoomLi);
     }
 
     //Creates a room - if the server allows this then the player is also forced to join
@@ -73,17 +78,22 @@ function initMain(){
         window.gameData.roomId = data.roomId;
         window.gameData.playerIsWhite = data.isWhite;
         const curTurn = data.clientCurrentTurn;
-        roomList.style.display = "none";    
+        roomListContainerEle.style.display = "none";    
 
         gameData.gameTurnList.appendTurn(curTurn.boardState, curTurn.isWhiteTurn, curTurn.cssText)
         renderBoard(curTurn.boardState, curTurn.isWhiteTurn, curTurn.cssText, gameData.playerIsWhite);
     })
 
     //Sets the game to local mode (can now play as black and white), also hides any multiplayer info
-    const playLocalButton = document.getElementById('play-local-button');
-    playLocalButton.addEventListener('click', ()=>{
+    const roomlistPlayLocalButtonEle = document.getElementById('roomlist-play-local-button');
+    roomlistPlayLocalButtonEle.addEventListener('click', ()=>{
         setMultiplayer(false);
-        roomList.style.display = "none";
+        roomListContainerEle.style.display = "none";
+    })
+    const dashboardPlayLocalButtonEle = document.getElementById('dashboard-play-local-button');
+    dashboardPlayLocalButtonEle.addEventListener('click', ()=>{
+        setMultiplayer(false);
+        roomListContainerEle.style.display = "none";
     })
 
     //Brings up the games list and sets the game to multiplayer mode
@@ -91,7 +101,7 @@ function initMain(){
     viewGamesButton.addEventListener('click', ()=>{
         setMultiplayer(true);
         gameSocket.emit('viewRooms');
-        roomList.style.display = "block";
+        roomListContainerEle.style.display = "block";
     })
     function setMultiplayer(setVal){
         window.gameData.multiplayer = setVal;
