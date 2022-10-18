@@ -157,6 +157,10 @@ io.on('connection', (socket)=>{
         }
     })
 
+    socket.on('viewRooms', ()=>{
+        socket.emit('clientViewRooms', rooms);
+    })
+
     //Broadcast a player move
     socket.on('move', (data)=>{
         const currentTurn = rooms[data.roomId].currentTurn;

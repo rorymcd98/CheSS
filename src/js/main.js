@@ -90,6 +90,7 @@ function initMain(){
     const viewGamesButton = document.getElementById('view-games-button');
     viewGamesButton.addEventListener('click', ()=>{
         setMultiplayer(true);
+        gameSocket.emit('viewRooms');
         roomList.style.display = "block";
     })
     function setMultiplayer(setVal){
