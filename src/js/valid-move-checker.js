@@ -5,11 +5,11 @@ const movesets = new GenerateMoveset();
 export function pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, boardState, isWhiteTurn){
     let isValidMove = false;
     let isCheckmate = false;
-    const boardArray = boardToArray(boardState, fromFyle, fromRank, toFyle, toRank);
-    const fromX = boardState.fyles.indexOf(fromFyle);
-    const fromY = boardState.ranks.indexOf(fromRank);
-    const toX = boardState.fyles.indexOf(toFyle);
-    const toY = boardState.ranks.indexOf(toRank);
+    const {boardArray, fromX, fromY, toX, toY}  = boardToArray(boardState, fromFyle, fromRank, toFyle, toRank);
+    // const fromX = boardState.fyles.indexOf(fromFyle);
+    // const fromY = boardState.ranks.indexOf(fromRank);
+    // const toX = boardState.fyles.indexOf(toFyle);
+    // const toY = boardState.ranks.indexOf(toRank);
 
     if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardArray, isWhiteTurn)){
         isValidMove = true;
@@ -26,7 +26,7 @@ export function pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, b
 
 //Passes the dom board to the valid move checker
 export function cssTurnHandler(boardState, isWhiteTurn, currentCssText){
-    const boardArray = boardToArray(boardState);
+    const {boardArray} = boardToArray(boardState);
     if(checkNumberCssChanges(currentCssText) !== 1){
         console.log('CSS moves must change or create exactly one property!')
         return [false, null];
@@ -36,7 +36,7 @@ export function cssTurnHandler(boardState, isWhiteTurn, currentCssText){
         return [false, null];
     }
     const cssBoardState = cssUpdateBoardState(boardState);
-    const cssBoardArray = boardToArray(cssBoardState);
+    const {boardArray: cssBoardArray} = boardToArray(cssBoardState);
 
     if(!(findKings(cssBoardArray, true).length === 1 && findKings(cssBoardArray, false).length === 1)){
         console.log('CSS moves can\'t create or destroy a king!')
@@ -100,20 +100,21 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
         let canMove = (piece.unmoved) ? 2 : 1;
         if(pP.big){//lol
             canMove*=2
-
-            //Check if there's a piece in the way for big pawns
-            let xDir = 0;
-            if (toX-fromX > 0){xDir=1}
-            if (toX-fromX < 0){xDir=-1}
-            let yDir = (toY - fromY) > 0 ? 1 : -1;
-            for (let i = 1; i<moveY;i++){
-                const interPiece = boardArray[fromY+i*yDir][fromX+i*xDir];
-                if(interPiece!==null || (interPiece && !interPiece.properties.ghost)){
-                    if(debug){console.log("There's a piece in the way!")}
-                    return false;
-                }
-            } 
         }
+        
+        //Check if there's a piece in the way for big or unmoved pawns
+        let xDir = 0;
+        if (toX-fromX > 0){xDir=1}
+        if (toX-fromX < 0){xDir=-1}
+        let yDir = (toY - fromY) > 0 ? 1 : -1;
+        for (let i = 1; i<moveY;i++){
+            const interPiece = boardArray[fromY+i*yDir][fromX+i*xDir];
+            if(interPiece!==null || (interPiece && !interPiece.properties.ghost)){
+                if(debug){console.log("There's a piece in the way!")}
+                return false;
+            }
+        } 
+
         const movePawn = orientation*(toY-fromY);
 
         const withinLimits = (movePawn > 0) && (movePawn <= canMove);
@@ -294,14 +295,19 @@ function checkCheckmate(boardArray,isWhiteTurn){
 
 //Highlights squares each piece can move to when they are hovered over
 export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, pieceCol){
-    const boardArray = boardToArray(boardState, fromFyle, fromRank);
-    const fromX = boardState.fyles.indexOf(fromFyle);
-    const fromY = boardState.ranks.indexOf(fromRank);
+    const {boardArray, fromX, fromY} = boardToArray(boardState, fromFyle, fromRank);
+    // const fromX = boardState.fyles.indexOf(fromFyle);
+    // const fromY = boardState.ranks.indexOf(fromRank);
     const isWhiteTurn = pieceCol === 'white' ? true : false;
     let pieceMoveset;
     if(hoverPiece.type == 'pawn' && hoverPiece.properties.big){
         pieceMoveset = movesets[pieceCol][hoverPiece.type].big;
     } else {pieceMoveset = movesets[pieceCol][hoverPiece.type];}
+
+    //Un-rotate the squares that get highlighted (this step could be avoided if we assemble our boardArray from the squares, not pieces, and attach coordinates to those. Frankly the use of a intermediate board array is a sign of bad programming anyway)
+    const quadrant = (Number(boardState.rotation)/90)%360;
+    let boardDims = [boardState.ranks.length, boardState.fyles.length];
+    if(quadrant%2===1){const temp = boardDims[1]; boardDims[1]=boardDims[0]; boardDims[0]=temp}
 
     pieceMoveset.forEach((move) => {
         const toX = fromX+move[0];
@@ -309,7 +315,8 @@ export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, pie
         if(checkValidMove(fromX,fromY,toX,toY,hoverPiece,boardArray,isWhiteTurn, false)){
             const toRank = boardState.ranks[toY];
             const toFyle = boardState.fyles[toX];
-            const ele = document.querySelector(`td[data-rank = "${toRank}"][data-fyle = "${toFyle}"]`);
+            const [outRankNum, outFyleNum] = quadrant%4 != 0 ? rotateVector(quadrant, toRank, toFyle, boardDims[0], boardDims[1], true) : [toRank, toFyle];
+            const ele = document.querySelector(`td[data-rank = "${outRankNum}"][data-fyle = "${outFyleNum}"]`);
             ele.classList.add('validMove');
         }
     });
@@ -488,8 +495,7 @@ function cssUpdateBoardState(boardState){
 }
 
 //Creates a 2D array from the board state, useful for when the board geometry changes
-function boardToArray(boardState){
-
+function boardToArray(boardState, fromFyle=-1, fromRank=-1, toFyle=-1, toRank=-1){
     const quadrant = (Number(boardState.rotation)/90)%360;
     
     let boardDims = [boardState.ranks.length, boardState.fyles.length];
@@ -513,28 +519,33 @@ function boardToArray(boardState){
             }
         }
     }
-
-    return resArray;
-
-    function rotateVector(quadrant, rankNum, fyleNum, rankLength, fyleLength){
-
-        let outRankNum;
-        let outFyleNum;
-        switch(quadrant){
-            case 1:
-                outRankNum = fyleNum;
-                outFyleNum = rankLength-1 - rankNum;
-                break;
-            case 2:
-                outRankNum = rankLength-1 - rankNum;
-                outFyleNum = fyleLength-1 - fyleNum;
-                break
-            case 3:
-                outRankNum = fyleLength-1 - fyleNum;
-                outFyleNum = rankNum;
-
-        }
+    const [fromY, fromX] = quadrant%4 != 0 ? rotateVector(quadrant, fromRank, fromFyle, boardDims[0], boardDims[1]) : [fromRank, fromFyle];
+    const [toY, toX] = quadrant%4 != 0 ? rotateVector(quadrant, toRank, toFyle, boardDims[0], boardDims[1]) : [toRank, toFyle];
         
-        return [outRankNum, outFyleNum];
+    const res = {boardArray: resArray, fromY: fromY, fromX: fromX, toY: toY, toX: toX};
+    return res;
+}
+
+function rotateVector(quadrant, rankNum, fyleNum, rankLength, fyleLength, inverse = false){
+
+    if(inverse){quadrant = 4-quadrant};
+
+    let outRankNum;
+    let outFyleNum;
+    switch(quadrant){
+        case 1:
+            outRankNum = fyleNum;
+            outFyleNum = rankLength-1 - rankNum;
+            break;
+        case 2:
+            outRankNum = rankLength-1 - rankNum;
+            outFyleNum = fyleLength-1 - fyleNum;
+            break
+        case 3:
+            outRankNum = fyleLength-1 - fyleNum;
+            outFyleNum = rankNum;
+
     }
+    
+    return [outRankNum, outFyleNum];
 }

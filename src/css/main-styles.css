@@ -1,3 +1,6 @@
+*{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 :root{
     --board-size:      60vh;
     --box-size:  calc(var(--board-size)/8);
@@ -113,7 +116,7 @@ body{
   max-width: var(--board-size);
   max-height: var(--board-size);
   padding: 4%;
-    background-color: rgb(42, 41, 46);
+  background-color: rgb(42, 41, 46);
   border: 0.1vh solid black;
   border-radius: 2vh;
 }
@@ -194,7 +197,7 @@ td.legend.bottom:last-child{
 .turn-indicator-container{
   display: inline-block;
   border-radius: 2vh;
-  background-color: rgb(118, 137, 145);
+  background-color: rgb(69, 82, 87);
   margin-inline: 0.4%;
   padding: 1%;
 }
@@ -204,20 +207,21 @@ td.legend.bottom:last-child{
   height: 5vh;
   margin: 0.2vh;
   border-radius: inherit;
-  font-size: 3vh;
   justify-content: center;
   align-items: center;
-  border: solid black;
+  border: 0.2vh solid black;
+  font-size: 2.5vh;
+  font-weight: bold;
 }
 #white-turn-indicator{
   opacity: 20%;
   color: black;
-  background-color: white;
+  background-color: rgb(237, 237, 237);
 }
 #black-turn-indicator{
   opacity: 100%;
-  color: white;
-  background-color: black;
+  color: rgb(237, 237, 237);
+  background-color: rgb(26, 26, 26);
 }
 #white-turn-indicator[data-isWhiteTurn]{
   opacity: 100%;
@@ -227,15 +231,17 @@ td.legend.bottom:last-child{
 }
 
 button{
-  background-color: white;
-  color: black;
-  border: solid black;
+  background-color: rgb(42, 41, 46);
+  color: rgb(224, 224, 224);
+  border: 0.1vh solid black;
   width: var(--button-width);
   height: var(--button-height);
   border-radius: 20%;
   cursor: pointer;
   transition: opacity 0.5s;
   margin-inline: 0.4%;
+  font-size: 1.6vh;
+  font-weight: bold;
 }
 #undo-button,
 #redo-button,

@@ -48,7 +48,7 @@ export function initEditor(callback){
         appendEditorText = 
 `#board-container{
     transform: rotate(${currentBoardState.rotation}deg);
-}`
+}\n`
     } else {console.log('You can\'t drag that into the editor')}
         let nextEditorText = currentCssText + appendEditorText;
         setCss(nextEditorText);
