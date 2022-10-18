@@ -73,7 +73,9 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
         //Only render the rank if it has any squares
         rank.hasChildNodes() && boardElement.appendChild(rank);
     };
-    document.getElementById("board-container").appendChild(boardElement);
+    const boardContainerEle = document.getElementById("board-container");
+    boardContainerEle.style.transform = `translate(-50%) rotate(${boardState.rotation}deg)`
+    boardContainerEle.appendChild(boardElement);
 
     //Render the board legend (these are able to be dragged into the editor)
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};

@@ -1,10 +1,13 @@
 For now
-    Working on board rotate - line 468 of valid move checker
+    Line 503 figure it out
     Debug: Error when hovering over rooks - this is only when they're big
 
 
 Making CSS nicer
     Sounds for pieces moving and so on
+
+    Ideas, make buttons in the same colour as the boarder
+    Make the legend a bit less dark
 
 Chess edge cases
     Pawn promotions
