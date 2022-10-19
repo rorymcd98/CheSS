@@ -23,10 +23,8 @@ function initMain(){
     })
 
     //Assigns a playerId if they don't have one in cookies
-    const playerIdTextEle = document.getElementById('player-id-text');
     gameSocket.on('clientAssignPlayer',(data)=>{
         window.gameData.playerId = data.playerId;
-        playerIdTextEle.innerText = gameData.playerId;
         setCookie('playerId', gameData.playerId, 7);
     })
 
@@ -73,8 +71,8 @@ function initMain(){
     const playerColTextEle = document.getElementById('player-col-text')
     const roomIdTextEle = document.getElementById('room-id-text');
     gameSocket.on('clientJoinGame', (data)=>{
-        playerColTextEle.innerText = data.isWhite ? 'White' : 'Black';
-        roomIdTextEle.innerText = data.roomId;
+        playerColTextEle.innerText = `Colour: ${data.isWhite ? 'White' : 'Black'}`;
+        roomIdTextEle.innerText = `Room ID: ${data.roomId}`;
         window.gameData.roomId = data.roomId;
         window.gameData.playerIsWhite = data.isWhite;
         const curTurn = data.clientCurrentTurn;
@@ -105,10 +103,7 @@ function initMain(){
     })
     function setMultiplayer(setVal){
         window.gameData.multiplayer = setVal;
-        const displayValue = setVal ? 'block' : 'none';
-        playerIdTextEle.style.display = displayValue;
-        playerColTextEle.style.display = displayValue;
-        roomIdTextEle.style.display = displayValue;
+        // const displayValue = setVal ? 'block' : 'none';
         
         undoButton.disabled = setVal;
         redoButton.disabled = setVal;

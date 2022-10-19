@@ -9,6 +9,7 @@
     --button-height: calc(var(--board-size)/9);
     --piece-size: 5vh;
 
+    --background: rgb(36,44,48);
     --dark:      rgb(97, 97, 97);
     --light:     rgb(222, 222, 222);
     --hover:     rgb(212, 203, 128);
@@ -16,8 +17,10 @@
     --valid-move-dark: rgb(171, 167, 103);
   }
 body{
-  background-color: rgb(36,44,48);
+  background-color: var(--background);
 }
+
+/* checkmate overlay */
 #checkmate-overlay{
   position: absolute;
   /* display: none; */
@@ -51,23 +54,7 @@ body{
   padding-inline: 3vh; 
 }
 
-#text-editor{
-  position: absolute;
-  left: 0%;
-  right: 0%;
-  top: 0%;
-  bottom: 0%;  
-}
-#left-panel{
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  left: 0%;
-  right: 50%;
-  top: 0%;
-  bottom: 0%;
-}
+/* right panel */
 #right-panel{
   position: absolute;
   display: flex;
@@ -76,7 +63,23 @@ body{
   top: 0%;
   bottom: 0%;
 }
+#text-editor{
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;  
+}
+#submit-css-button{
+  position: absolute;
+  bottom: 2%;
+  right: 3%;
+  height: 13vh;
+  width: 13vh;
+  font-size: 2.2vh;
+}
 
+/* room list */
 #room-list-container{
   position: absolute;
   left: 50%;
@@ -89,7 +92,6 @@ body{
   border-radius: 1vh;
   z-index: 5;
 }
-
 #room-list{
   position: relative;
   list-style: none;
@@ -104,7 +106,6 @@ body{
   overflow-y: scroll;
   height: 80%;
 }
-
 .join-room-button{
   position: relative;
   width: 95%;
@@ -114,17 +115,14 @@ body{
   justify-content: center;
   margin-top: 0.25vh;
 }
-
 #room-list > li:nth-of-type(odd) > button:first-child{
   background-color: rgb(48, 48, 57);
   color: white;
 }
-
 #room-list > li:nth-of-type(even) > button:first-child{
   background-color: rgb(60, 61, 70);
   color: rgb(213, 213, 213);
 }
-
 #create-room-button{
   position: absolute;
   height: 5vh;
@@ -134,7 +132,6 @@ body{
   bottom: 2%;
   right: 2%;
 }
-
 #roomlist-play-local-button{
   position: absolute;
   height: 5vh;
@@ -144,6 +141,61 @@ body{
   bottom: 2%;
   left: 2%;
 }
+
+/* left panel */
+#left-panel{
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 0%;
+  right: 50%;
+  top: 0%;
+  bottom: 0%;
+}
+.tooltip{
+  position: absolute;
+  top: 8%;
+  right: 15.5%;
+  width: 2.2vh;
+  height: 2.2vh;
+  color:var(--background);
+  background-color: rgb(116, 116, 116);
+  border-radius: 50%;
+  z-index: 1;
+  font-size: 1.2vh;
+  font-weight: bold;
+  cursor: default;
+  transition: filter 0.2s;
+  text-align: center;
+  line-height: 170%;
+}
+.tooltip:hover{
+  filter: brightness(120%);
+}
+.tooltip-text-container{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  top: 0.5vh;
+  left: 3vh;
+  display: none;
+  width: 11vh;
+  height: auto;
+  color: var(--background);
+  background-color: rgb(116, 116, 116);
+  border-radius: 0.4vh;
+  text-align: left;
+  padding-left: 0.3vh;
+}
+.tooltip:hover .tooltip-text-container{
+  display: block;
+}
+.tooltip-text{
+  font-size: 1.5vh;
+
+}
+
 
 #board-container{
   position: relative;
@@ -297,14 +349,7 @@ button:hover{
   display: inline-block;
   position: relative;
 }
-#submit-css-button{
-  position: absolute;
-  bottom: 2%;
-  right: 3%;
-  height: 13vh;
-  width: 13vh;
-  font-size: 2.2vh;
-}
+
 
 
 
