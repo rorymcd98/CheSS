@@ -103,7 +103,10 @@ function initMain(){
     })
     function setMultiplayer(setVal){
         window.gameData.multiplayer = setVal;
+        const mpTooltipEle = document.getElementById('multiplayer-tooltip');
         // const displayValue = setVal ? 'block' : 'none';
+        
+        mpTooltipEle.style.opacity = setVal ? '100%':"0%";
         
         undoButton.disabled = setVal;
         redoButton.disabled = setVal;

@@ -166,7 +166,7 @@ body{
   font-size: 1.2vh;
   font-weight: bold;
   cursor: default;
-  transition: filter 0.2s;
+  transition: filter 0.2s, opacity 0.2s;
   text-align: center;
   line-height: 170%;
 }
