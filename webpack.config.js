@@ -49,7 +49,7 @@ module.exports = {
 				new HtmlWebpackPlugin({
 						hash:true,
 						title: 'Project',
-						template: path.resolve(__dirname,'src','html','index.html')}),
+						template: path.resolve(__dirname,'src','html','index.ejs')}),
 				new webpack.HotModuleReplacementPlugin()
 			]
 };

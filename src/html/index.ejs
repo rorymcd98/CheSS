@@ -5,11 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Document</title>
+    <title>CheSS - Chess with CSS</title>
 </head>
 <body>
-    <div id="left-panel">
-        <div id = "board-container"></div>
+    <div id="checkmate-overlay">
+        <h1 id="checkmate-text">Checkmate!</h1>
+        <button id="play-again-button">Play Again</button>
+    </div> 
+
+    <section id="left-panel">
+        <div class = "slide-panel" id = "rules-panel">sometext
+            <div class = "slide-tab" id = "rules-tab">
+                <div>
+                    <text>Rules</text>
+                </div>
+            </div>     
+        </div>
+ 
+        <div class = "tooltip" id = "multiplayer-tooltip">MP
+            <div class = "tooltip-text-container">
+                <text class = "tooltip-text" id="player-col-text"></text>
+                <text class = "tooltip-text" id="room-id-text"></text>
+            </div>
+        </div>
+        <div id = "board-container" class="draggable" draggable="true"></div>
         <div class = "turn-control-dashboard">
             <span class ="turn-indicator-container">
                 <span class ="turn-indicator" id="white-turn-indicator" data-isWhiteTurn>White Turn</span>
@@ -17,17 +36,22 @@
             </span>
             <button id = "undo-button">Undo</button>
             <button id = "redo-button">Redo</button>
-            <button id = "new-game-button">New game</button>
-            <span id = "save-load-buttons">
-                <button id = "save-button">Save game</button>
-                <button id = "load-button">Load game</button>
-            </span>
+            <button id = "new-game-button">New Game</button>
+            <button id = "view-games-button">View Games</button>
+            <button id = "dashboard-play-local-button">Play Local</button>
         </div>
-    </div>
+    </section>
 
-    <div id="right-panel">
+    <section id="right-panel">
         <div id="text-editor" style="border:1px solid grey"></div>
         <button id="submit-css-button">Submit CSS</button>
+    </section>
+
+    <div id="room-list-container">
+        <ul id = "room-list">     
+        </ul>
+        <button id = "roomlist-play-local-button">Play Local</button>
+        <button id = "create-room-button">Create Room</button>
     </div>
 </body>
 </html>

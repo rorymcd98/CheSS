@@ -132,6 +132,12 @@ function initMain(){
 
     //---buttons---
     //Create the event listeners for buttons
+
+    const slideTabEle = document.getElementById('rules-tab');
+    slideTabEle.addEventListener('click', ()=>{
+        const rulesPanelEle = document.getElementById('rules-panel');
+        rulesPanelEle.classList.toggle('showPanel');
+    });
     
     const newGameButton = document.getElementById("new-game-button");
     newGameButton.addEventListener('click', ()=>{
