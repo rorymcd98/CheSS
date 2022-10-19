@@ -1,13 +1,14 @@
 For now
-    Checkmate overlay
-    The leftover multiplayer information stuff (put this in a hover bubble somewhere)
     Drag out menu with the rules
     Sound for pieces
     Logo CheSS
+    Tab Icon
 
 
 Making CSS nicer
     Sounds for pieces moving and so on
+    Figure out fonts
+    Add pictures
 
 Chess edge cases
     Pawn promotions

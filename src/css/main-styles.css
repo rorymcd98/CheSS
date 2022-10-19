@@ -8,7 +8,6 @@
     --button-width: calc(var(--board-size)/9);
     --button-height: calc(var(--board-size)/9);
     --piece-size: 5vh;
-    --rules-panel-width: 40%;
 
     --background: rgb(36,44,48);
     --dark:      rgb(97, 97, 97);
@@ -156,6 +155,7 @@ body{
 }
 
 .slide-panel{
+  --rules-panel-width: 50%;
   position: absolute;
   box-sizing: border-box;
   background-color: rgb(232, 232, 232);
@@ -171,11 +171,9 @@ body{
   transition-duration: .5s;
   transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
 }
-
 .showPanel{
   left: 0%; 
 }
-
 .slide-tab{
   position: absolute;
   box-sizing: border-box;
@@ -190,7 +188,6 @@ body{
   border: 0.2vh solid black;
   z-index: 2;
 }
-
 .slide-tab div{
   position: relative;
   left: 6%;
@@ -199,6 +196,12 @@ body{
   font-size: 2vh;
   font-weight: normal;
   user-select: none;
+}
+
+#rules-section{
+  padding-left: 5%;
+  font-family: Lucida !important;
+  overflow: scroll;
 }
 
 .tooltip{
