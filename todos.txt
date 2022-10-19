@@ -1,13 +1,13 @@
 For now
-    Line 503 figure it out
-    Debug: Error when hovering over rooks - this is only when they're big
+    Checkmate overlay
+    The leftover multiplayer information stuff (put this in a hover bubble somewhere)
+    Drag out menu with the rules
+    Sound for pieces
+    Logo CheSS
 
 
 Making CSS nicer
     Sounds for pieces moving and so on
-
-    Ideas, make buttons in the same colour as the boarder
-    Make the legend a bit less dark
 
 Chess edge cases
     Pawn promotions
