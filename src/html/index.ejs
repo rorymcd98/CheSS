@@ -30,7 +30,7 @@
                         <li>CSS moves can be made by entering interprettable CSS into the editor, then pressing the 'Submit CSS' button.</li>
                     </ul>
                     <!-- gif gos here, 3 different operations -->
-                    <img src="<%=require('../img/css-drag.gif')%>" style="width:95%">
+                    <img src="<%=require('../assets/img/css-drag.gif')%>" style="width:95%">
                     <p><em>Tip: Dragging a piece, a rank or file legend, or the board into the editor will automatically list its stylings.</em></p>
                     <h3>3. A limited number of stylings can be applied with a CSS move.</h3>
                     <ul>
@@ -50,12 +50,12 @@
                 </div>     
             </div>
 
-            <div class = "slide-panel showPanel" id = "stylings-panel">
+            <div class = "slide-panel" id = "stylings-panel">
                 <!-- Rules go here -->
                 <div class = "panel-text-container">
                     <h2>Stylings and selectors</h2>
                     <h4>Piece stylings</h4>
-                    <img src="<%=require('../img/piece-styling.png')%>" style="width:95%">
+                    <img src="<%=require('../assets/img/piece-styling.png')%>" style="width:95%">
                     <ul>
                         <li><b>content:</b> <i>{piece unicode}</i>; - Set the type of piece.</li>
                         <li><b>font-size:</b> 6vh; - Certain pieces can move twice as far.</li>
@@ -63,12 +63,12 @@
                         <li><b>opacity:</b> 50%; - Translucent pieces cannot take, check, or be taken.</li>
                     </ul>
                     <h4>Rank and file stylings</h4>
-                    <img src="<%=require('../img/legend-styling.png')%>" style="width:95%">
+                    <img src="<%=require('../assets/img/legend-styling.png')%>" style="width:95%">
                     <ul>
                         <li><b>table-cell:</b> none; - The rank or file dissapears; pieces may move over them.</li>
                     </ul>
                     <h4>Board stylings</h4>
-                    <img src="<%=require('../img/board-styling.png')%>" style="width:95%">
+                    <img src="<%=require('../assets/img/board-styling.png')%>" style="width:95%">
                     <ul>
                         <li><b>display:</b> none; - The rank or file does not exist.</li>
                     </ul>

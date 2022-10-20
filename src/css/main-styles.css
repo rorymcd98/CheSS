@@ -165,23 +165,27 @@ body{
   --rules-panel-width: 60vh;
   position: absolute;
   box-sizing: border-box;
-  background-color: rgb(230, 230, 230);
-  left: calc(-1*var(--rules-panel-width));
-  width: var(--rules-panel-width);
   height: 100%;
   top: 50%;
+  right: 0%;
+  left: 0%;
+  background-color: rgb(36,44,48);
+  left: calc(-1*var(--rules-panel-width));
+  width: var(--rules-panel-width);
   transform: translateY(-50%);
   z-index: 3;
-  border-right: 0.2vh solid rgb(219, 224, 238);
+  border-right: 0.3vh solid rgb(81, 85, 88);
   transition-property: left;
   transition-duration: .5s;
   transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
 }
 .slide-panel > .panel-text-container{
   overflow: scroll;
+  overflow-x: hidden;
   height: 100%;
   padding-left: 5%;
   font-family: Lucida !important;
+  color: rgb(219, 219, 219);
 }
 .showPanel{
   left: 0%; 
@@ -195,7 +199,7 @@ body{
   height: 10vh;
   width: 2.5vh;
   color: rgb(234, 234, 234);
-  background-color: rgb(56, 56, 71);
+  background-color: rgb(34, 34, 45);
   border-radius: 0vh 1vh 1vh 0vh;
   border: 0.2vh solid black;
   z-index: 1;

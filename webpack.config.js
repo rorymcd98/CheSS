@@ -58,7 +58,7 @@ module.exports = {
 						hash:true,
 						title: 'Project',
 						template: path.resolve(__dirname,'src','html','index.ejs'),
-						favicon: './src/img/chess-favicon.ico',
+						favicon: './src/assets/img/chess-favicon.ico',
 					}),
 				new webpack.HotModuleReplacementPlugin()
 			]

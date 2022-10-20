@@ -5,9 +5,9 @@
   "main": "./src/server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon production-server.js",
+    "start": "nodemon ./src/production-server.js",
     "build": "webpack",
-    "dev": "node ./src/server/server.js"
+    "dev": "node ./src/server/dev-server.js"
   },
   "author": "Rory McDonald",
   "license": "MIT",
