@@ -14,32 +14,72 @@
     </div> 
 
     <section id="left-panel">
-        <div class = "slide-panel showPanel" id = "rules-panel">
-            <!-- Rules go here -->
-            <section id = "rules-section">
-                <h2>Rules of CheSS</h2>
-                <h3>1. The normal chess rules apply <i>(mostly...)</i></h3>
-                <ul>
-                    <li>The board and the pieces can be manipulated by CSS, changing their behaviour.</li>
-                    <li>Special moves - <i>en passant</i>, promotions, and castling - can't be made.</li>
-                    <li>There is no drawing or stalemating.</li>
-                </ul>
-                <h3>2. A turn may consist of either a regular chess piece move, or a CSS move.</h3>
-                <ul>
-                    <li>CSS moves can be made by entering interprettable CSS into the editor, then pressing the 'Submit CSS' button.</li>
-                </ul>
-                <!-- gif gos here, 3 different operations -->
-                <em>Tip: Dragging a piece, a rank or file legend, or the board into the editor will </em>
-                                    
-            </section>
-            
-            <div class = "slide-tab" id = "rules-tab">
-                <div>
-                    <text>Rules</text>
+        <div class = "slide-panels-container">
+            <div class = "slide-panel" id = "rules-panel">
+                <!-- Rules go here -->
+                <div class = "panel-text-container">
+                    <h2>Rules of CheSS</h2>
+                    <h3>1. The normal chess rules apply <i>(mostly...)</i></h3>
+                    <ul>
+                        <li>The board and the pieces can be manipulated by CSS, changing their behaviour.</li>
+                        <li>Special moves - <i>en passant</i>, promotions, and castling - can't be made.</li>
+                        <li>There is no drawing or stalemating.</li>
+                    </ul>
+                    <h3>2. A turn may consist of either a regular chess piece move, or a CSS move.</h3>
+                    <ul>
+                        <li>CSS moves can be made by entering interprettable CSS into the editor, then pressing the 'Submit CSS' button.</li>
+                    </ul>
+                    <!-- gif gos here, 3 different operations -->
+                    <img src="<%=require('../img/css-drag.gif')%>" style="width:95%">
+                    <p><em>Tip: Dragging a piece, a rank or file legend, or the board into the editor will automatically list its stylings.</em></p>
+                    <h3>3. A limited number of stylings can be applied with a CSS move.</h3>
+                    <ul>
+                        <li>The available stylings are listed in the styling tab.</li>
+                    </ul>
+                    <h3>4. CSS moves cannot effect the kings.</h3>
+                    <ul>
+                        <li>CSS moves cannot remove or add a king to the board.</li>
+                        <li>CSS moves cannot put a king in check, or be made while the king is in check.</li>
+                        <li>CSS moves cannot change the styling of the king piece.</li>
+                    </ul>
                 </div>
-            </div>     
+                <div class = "slide-tab" id = "rules-tab">
+                    <div>
+                        <text>Rules</text>
+                    </div>
+                </div>     
+            </div>
+
+            <div class = "slide-panel showPanel" id = "stylings-panel">
+                <!-- Rules go here -->
+                <div class = "panel-text-container">
+                    <h2>Stylings and selectors</h2>
+                    <h4>Piece stylings</h4>
+                    <img src="<%=require('../img/piece-styling.png')%>" style="width:95%">
+                    <ul>
+                        <li><b>content:</b> <i>{piece unicode}</i>; - Set the type of piece.</li>
+                        <li><b>font-size:</b> 6vh; - Certain pieces can move twice as far.</li>
+                        <li><b>font-weight:</b> bold; - Bold pieces can take any piece (pawns can take forward).</li>
+                        <li><b>opacity:</b> 50%; - Translucent pieces cannot take, check, or be taken.</li>
+                    </ul>
+                    <h4>Rank and file stylings</h4>
+                    <img src="<%=require('../img/legend-styling.png')%>" style="width:95%">
+                    <ul>
+                        <li><b>table-cell:</b> none; - The rank or file dissapears; pieces may move over them.</li>
+                    </ul>
+                    <h4>Board stylings</h4>
+                    <img src="<%=require('../img/board-styling.png')%>" style="width:95%">
+                    <ul>
+                        <li><b>display:</b> none; - The rank or file does not exist.</li>
+                    </ul>
+                </div>
+                <div class = "slide-tab" id = "stylings-tab">
+                    <div>
+                        <text>Stylings</text>
+                    </div>
+                </div>     
+            </div>
         </div>
- 
         <div class = "tooltip" id = "multiplayer-tooltip">MP
             <div class = "tooltip-text-container">
                 <text class = "tooltip-text" id="player-col-text"></text>

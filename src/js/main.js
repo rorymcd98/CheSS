@@ -133,10 +133,16 @@ function initMain(){
     //---buttons---
     //Create the event listeners for buttons
 
-    const slideTabEle = document.getElementById('rules-tab');
-    slideTabEle.addEventListener('click', ()=>{
+
+    const rulesTabEle = document.getElementById('rules-tab');
+    rulesTabEle.addEventListener('click', ()=>{
         const rulesPanelEle = document.getElementById('rules-panel');
         rulesPanelEle.classList.toggle('showPanel');
+    });
+    const stylingsTabEle = document.getElementById('stylings-tab');
+    stylingsTabEle.addEventListener('click', ()=>{
+        const stylingsPanelEle = document.getElementById('stylings-panel');
+        stylingsPanelEle.classList.toggle('showPanel');
     });
     
     const newGameButton = document.getElementById("new-game-button");

@@ -74,7 +74,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
         rank.hasChildNodes() && boardElement.appendChild(rank);
     };
     const boardContainerEle = document.getElementById("board-container");
-    boardContainerEle.style.transform = `translate(-50%) rotate(${boardState.rotation}deg)`
+    boardContainerEle.style.transform = `translate(-50%) rotate(${boardState.rotation}deg)`;
     boardContainerEle.appendChild(boardElement);
 
     //Render the board legend (these are able to be dragged into the editor)

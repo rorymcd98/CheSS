@@ -121,7 +121,7 @@ body{
 }
 #room-list > li:nth-of-type(even) > button:first-child{
   background-color: rgb(60, 61, 70);
-  color: rgb(213, 213, 213);
+  color: white;
 }
 #create-room-button{
   position: absolute;
@@ -153,12 +153,19 @@ body{
   top: 0%;
   bottom: 0%;
 }
+.slide-panels-container h4,ul{
+  margin-bottom: 1vh;
+}
+.slide-panels-container ul{
+  margin-top: 1vh;
+}
+
 
 .slide-panel{
-  --rules-panel-width: 50%;
+  --rules-panel-width: 60vh;
   position: absolute;
   box-sizing: border-box;
-  background-color: rgb(232, 232, 232);
+  background-color: rgb(230, 230, 230);
   left: calc(-1*var(--rules-panel-width));
   width: var(--rules-panel-width);
   height: 100%;
@@ -166,10 +173,15 @@ body{
   transform: translateY(-50%);
   z-index: 3;
   border-right: 0.2vh solid rgb(219, 224, 238);
-  box-shadow: 25px 0px 30px  rgba(0, 0, 0, .5);
   transition-property: left;
   transition-duration: .5s;
   transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+.slide-panel > .panel-text-container{
+  overflow: scroll;
+  height: 100%;
+  padding-left: 5%;
+  font-family: Lucida !important;
 }
 .showPanel{
   left: 0%; 
@@ -179,29 +191,35 @@ body{
   box-sizing: border-box;
   right: 0%;
   top: 50%;
-  transform: translateY(-50%) translateX(2.5vh);
+  transform: translateY(-50%) translateX(2.8vh);
   height: 10vh;
-  width: 2.3vh;
+  width: 2.5vh;
   color: rgb(234, 234, 234);
-  background-color: rgb(43, 43, 47);
-  border-radius: 0% 10px 10px 0%;
+  background-color: rgb(56, 56, 71);
+  border-radius: 0vh 1vh 1vh 0vh;
   border: 0.2vh solid black;
-  z-index: 2;
+  z-index: 1;
 }
 .slide-tab div{
+  width: fit-content;
   position: relative;
-  left: 6%;
-  top: 24%;
-  transform: rotate(90deg);
+  left: 50%;
+  top: 50%;
+  transform: translateX(-46.5%) translateY(-50%) rotate(90deg);
   font-size: 2vh;
   font-weight: normal;
   user-select: none;
 }
 
-#rules-section{
-  padding-left: 5%;
-  font-family: Lucida !important;
-  overflow: scroll;
+.slide-tab#rules-tab{
+  position: absolute;
+  top: 40%;
+  transform: translateX(2.5vh);
+}
+.slide-tab#stylings-tab{
+  top:40%;
+  position: absolute;
+  transform: translateY(10.1vh) translateX(2.5vh);
 }
 
 .tooltip{
@@ -240,7 +258,7 @@ body{
   text-align: left;
   padding-left: 0.3vh;
 }
-.tooltip:hover .tooltip-text-container{
+.tooltip:hover > .tooltip-text-container{
   display: block;
 }
 .tooltip-text{

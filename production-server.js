@@ -33,7 +33,6 @@ class Room{
         this.currentTurn = data.currentTurn;
     }
 }
-
 class Player{
     constructor(data){
         this.playerId = data.playerId;

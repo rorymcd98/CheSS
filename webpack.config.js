@@ -42,6 +42,14 @@ module.exports = {
 			{
 				test: /\.ttf$/,
 				use: ['file-loader']
+			},
+			{
+				test: /\.(png|svg|jpg|jpeg|gif)$/i,
+				type: 'asset/resource',
+			},
+			{
+				test: /\.(woff|woff2|eot|ttf|otf)$/i,
+				type: 'asset/resource',
 			}
 		]
 	},
@@ -49,7 +57,9 @@ module.exports = {
 				new HtmlWebpackPlugin({
 						hash:true,
 						title: 'Project',
-						template: path.resolve(__dirname,'src','html','index.ejs')}),
+						template: path.resolve(__dirname,'src','html','index.ejs'),
+						favicon: './src/img/chess-favicon.ico',
+					}),
 				new webpack.HotModuleReplacementPlugin()
 			]
 };

@@ -35,7 +35,7 @@ export function initEditor(callback){
             appendEditorText =
 `#${drgEle.id}{
     content: ${pieceToUnicode[pieceObj.col][pieceObj.type]};
-    font-size: ${pieceProps.big ? '6vw' : '3vw'};
+    font-size: ${pieceProps.big ? '6vh' : '3vh'};
     font-weight: ${pieceProps.bold ? 'bold' : 'normal'};
     opacity: ${pieceProps.ghost ? '50%' : '100%'};
 }\n`;
