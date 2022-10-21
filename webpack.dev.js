@@ -5,23 +5,12 @@ const path = require('path');
 
 module.exports = {
 	mode: 'development',
-	watch: true,
+	watch: false,
 	entry: {app: path.resolve(__dirname,'src/js/main.js'),
-			// hot: 'webpack/hot/dev-server.js',
-			// client: 'webpack-dev-server/client/index.js?hot=true&live-reload=true'
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].[hash:8].js',
-		sourceMapFilename: '[name].[hash:8].map',
-		chunkFilename: '[id].[hash:8].js'
-	},
-	devServer: {
-		static: path.resolve(__dirname,'dist'),
-		overlay: true,
-		watch: true,
-		hot: false,
-		client: false
+		filename: '[name].bundle.js'
 	},
 	module: {
 		rules: [
@@ -49,8 +38,7 @@ module.exports = {
 			},
 			{
 				test: /\.(woff|woff2|eot|ttf|otf)$/i,
-				type: 'asset/resource',
-				loader: 'file?name=src/assets/fonts/[name].[ext]'
+				type: 'asset/resource'
 			}
 		]
 	},
@@ -60,7 +48,9 @@ module.exports = {
 						title: 'Project',
 						template: path.resolve(__dirname,'src','html','index.ejs'),
 						favicon: './src/assets/img/chess-favicon.ico',
-					}),
-				new webpack.HotModuleReplacementPlugin()
-			]
+					})
+			],
+	optimization: {
+		runtimeChunk: 'single',
+		},
 };

@@ -79,6 +79,7 @@ function initMain(){
         const curTurn = data.clientCurrentTurn;
         roomListContainerEle.style.display = "none";    
 
+        logger(`Joined room ${gameData.roomId} as ${gameData.playerIsWhite ? 'White' : 'Black'}`)
         gameData.gameTurnList.appendTurn(curTurn.boardState, curTurn.isWhiteTurn, curTurn.cssText)
         renderBoard(curTurn.boardState, curTurn.isWhiteTurn, curTurn.cssText, gameData.playerIsWhite);
     })

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/server/production-server.js",
-    "build": "webpack",
+    "build": "webpack --config webpack.prod.js",
     "dev": "node ./src/server/dev-server.js"
   },
   "author": "Rory McDonald",
@@ -19,15 +19,15 @@
     "monaco-editor": "^0.34.0",
     "monaco-editor-webpack-plugin": "^7.0.1",
     "requirejs": "^2.3.6",
-    "socket.io": "^1.7.4"
+    "socket.io": "^4.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
-    "eslint": "^4.6.1",
-    "eslint-config-airbnb-base": "^12.0.0",
+    "eslint": "^8.26.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.7.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
