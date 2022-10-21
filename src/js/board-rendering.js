@@ -1,6 +1,7 @@
 
-import {setCss} from "./editor.js"
-import {pieceTurnHandler, highlightSquares} from "./valid-move-checker.js"
+import {setCss} from "./editor.js";
+import {pieceTurnHandler, highlightSquares} from "./valid-move-checker.js";
+import {logger} from "./logger.js";
 
 export function factoryRenderBoard(webSocket){
 const gameSocket = webSocket;
@@ -168,7 +169,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
         square.addEventListener('drop', (e)=>{
             e.preventDefault();
             const draggedPiece = document.querySelector('.dragging');
-            if(!draggedPiece.classList.contains('piece')){console.log("That's not a piece!"); return false};
+            if(!draggedPiece.classList.contains('piece')){logger("That's not a piece!"); return false};
             const fromSquare = draggedPiece.parentElement;
             const fromFyle = Number(fromSquare.getAttribute('data-fyle'));
             const fromRank = Number(fromSquare.getAttribute('data-rank'));
@@ -178,7 +179,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
             const isWhiteTurn = window.gameData.gameTurnList.current.isWhiteTurn;
             const curPiece = boardState[fromRank][fromFyle].piece;
 
-            if (window.gameData.multiplayer && isWhiteTurn !== window.gameData.playerIsWhite){console.log('Not your turn!'); return false}
+            if (window.gameData.multiplayer && isWhiteTurn !== window.gameData.playerIsWhite){logger('Not your turn!'); return false}
 
             const [isValidMove, isCheckmate] = pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, boardState, isWhiteTurn);
             if (isValidMove){

@@ -1,5 +1,6 @@
 import {getCss} from './editor.js';
 const movesets = new GenerateMoveset();
+import {logger} from "./logger.js";
 
 //Passes the dom board to the valid move checker
 export function pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, boardState, isWhiteTurn){
@@ -28,22 +29,22 @@ export function pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, b
 export function cssTurnHandler(boardState, isWhiteTurn, currentCssText){
     const {boardArray} = boardToArray(boardState);
     if(checkNumberCssChanges(currentCssText) !== 1){
-        console.log('CSS moves must change or create exactly one property!')
+        logger('CSS moves must change or create exactly one property!')
         return [false, null];
     }
     if(isKingInCheck(boardArray, isWhiteTurn)){
-        console.log('CSS moves can\'t be made while in check!')
+        logger('CSS moves can\'t be made while in check!')
         return [false, null];
     }
     const cssBoardState = cssUpdateBoardState(boardState);
     const {boardArray: cssBoardArray} = boardToArray(cssBoardState);
 
     if(!(findKings(cssBoardArray, true).length === 1 && findKings(cssBoardArray, false).length === 1)){
-        console.log('CSS moves can\'t create or destroy a king!')
+        logger('CSS moves can\'t create or destroy a king!')
         return [false, null];
     }
     if(isKingInCheck(cssBoardArray, true) || isKingInCheck(cssBoardArray, true)){
-        console.log('CSS moves can\'t put a king in check!')
+        logger('CSS moves can\'t put a king in check!')
         return [false, null];
     }
     return [true, cssBoardState];
@@ -64,7 +65,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
     }
     //Correct colour
     if ((isWhiteTurn && piece.col === 'black') || (!isWhiteTurn && piece.col === 'white')){
-        if(debug){console.log('You can only move your own piece colour!')}
+        if(debug){logger('You can only move your own piece colour!')}
         return false;
     }
     //Useful intermediary values (absolute X, Y movement)
@@ -72,25 +73,25 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
 
     //Check that they're not taking their own king (this can happen sometimes)
     if(boardArray[toY][toX] !== null && boardArray[toY][toX].type === 'king' && !isEnemyPiece(toX, toY)){
-        if(debug){console.log('You can\'t take your own king!')}
+        if(debug){logger('You can\'t take your own king!')}
         return false;
     } 
 
     //Check if the cell is either unnocupied or an enemy, or the taking piece is bold
     if(boardArray[toY][toX] !== null && !isEnemyPiece(toX, toY) && !pP.bold){
-        if(debug){console.log('No self-taking!')}
+        if(debug){logger('No self-taking!')}
         return false;
     } 
 
     //Ghosts can't take
     if(pP.ghost && boardArray[toY][toX] !== null ){
-        if(debug){console.log('Ghosts can\'t take!')};
+        if(debug){logger('Ghosts can\'t take!')};
         return false;
     }
 
     //Ghosts can't be taken
     if(boardArray[toY][toX] !== null && boardArray[toY][toX].properties.ghost){
-        if(debug){console.log('Ghosts can\'t be taken!')};
+        if(debug){logger('Ghosts can\'t be taken!')};
         return false;
     }
 
@@ -110,7 +111,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
         for (let i = 1; i<moveY;i++){
             const interPiece = boardArray[fromY+i*yDir][fromX+i*xDir];
             if(interPiece!==null || (interPiece && !interPiece.properties.ghost)){
-                if(debug){console.log("There's a piece in the way!")}
+                if(debug){logger("There's a piece in the way!")}
                 return false;
             }
         } 
@@ -122,7 +123,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
         const takeLikeAPawn = (movePawn === moveX);
 
         if(!withinLimits || !((movesLikeAPawn && (boardArray[toY][toX] === null || pP.bold)) || (takeLikeAPawn && isEnemyPiece(toX,toY)))){
-            if(debug){console.log('Not a valid pawn move!')}
+            if(debug){logger('Not a valid pawn move!')}
             return false;
         }
  
@@ -131,19 +132,19 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
     //Knight
     if (piece.type === "knight"){
         if (!pP.big && !(((moveX === 1) && (moveY === 2) || (moveX === 2) && (moveY === 1)))){
-            if(debug){console.log('Not a valid knight move!')}
+            if(debug){logger('Not a valid knight move!')}
             return false;
         }
         //Big knight
         if (pP.big && !([1,2].includes(moveX) && [2,4].includes(moveY) || [2,4].includes(moveX) && [1,2].includes(moveY))){
-            if(debug){console.log('Not a valid big knight move!')}
+            if(debug){logger('Not a valid big knight move!')}
             return false;
         }
     }
     //King
     if (piece.type === "king"){
         if (!((moveX === 1) || (moveY===1))){
-            if(debug){console.log('Not a valid king move!')}
+            if(debug){logger('Not a valid king move!')}
             return false;
         }
     }
@@ -153,7 +154,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
     const isBishop = piece.type === "bishop";
     if (isQueen || isRook || isBishop){
         if (!(((moveX === moveY) && !isRook) || (((moveX ===0)^(moveY === 0)) && !isBishop))){
-            if(debug){console.log(`Not a valid ${piece.type} move!`)}
+            if(debug){logger(`Not a valid ${piece.type} move!`)}
             return false;
         }
         //Check if the rook, bishop, queen will encounter a piece on their route (unless the moving piece, or intercepting piece is a ghost)
@@ -163,7 +164,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
             for (let i = 1; i<moveY;i++){
                 const interPiece = boardArray[fromY+i*yDir][fromX+i*xDir];
                 if(interPiece!==null || (interPiece && !interPiece.properties.ghost)){
-                    if(debug){console.log("There's a piece in the way!")}
+                    if(debug){logger("There's a piece in the way!")}
                     return false;
                 }   
             }
@@ -181,7 +182,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
             for (let i = 1; i<Math.max(moveY, moveX);i++){
                 const interPiece = boardArray[fromY+i*yDir][fromX+i*xDir];
                 if(interPiece!==null || (interPiece && !interPiece.properties.ghost)){
-                    if(debug){console.log("There's a piece in the way!")}
+                    if(debug){logger("There's a piece in the way!")}
                     return false;
                 }   
             }
@@ -193,7 +194,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
     nextBoardArray[fromY][fromX] = null;
     //Check for checks in the updated board state
     if (isKingInCheck(nextBoardArray, isWhiteTurn)){
-        if(debug){console.log('The king will be in check!')}
+        if(debug){logger('The king will be in check!')}
         return false;
     }
     
@@ -280,7 +281,7 @@ function checkCheckmate(boardArray,isWhiteTurn){
                     pieceMoveset = movesets[lookForTurn][piece.type].big;
                 } else {pieceMoveset = movesets[lookForTurn][piece.type];}
                 if(pieceMoveset.some((move) => {
-                    //if(checkValidMove(i,j,i+move[0],j+move[1],piece,boardState,isWhiteTurn)){console.log(i,j,move, piece)} //Common debug
+                    //if(checkValidMove(i,j,i+move[0],j+move[1],piece,boardState,isWhiteTurn)){logger(i,j,move, piece)} //Common debug
                     return checkValidMove(i,j,i+move[0],j+move[1],piece,boardArray,isWhiteTurn, false)})
                     ){
                     return false;
@@ -289,7 +290,7 @@ function checkCheckmate(boardArray,isWhiteTurn){
         }
     }
     const winner = !isWhiteTurn ? 'white' : 'black';
-    console.log(`Checkmate, ${winner} wins!`);
+    logger(`Checkmate, ${winner} wins!`);
     return true;
 }
 
@@ -404,7 +405,7 @@ function cssUpdateBoardState(boardState){
             lineSelectorRules(i, ['td[data-fyle'], 'fyles', 'display', {'none':false,'table-cell':true});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'content', unicodeToPiece, (val,rN,fN)=>{const pc = resBoard[rN][fN].piece; pc.col = val[0]; pc.type = val[1]});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'opacity', {'100%':false,'50%':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.ghost = val});
-            pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-size', {'3vw':false,'6vw':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.big = val});
+            pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-size', {'3vh':false,'6vh':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.big = val});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'font-weight', {'normal':false,'bold':true}, (val,rN,fN)=>{resBoard[rN][fN].piece.properties.bold = val});
             boardSelectorRules(i, ['#board-container'], 'transform', {'0deg':0, '90deg':90, '180deg':180, '270deg':270, '360deg':0}, (val)=>{resBoard.rotation = val})
         }
@@ -433,7 +434,7 @@ function cssUpdateBoardState(boardState){
                             const idx = resBoard[lineType].indexOf(lineValue);
                             if(idx>=0){resBoard[lineType].splice(idx, 1);}
                         }                       
-                    } else {console.log("Invalid CSS styling value!")}
+                    } else {logger("Invalid CSS styling value!")}
                 }
             }
             j++;
@@ -446,7 +447,7 @@ function cssUpdateBoardState(boardState){
         if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return};
         const selector = line.trim().slice(0,line.trim().indexOf('{'));
         const eles = document.querySelectorAll(selector);
-        if ([...eles].some((ele)=>ele.classList.contains('king'))){console.log("CSS moves cannot effect kings!"); return};
+        if ([...eles].some((ele)=>ele.classList.contains('king'))){logger("CSS moves cannot effect kings!"); return};
         line = nextCssText[j];
         while(!line.includes('}')){
             if(line.includes(':')){
@@ -464,7 +465,7 @@ function cssUpdateBoardState(boardState){
                             const rankFyle = ele.dataset.fyle;
                             ruleCallback(boardStateProp, rankNum, rankFyle);
                         })
-                    } else {console.log("Invalid CSS styling value!")}
+                    } else {logger("Invalid CSS styling value!")}
                 }
             }
             j++;
@@ -485,7 +486,7 @@ function cssUpdateBoardState(boardState){
                     if (Object.keys(validValues).includes(candidateValue)){
                         const boardStateProp = validValues[candidateValue];
                         ruleCallback(boardStateProp);
-                    } else {console.log("Invalid CSS styling value!")}
+                    } else {logger("Invalid CSS styling value!")}
                 }
             }
             j++;

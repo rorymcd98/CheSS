@@ -1,3 +1,5 @@
+import {logger} from "./logger.js";
+
 //Doubly linked list of turn nodes
 class TurnNode{
     constructor(savedBoardState, savedIsWhiteTurn, savedCssText){
@@ -43,9 +45,9 @@ export class TurnList{
     }
     debug(){
         let dummy = this.head;
-        console.log("debug")
+        logger("debug")
         while(dummy){
-            if (dummy === this.current){console.log('current')}
+            if (dummy === this.current){logger('current')}
             print(dummy.boardState);
             dummy = dummy.next;
         }
@@ -103,5 +105,5 @@ function print(boardState, css = true){
             }
         }
     }
-    console.log(resText)
+    logger(resText)
 }

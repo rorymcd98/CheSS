@@ -1,5 +1,5 @@
 {
-  "name": "CheSS",
+  "name": "chess-css",
   "version": "0.1.0",
   "description": "Chess variant that uses CSS to manipulate the board and pieces.",
   "main": "./src/server/production-server.js",

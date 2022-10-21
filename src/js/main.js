@@ -2,6 +2,7 @@ import {cssTurnHandler} from "./valid-move-checker.js"
 import {initEditor, getCss} from "./editor.js"
 import {DefaultBoard, TurnList} from "./turn-list.js"
 import {factoryRenderBoard} from "./board-rendering.js"
+import {logger} from "./logger.js"
 import io from "socket.io-client";
 import "../css/main-styles.css"
 
@@ -15,7 +16,7 @@ function initMain(){
     //---websockets---
     //Logs all socket errors
     gameSocket.on('err', (data)=>{
-        console.log(data.errMessage);
+        logger(data.errMessage);
     })
 
     gameSocket.on('clientNewGame',()=>{
@@ -122,7 +123,7 @@ function initMain(){
     })
 
     gameSocket.on('clientCheckmate', (data)=>{
-        console.log('client here')
+        logger('client here')
         const checkmateOverlay = document.getElementById('checkmate-overlay');
         const checkmateText = document.getElementById('checkmate-text');
         
@@ -191,7 +192,7 @@ function initMain(){
         const currentCssText = gameData.gameTurnList.current.cssText;
         const currentBoardState = structuredClone(gameData.gameTurnList.current.boardState);
         const currentIsWhiteTurn = gameData.gameTurnList.current.isWhiteTurn;
-        if (gameData.multiplayer && currentIsWhiteTurn !== gameData.playerIsWhite){console.log('Not your turn!'); return false}
+        if (gameData.multiplayer && currentIsWhiteTurn !== gameData.playerIsWhite){logger('Not your turn!'); return false}
 
         const [isValidCssMove, nextBoardState] = cssTurnHandler(currentBoardState, currentIsWhiteTurn, currentCssText);
         if (isValidCssMove){

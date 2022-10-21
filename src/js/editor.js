@@ -1,5 +1,7 @@
 //Create the monaco text editor element
 import * as monaco from 'monaco-editor';
+import {logger} from "./logger.js";
+
 
 export function initEditor(callback){
     monaco.editor.onDidCreateModel(()=>{
@@ -49,7 +51,7 @@ export function initEditor(callback){
 `#board-container{
     transform: rotate(${currentBoardState.rotation}deg);
 }\n`
-    } else {console.log('You can\'t drag that into the editor')}
+    } else {logger('You can\'t drag that into the editor')}
         let nextEditorText = currentCssText + appendEditorText;
         setCss(nextEditorText);
     })
