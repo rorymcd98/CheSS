@@ -1,4 +1,4 @@
-*{
+*:not(#text-editor *) {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 :root{
@@ -93,9 +93,8 @@ body{
 }
 #logger > p{
  margin: 0%;
- font-size: 2vh;
- outline: 1vh;
- border-color: rgb(78, 78, 87);;
+ font-size: 1.5vh;
+ font-family: Consolas;
 }
 #logger > p:nth-of-type(odd){
   background-color: rgb(48, 48, 57);
@@ -194,6 +193,7 @@ body{
   top: 50%;
   right: 0%;
   left: 0%;
+
   background-color: rgb(36,44,48);
   left: calc(-1*var(--rules-panel-width));
   width: var(--rules-panel-width);
@@ -204,14 +204,17 @@ body{
   transition-duration: .5s;
   transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
 }
-.slide-panel > .panel-text-container{
+.slide-panel > .panel-text-container {
   overflow: scroll;
   overflow-x: hidden;
   height: 100%;
   padding-left: 5%;
-  font-family: Lucida !important;
   color: rgb(219, 219, 219);
 }
+.slide-panel > .panel-text-container *{
+  font-family:  'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
 .showPanel{
   left: 0%; 
 }

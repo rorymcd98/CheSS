@@ -50,6 +50,7 @@ module.exports = {
 			{
 				test: /\.(woff|woff2|eot|ttf|otf)$/i,
 				type: 'asset/resource',
+				loader: 'file?name=src/assets/fonts/[name].[ext]'
 			}
 		]
 	},

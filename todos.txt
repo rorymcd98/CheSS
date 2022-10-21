@@ -1,10 +1,9 @@
 For now
     Sound for pieces
     Logo CheSS
-    Figure out fonts
 
 Making CSS nicer
-    Sounds for pieces moving and so on
+    Done for now
 
 Chess edge cases
     Pawn promotions
@@ -12,5 +11,5 @@ Chess edge cases
     Castling
 
 Bugs
-    
+    ...
 
