@@ -1,11 +1,11 @@
 {
-  "name": "chess",
+  "name": "CheSS",
   "version": "0.1.0",
-  "description": "A realtime online multiplayer game.",
-  "main": "./src/server/index.js",
+  "description": "Chess variant that uses CSS to manipulate the board and pieces.",
+  "main": "./src/server/production-server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/production-server.js",
+    "start": "node ./src/server/production-server.js",
     "build": "webpack",
     "dev": "node ./src/server/dev-server.js"
   },
