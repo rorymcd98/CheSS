@@ -68,15 +68,29 @@ body{
   left: 0%;
   right: 0%;
   top: 0%;
-  bottom: 0%;  
+  bottom: 30%;  
 }
 #submit-css-button{
   position: absolute;
-  bottom: 2%;
+  bottom: 32%;
   right: 3%;
   height: 13vh;
   width: 13vh;
   font-size: 2.4vh;
+}
+
+#logger{
+  position: absolute;
+  box-sizing: border-box;
+  top: 70%;
+  left: 0%;
+  right: 0%;
+  bottom: 0%;  
+  color: white;
+  background-color: rgb(48, 48, 49);
+  border-left: solid 0.1vh rgb(137, 137, 137);
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 /* room list */

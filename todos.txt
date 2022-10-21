@@ -1,14 +1,10 @@
 For now
-    Drag out menu with the rules
     Sound for pieces
     Logo CheSS
-    Tab Icon
-
+    Figure out fonts
 
 Making CSS nicer
     Sounds for pieces moving and so on
-    Figure out fonts
-    Add pictures
 
 Chess edge cases
     Pawn promotions
