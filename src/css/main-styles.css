@@ -78,7 +78,6 @@ body{
   width: 13vh;
   font-size: 2.4vh;
 }
-
 #logger{
   position: absolute;
   box-sizing: border-box;
@@ -91,6 +90,18 @@ body{
   border-left: solid 0.1vh rgb(137, 137, 137);
   overflow: scroll;
   overflow-x: hidden;
+}
+#logger > p{
+ margin: 0%;
+ font-size: 2vh;
+ outline: 1vh;
+ border-color: rgb(78, 78, 87);;
+}
+#logger > p:nth-of-type(odd){
+  background-color: rgb(48, 48, 57);
+}
+#logger > p:nth-of-type(even){
+  background-color: rgb(60, 61, 70);
 }
 
 /* room list */
