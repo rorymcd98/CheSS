@@ -19,14 +19,14 @@
     "monaco-editor-webpack-plugin": "^7.0.1",
     "requirejs": "^2.3.6",
     "socket.io": "^4.5.3",
-    "socket.io-client": "^4.5.3"
+    "socket.io-client": "^4.5.3",
+    "dotenv": "^16.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
-    "dotenv": "^16.0.3",
     "eslint": "^8.26.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.7.0",
