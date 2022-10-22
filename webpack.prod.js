@@ -11,9 +11,9 @@ module.exports = {
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].[hash:8].js',
-		sourceMapFilename: '[name].[hash:8].map',
-		chunkFilename: '[id].[hash:8].js'
+		filename: '[name].[contenthash].js',
+		sourceMapFilename: '[name].[contenthash].map',
+		chunkFilename: '[id].[contenthash].js'
 	},
 	devServer: {
 		static: path.resolve(__dirname,'dist'),

@@ -1,12 +1,14 @@
 const express = require("express");
 const path = require('path');
+require('dotenv').config({path:__dirname+'../../.env'});
 
 const app = express();
 const pathToDist = path.resolve(__dirname, '..', '..', 'dist')
 app.use(express.static(pathToDist));
+const port = process.env.PORT || 3000;
+
 
 module.exports = {main: main};
-
 main(app);
 
 function main(app){
@@ -183,7 +185,7 @@ function main(app){
         })
     });
 
-    server.listen(3000, ()=>{
-        console.log('CheSS app - Web socket listening');
+    server.listen(port, ()=>{
+        console.log(`CheSS app - Web socket listening on port ${port}`);
     })
 }
