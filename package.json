@@ -18,7 +18,8 @@
     "monaco-editor": "^0.34.0",
     "monaco-editor-webpack-plugin": "^7.0.1",
     "requirejs": "^2.3.6",
-    "socket.io": "*"
+    "socket.io": "^4.5.3",
+    "socket.io-client": "^4.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

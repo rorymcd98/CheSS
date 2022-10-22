@@ -3,7 +3,7 @@ For now
     Logo CheSS
 
 Making CSS nicer
-    Done for now
+    ...
 
 Chess edge cases
     Pawn promotions
