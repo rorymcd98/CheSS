@@ -5,8 +5,6 @@ import {factoryRenderBoard} from "./board-rendering.js"
 import {logger} from "./logger.js"
 import io from "socket.io-client";
 import "../css/main-styles.css"
-import {dotenv} from "dotenv";
-console.log(process.env)
 
 //Global gameData vars are: playerId, multiplayer, roomId, gameTurnList
 window.gameData = {};
