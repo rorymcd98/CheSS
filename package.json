@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node ./src/server/production-server.js",
     "build": "webpack --config webpack.prod.js",
-    "dev": "node ./src/server/dev-server.js",
-    "heroku-postbuild": "webpack --config webpack.prod.js"
+    "dev": "node ./src/server/dev-server.js"
   },
   "author": "Rory McDonald",
   "license": "MIT",
@@ -19,7 +18,7 @@
     "monaco-editor": "^0.34.0",
     "monaco-editor-webpack-plugin": "^7.0.1",
     "requirejs": "^2.3.6",
-    "socket.io": "^4.5.3"
+    "socket.io": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
