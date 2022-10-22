@@ -5,10 +5,13 @@ import {factoryRenderBoard} from "./board-rendering.js"
 import {logger} from "./logger.js"
 import io from "socket.io-client";
 import "../css/main-styles.css"
+import {dotenv} from "dotenv";
+console.log(process.env)
 
 //Global gameData vars are: playerId, multiplayer, roomId, gameTurnList
 window.gameData = {};
-const gameSocket = io('http://localhost:3000/');
+// const gameSocket = io('http://localhost:3000/');
+const gameSocket = io('https://chess-css.herokuapp.com/')
 const renderBoard = factoryRenderBoard(gameSocket);
 initEditor(initMain);
 
