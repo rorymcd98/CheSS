@@ -4,10 +4,10 @@
   "description": "Chess variant that uses CSS to manipulate the board and pieces.",
   "main": "./src/server/production-server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/server/production-server.js",
     "build": "webpack --config webpack.prod.js",
-    "dev": "node ./src/server/dev-server.js"
+    "dev": "node ./src/server/dev-server.js",
+    "heroku-postbuild": "webpack --config webpack.prod.js"
   },
   "author": "Rory McDonald",
   "license": "MIT",
