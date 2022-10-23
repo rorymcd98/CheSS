@@ -8,8 +8,8 @@ import "../css/main-styles.css"
 
 //Global gameData vars are: playerId, multiplayer, roomId, gameTurnList
 window.gameData = {};
- const gameSocket = io('http://localhost:3000/');
-//const gameSocket = io('https://chess-css.herokuapp.com/')
+//const gameSocket = io('http://localhost:3000/');
+const gameSocket = io('https://chess-css.herokuapp.com/')
 const renderBoard = factoryRenderBoard(gameSocket);
 initEditor(initMain);
 
