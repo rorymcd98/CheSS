@@ -1,9 +1,8 @@
 For now
-    Sound for pieces
+    Sound for pieces, checks etc
     Logo CheSS
 
-Making CSS nicer
-    ...
+
 
 Chess edge cases
     Pawn promotions
@@ -12,4 +11,18 @@ Chess edge cases
 
 Bugs
     ...
+    Queen moves not valid when row is hidden
+    Board cannot be rotated while a row is hidden
 
+Backend
+    Logging for when users join, leave etc
+    Spam prevention
+    Empty rooms need to be cleared up (Heroku seems to do this)
+    People need to be disconnected from rooms after leaving for too long
+
+
+Remaining aesthetic stuff
+    ...
+    Splash screen
+    Logger fonts
+    Logger sounds

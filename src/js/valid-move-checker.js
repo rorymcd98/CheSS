@@ -6,11 +6,9 @@ import {logger} from "./logger.js";
 export function pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, boardState, isWhiteTurn){
     let isValidMove = false;
     let isCheckmate = false;
+    console.log(fromFyle, fromRank, toFyle, toRank)
     const {boardArray, fromX, fromY, toX, toY}  = boardToArray(boardState, fromFyle, fromRank, toFyle, toRank);
-    // const fromX = boardState.fyles.indexOf(fromFyle);
-    // const fromY = boardState.ranks.indexOf(fromRank);
-    // const toX = boardState.fyles.indexOf(toFyle);
-    // const toY = boardState.ranks.indexOf(toRank);
+    console.log(boardArray, fromX, fromY, toX, toY)
 
     if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardArray, isWhiteTurn)){
         isValidMove = true;
@@ -38,7 +36,6 @@ export function cssTurnHandler(boardState, isWhiteTurn, currentCssText){
     }
     const cssBoardState = cssUpdateBoardState(boardState);
     const {boardArray: cssBoardArray} = boardToArray(cssBoardState);
-
     if(!(findKings(cssBoardArray, true).length === 1 && findKings(cssBoardArray, false).length === 1)){
         logger('CSS moves can\'t create or destroy a king!')
         return [false, null];
@@ -307,16 +304,24 @@ export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, pie
 
     //Un-rotate the squares that get highlighted (this step could be avoided if we assemble our boardArray from the squares, not pieces, and attach coordinates to those. Frankly the use of a intermediate board array is a sign of bad programming anyway)
     const quadrant = (Number(boardState.rotation)/90)%360;
-    let boardDims = [boardState.ranks.length, boardState.fyles.length];
-    if(quadrant%2===1){const temp = boardDims[1]; boardDims[1]=boardDims[0]; boardDims[0]=temp}
+    let boardDimY;
+    let boardDimX;
+    if(quadrant%2===0){
+        boardDimY = boardState.ranks.length;
+        boardDimX = boardState.fyles.length;
+    } else {
+        //If we're in a 'odd' quadrant, we will have to rotate/flip the output array dimensions
+        boardDimX = boardState.ranks.length;
+        boardDimY = boardState.fyles.length;
+    }
 
     pieceMoveset.forEach((move) => {
         const toX = fromX+move[0];
         const toY = fromY+move[1];
         if(checkValidMove(fromX,fromY,toX,toY,hoverPiece,boardArray,isWhiteTurn, false)){
-            const toRank = boardState.ranks[toY];
-            const toFyle = boardState.fyles[toX];
-            const [outRankNum, outFyleNum] = quadrant%4 != 0 ? rotateVector(quadrant, toRank, toFyle, boardDims[0], boardDims[1], true) : [toRank, toFyle];
+            const [outToY, outToX] = quadrant%4 != 0 ? rotateVector(quadrant, toY, toX, boardDimY, boardDimX, true) : [toY, toX];
+            const outRankNum = boardState.ranks[outToY];
+            const outFyleNum = boardState.fyles[outToX];
             const ele = document.querySelector(`td[data-rank = "${outRankNum}"][data-fyle = "${outFyleNum}"]`);
             ele.classList.add('validMove');
         }
@@ -498,12 +503,18 @@ function cssUpdateBoardState(boardState){
 //Creates a 2D array from the board state, useful for when the board geometry changes
 function boardToArray(boardState, fromFyle=-1, fromRank=-1, toFyle=-1, toRank=-1){
     const quadrant = (Number(boardState.rotation)/90)%360;
+    let boardDimY;
+    let boardDimX;
+    if(quadrant%2===0){
+        boardDimY = boardState.ranks.length;
+        boardDimX = boardState.fyles.length;
+    } else {
+        //If we're in a 'odd' quadrant, we will have to rotate/flip the output array dimensions
+        boardDimX = boardState.ranks.length;
+        boardDimY = boardState.fyles.length;
+    }
     
-    let boardDims = [boardState.ranks.length, boardState.fyles.length];
-    
-    //If we're in a 'odd' quadrant, we will have to rotate/flip the output array dimensions
-    if(quadrant%2===1){const temp = boardDims[1]; boardDims[1]=boardDims[0]; boardDims[0]=temp}
-    let resArray = [...Array(boardDims[0])].map(e => Array(boardDims[1]));
+    let resArray = [...Array(boardDimY)].map(e => Array(boardDimX));
    
     for(let rankCount = 0; rankCount <= 7; rankCount++){
         const rankNum = boardState.ranks.indexOf(rankCount);
@@ -514,20 +525,26 @@ function boardToArray(boardState, fromFyle=-1, fromRank=-1, toFyle=-1, toRank=-1
                 if(fyleNum>=0){
                     const curSquare = boardState[rankCount][fyleCount];
                 
-                    const [outRankNum, outFyleNum] = quadrant%4 != 0 ? rotateVector(quadrant, rankNum, fyleNum, boardDims[0], boardDims[1]) : [rankNum, fyleNum];
-                    resArray[outRankNum][outFyleNum] = curSquare.piece;
+                    const [rotRankNum, rotFyleNum] = quadrant%4 != 0 ? rotateVector(quadrant, rankNum, fyleNum, boardState.ranks.length, boardState.fyles.length) : [rankNum, fyleNum];
+                    resArray[rotRankNum][rotFyleNum] = curSquare.piece;
                 }
             }
         }
     }
-    const [fromY, fromX] = quadrant%4 != 0 ? rotateVector(quadrant, fromRank, fromFyle, boardDims[0], boardDims[1]) : [fromRank, fromFyle];
-    const [toY, toX] = quadrant%4 != 0 ? rotateVector(quadrant, toRank, toFyle, boardDims[0], boardDims[1]) : [toRank, toFyle];
-        
-    const res = {boardArray: resArray, fromY: fromY, fromX: fromX, toY: toY, toX: toX};
+    let fromRankNum = boardState.ranks.indexOf(fromRank);
+    let fromFyleNum = boardState.fyles.indexOf(fromFyle);
+    let toRankNum = boardState.ranks.indexOf(toRank);
+    let toFyleNum = boardState.fyles.indexOf(toFyle);
+
+    const [rotFromY, rotFromX] = quadrant%4 != 0 ? rotateVector(quadrant, fromRankNum, fromFyleNum, boardState.ranks.length, boardState.fyles.length) : [fromRankNum, fromFyleNum];
+    const [rotToY, rotToX] = quadrant%4 != 0 ? rotateVector(quadrant, toRankNum, toFyleNum, boardState.ranks.length, boardState.fyles.length) : [toRankNum, toFyleNum];
+
+    const res = {boardArray: resArray, fromY: rotFromY, fromX: rotFromX, toY: rotToY, toX: rotToX};
     return res;
 }
 
 function rotateVector(quadrant, rankNum, fyleNum, rankLength, fyleLength, inverse = false){
+    //rankLength and fyleLength of the rotated/output array
 
     if(inverse){quadrant = 4-quadrant};
 
