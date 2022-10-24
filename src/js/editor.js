@@ -1,5 +1,5 @@
 //Create the monaco text editor element
-import * as monaco from 'monaco-editor';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import {logger} from "./logger.js";
 
 

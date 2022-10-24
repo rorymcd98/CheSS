@@ -1,26 +1,16 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require("webpack");
 const path = require('path');
 
 module.exports = {
 	mode: 'production',
 	watch: false,
-	devtool: 'source-map',
 	entry: {app: path.resolve(__dirname,'src/js/main.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].[contenthash].js',
-		sourceMapFilename: '[name].[contenthash].map',
 		chunkFilename: '[id].[contenthash].js'
-	},
-	devServer: {
-		static: path.resolve(__dirname,'dist'),
-		overlay: true,
-		watch: true,
-		hot: false,
-		client: false
 	},
 	module: {
 		rules: [
@@ -52,16 +42,17 @@ module.exports = {
 			}
 		]
 	},
-	plugins: [	new MonacoWebpackPlugin(),
+	plugins: [	new MonacoWebpackPlugin({
+		languages: ['css']
+	}),
 				new HtmlWebpackPlugin({
 						hash:true,
 						title: 'Project',
 						template: path.resolve(__dirname,'src','html','index.ejs'),
 						favicon: './src/assets/img/chess-favicon.ico',
-					}),
-				new webpack.HotModuleReplacementPlugin()
+					})
 			],
 	optimization: {
-		runtimeChunk: 'single',
-		},
+		minimize: true
+	}
 };
