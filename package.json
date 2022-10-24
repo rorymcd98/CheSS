@@ -5,7 +5,7 @@
   "main": "./src/server/production-server.js",
   "scripts": {
     "start": "node ./src/server/production-server.js",
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack --config webpack.prod.js -p",
     "dev": "node ./src/server/dev-server.js"
   },
   "author": "Rory McDonald",
