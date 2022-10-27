@@ -15,3 +15,18 @@ Play now at [chess-css.herokuapp.com](https://chess-css.herokuapp.com/)
 - Hover over pieces to view the available moves, accounting for CSS changes
 - Multiplayer supported through socket.io with automatic rejoining and restoring game state
 
+##Instructions
+
+* Get the latest release
+
+* Install Node.js
+
+* Unzip the release and run:
+
+```
+npm install .
+npm run build
+npm run start
+```
+
+* Open your browser and visit http://localhost:3000/ (or your environment's specified port)
