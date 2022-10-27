@@ -92,6 +92,7 @@ function main(app){
             playerId = generatePlayerId();
         }
         socket.emit('clientAssignPlayer', {playerId: playerId})
+        console.log(`Player ${playerId} connected`);
         
         if(!(playerId in allPlayers)){
             allPlayers[playerId] = {roomId: null, isWhite: null}; 
@@ -107,6 +108,8 @@ function main(app){
             const clientCurrentTurn = leftRoom.currentTurn;
 
             socket.emit('clientJoinGame', {roomId: leftRoomId, isWhite: playerIsWhite, clientCurrentTurn: clientCurrentTurn});
+            console.log(`Player ${playerId} rejoined room ${roomId}`);
+            socket.broadcast.to(leftRoomId).emit('log', {message: `A player has joined your room!`});
         } else {
             socket.emit('clientViewRooms', rooms);
         }
@@ -126,7 +129,9 @@ function main(app){
             socket.join(roomId)
             allPlayers[playerId].roomId = roomId;
             allPlayers[playerId].isWhite = newPlayer.isWhite;
+            
             socket.emit('clientJoinGame', {roomId: roomId, isWhite: newPlayer.isWhite, clientCurrentTurn: currentTurn});
+            console.log(`Player ${playerId} created room ${roomId}`);
             io.emit('clientViewRooms', rooms);
         })
 
@@ -158,9 +163,11 @@ function main(app){
             
                 const clientCurrentTurn = room.currentTurn;
                 socket.emit('clientJoinGame', {roomId: roomId, isWhite: playerIsWhite, clientCurrentTurn: clientCurrentTurn});
+                socket.broadcast.to(roomId).emit('log', {message: `A player has joined your room!`});
+                console.log(`Player ${playerId} joined room ${roomId}`);
                 io.emit('clientViewRooms', rooms);
             } else {
-                socket.emit('err', {errMessage: "Error joining room"})
+                socket.emit('log', {message: "Error joining room"})
             }
         })
 

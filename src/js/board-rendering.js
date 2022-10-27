@@ -79,6 +79,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
     boardContainerEle.appendChild(boardElement);
 
     //Render the board legend (these are able to be dragged into the editor)
+    //Render the fyles legend
     const fyles = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F', 6:'G', 7:'H'};
     let topLegend = document.createElement('tr');
     let bottomLegend = document.createElement('tr');
@@ -99,6 +100,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
         bottomLegend.append(legend.cloneNode(true));
     };
 
+    //Render the ranks legend (also renders the corner elements)
     boardElement.insertBefore(topLegend, boardElement.firstChild);
     boardElement.appendChild(bottomLegend);
     for(let rankCount=-1; rankCount<9; rankCount++){
@@ -165,6 +167,7 @@ return function renderBoard(boardState, isWhiteTurn = true, cssText, whitePerspe
     })
     
     //Drop events for squares handle the logic for regular chess moves
+    //If a drag and drop is a valid move, the move is played, and the boardstate / turn list is updated
     squares.forEach(square => {
         square.addEventListener('drop', (e)=>{
             e.preventDefault();

@@ -8,16 +8,15 @@ import "../css/main-styles.css"
 
 //Global gameData vars are: playerId, multiplayer, roomId, gameTurnList
 window.gameData = {};
-//const gameSocket = io('http://localhost:3000/');
-const gameSocket = io('https://chess-css.herokuapp.com/')
+const gameSocket = io();
 const renderBoard = factoryRenderBoard(gameSocket);
 initEditor(initMain);
 
 function initMain(){
     //---websockets---
-    //Logs all socket errors
-    gameSocket.on('err', (data)=>{
-        logger(data.errMessage);
+    //Logs all server messages
+    gameSocket.on('log', (data)=>{
+        logger(data.message);
     })
 
     gameSocket.on('clientNewGame',()=>{

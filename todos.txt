@@ -1,8 +1,10 @@
 For now
     Sound for pieces, checks etc
+    Notification when another player joins and disconnects
     Logo CheSS
 
-
+Local play
+    Enable saving of game state
 
 Chess edge cases
     Pawn promotions
@@ -11,18 +13,16 @@ Chess edge cases
 
 Bugs
     ...
-    Queen moves not valid when row is hidden
-    Board cannot be rotated while a row is hidden
 
-Backend
+Back end
     Logging for when users join, leave etc
     Spam prevention
     Empty rooms need to be cleared up (Heroku seems to do this)
     People need to be disconnected from rooms after leaving for too long
-
+    Figure out how to import all the web socket code into dev-server.js
 
 Remaining aesthetic stuff
     ...
     Splash screen
-    Logger fonts
+    Logger font colours (e.g. errors, good messages, neutral messages)
     Logger sounds

@@ -6,9 +6,7 @@ import {logger} from "./logger.js";
 export function pieceTurnHandler(fromFyle, fromRank, toFyle, toRank, curPiece, boardState, isWhiteTurn){
     let isValidMove = false;
     let isCheckmate = false;
-    console.log(fromFyle, fromRank, toFyle, toRank)
     const {boardArray, fromX, fromY, toX, toY}  = boardToArray(boardState, fromFyle, fromRank, toFyle, toRank);
-    console.log(boardArray, fromX, fromY, toX, toY)
 
     if(checkValidMove(fromX, fromY, toX, toY, curPiece, boardArray, isWhiteTurn)){
         isValidMove = true;
@@ -155,6 +153,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
             return false;
         }
         //Check if the rook, bishop, queen will encounter a piece on their route (unless the moving piece, or intercepting piece is a ghost)
+        //Queen and bishop moves
         if ((moveX === moveY) && (isQueen || isBishop) && !pP.ghost){
             let xDir = (toX - fromX) > 0 ? 1 : -1;
             let yDir = (toY - fromY) > 0 ? 1 : -1;
@@ -165,7 +164,8 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
                     return false;
                 }   
             }
-        } 
+        }
+        //Queen and rook moves
         if (((moveX ===0)^(moveY === 0)) && (isQueen || isRook) && !pP.ghost){
             let xDir;
             let yDir;
@@ -185,6 +185,7 @@ function checkValidMove(fromX, fromY, toX, toY, piece, boardArray, isWhiteTurn, 
             }
         }
     }
+
     //Create a new board with the piece moved
     let nextBoardArray = structuredClone(boardArray);
     nextBoardArray[toY][toX] = nextBoardArray[fromY][fromX];
@@ -291,18 +292,17 @@ function checkCheckmate(boardArray,isWhiteTurn){
     return true;
 }
 
-//Highlights squares each piece can move to when they are hovered over
+//Highlights squares a piece can move to when they are hovered over
 export function highlightSquares(fromFyle, fromRank, hoverPiece, boardState, pieceCol){
     const {boardArray, fromX, fromY} = boardToArray(boardState, fromFyle, fromRank);
-    // const fromX = boardState.fyles.indexOf(fromFyle);
-    // const fromY = boardState.ranks.indexOf(fromRank);
+
     const isWhiteTurn = pieceCol === 'white' ? true : false;
     let pieceMoveset;
     if(hoverPiece.type == 'pawn' && hoverPiece.properties.big){
         pieceMoveset = movesets[pieceCol][hoverPiece.type].big;
     } else {pieceMoveset = movesets[pieceCol][hoverPiece.type];}
 
-    //Un-rotate the squares that get highlighted (this step could be avoided if we assemble our boardArray from the squares, not pieces, and attach coordinates to those. Frankly the use of a intermediate board array is a sign of bad programming anyway)
+    //Un-rotate the 'move' to find the actual board piece that should be highlighted
     const quadrant = (Number(boardState.rotation)/90)%360;
     let boardDimY;
     let boardDimX;
@@ -373,8 +373,9 @@ function GenerateMoveset(){
     this.black.rook = this.white.rook;
     this.black.queen = this.white.queen;
 }
+
 //Find all the current-turn kings
-//This workflow exists in case we want to get rid of CSS move rule.1 (multiple kings)
+//[It's plural because there were plans to have multiple kings per player]
 function findKings(boardArray, isWhiteTurn){
     let kings = [];
     const turn = isWhiteTurn ? 'white' : 'black';
@@ -391,7 +392,7 @@ function findKings(boardArray, isWhiteTurn){
 
 //Currently just a dummy function until we can count the number of changes
 function checkNumberCssChanges(currentCssText){
-    const nextCssText = getCss();
+    //const nextCssText = getCss();
  
     return 1;
     return numberCssChanges;
@@ -405,7 +406,7 @@ function cssUpdateBoardState(boardState){
         let line = nextCssText[i];
         const unicodeToPiece = {'\u2659':['white','pawn'],'\u2656':['white','rook'],'\u2658':['white','knight'],'\u2657':['white','bishop'],'\u2654':['white','king'],'\u2655':['white','queen'],
                                 '\u265F':['black','pawn'],'\u265C':['black','rook'],'\u265E':['black','knight'],'\u265D':['black','bishop'],'\u265A':['black','king'],'\u265B':['black','queen']};
-        if(line.includes('{')){//Todo: At some point this will need to debug in case of invalid property.
+        if(line.includes('{')){
             lineSelectorRules(i, ['td[data-rank'], 'ranks', 'display', {'none':false,'table-cell':true});
             lineSelectorRules(i, ['td[data-fyle'], 'fyles', 'display', {'none':false,'table-cell':true});
             pieceSelectorRules(i, ['#white', '#black', '.white', '.black', '.pawn', '.rook','.bishop', '.knight', '.queen', '.piece'], 'content', unicodeToPiece, (val,rN,fN)=>{const pc = resBoard[rN][fN].piece; pc.col = val[0]; pc.type = val[1]});
@@ -439,7 +440,7 @@ function cssUpdateBoardState(boardState){
                             const idx = resBoard[lineType].indexOf(lineValue);
                             if(idx>=0){resBoard[lineType].splice(idx, 1);}
                         }                       
-                    } else {logger("Invalid CSS styling value!")}
+                    } else {logger(`Invalid CSS styling value: "${candidateValue}"`)}
                 }
             }
             j++;
@@ -452,7 +453,7 @@ function cssUpdateBoardState(boardState){
         if(!selectorStarts.some((selecStart)=>(line.trim().startsWith(selecStart)))){return};
         const selector = line.trim().slice(0,line.trim().indexOf('{'));
         const eles = document.querySelectorAll(selector);
-        if ([...eles].some((ele)=>ele.classList.contains('king'))){logger("CSS moves cannot effect kings!"); return};
+        if ([...eles].some((ele)=>ele.classList.contains('king'))){logger(`Invalid selector: "${selector}" - CSS moves cannot effect kings!`); return};
         line = nextCssText[j];
         while(!line.includes('}')){
             if(line.includes(':')){
@@ -470,7 +471,7 @@ function cssUpdateBoardState(boardState){
                             const rankFyle = ele.dataset.fyle;
                             ruleCallback(boardStateProp, rankNum, rankFyle);
                         })
-                    } else {logger("Invalid CSS styling value!")}
+                    } else {logger(`Invalid CSS styling value: "${candidateValue}"`)}
                 }
             }
             j++;
@@ -491,7 +492,7 @@ function cssUpdateBoardState(boardState){
                     if (Object.keys(validValues).includes(candidateValue)){
                         const boardStateProp = validValues[candidateValue];
                         ruleCallback(boardStateProp);
-                    } else {logger("Invalid CSS styling value!")}
+                    } else {logger(`Invalid CSS styling value: "${candidateValue}"`)}
                 }
             }
             j++;
@@ -545,7 +546,6 @@ function boardToArray(boardState, fromFyle=-1, fromRank=-1, toFyle=-1, toRank=-1
 
 function rotateVector(quadrant, rankNum, fyleNum, rankLength, fyleLength, inverse = false){
     //rankLength and fyleLength of the rotated/output array
-
     if(inverse){quadrant = 4-quadrant};
 
     let outRankNum;
