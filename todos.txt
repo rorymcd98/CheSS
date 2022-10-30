@@ -3,6 +3,9 @@ For now
     Notification when another player joins and disconnects
     Logo CheSS
 
+Unit testing
+    Really need some form of unit testing - maybe JEST
+
 Local play
     Enable saving of game state
 
