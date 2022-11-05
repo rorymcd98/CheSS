@@ -1,4 +1,6 @@
 const express = require("express");
+require('dotenv').config({path:__dirname+'../../.env'});
+const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -25,7 +27,6 @@ app.use(staticMiddleware)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 const server = require('http').Server(app)
 const io = require('socket.io')(server);
 //Cookie functions from https://www.w3schools.com/js/js_cookies.asp
@@ -106,6 +107,7 @@ io.on('connection', (socket)=>{
         playerId = generatePlayerId();
     }
     socket.emit('clientAssignPlayer', {playerId: playerId})
+    console.log(`Player ${playerId} connected`);
     
     if(!(playerId in allPlayers)){
         allPlayers[playerId] = {roomId: null, isWhite: null}; 
@@ -121,6 +123,8 @@ io.on('connection', (socket)=>{
         const clientCurrentTurn = leftRoom.currentTurn;
 
         socket.emit('clientJoinGame', {roomId: leftRoomId, isWhite: playerIsWhite, clientCurrentTurn: clientCurrentTurn});
+        console.log(`Player ${playerId} rejoined room ${roomId}`);
+        socket.broadcast.to(leftRoomId).emit('log', {message: `A player has joined your room!`});
     } else {
         socket.emit('clientViewRooms', rooms);
     }
@@ -140,7 +144,9 @@ io.on('connection', (socket)=>{
         socket.join(roomId)
         allPlayers[playerId].roomId = roomId;
         allPlayers[playerId].isWhite = newPlayer.isWhite;
+        
         socket.emit('clientJoinGame', {roomId: roomId, isWhite: newPlayer.isWhite, clientCurrentTurn: currentTurn});
+        console.log(`Player ${playerId} created room ${roomId}`);
         io.emit('clientViewRooms', rooms);
     })
 
@@ -172,9 +178,11 @@ io.on('connection', (socket)=>{
         
             const clientCurrentTurn = room.currentTurn;
             socket.emit('clientJoinGame', {roomId: roomId, isWhite: playerIsWhite, clientCurrentTurn: clientCurrentTurn});
+            socket.broadcast.to(roomId).emit('log', {message: `A player has joined your room!`});
+            console.log(`Player ${playerId} joined room ${roomId}`);
             io.emit('clientViewRooms', rooms);
         } else {
-            socket.emit('err', {errMessage: "Error joining room"})
+            socket.emit('log', {message: "Error joining room"})
         }
     })
 
@@ -199,6 +207,6 @@ io.on('connection', (socket)=>{
     })
 });
 
-server.listen(3000, ()=>{
-    console.log('CheSS app - Web socket listening');
+server.listen(port, ()=>{
+    console.log(`CheSS app - Web socket listening on port ${port}`);
 })
