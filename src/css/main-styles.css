@@ -10,11 +10,10 @@
     --piece-size: 5vh;
 
     --background: rgb(36,44,48);
-    --dark:      rgb(97, 97, 97);
-    --light:     rgb(222, 222, 222);
-    --hover:     rgb(212, 203, 128);
-    --valid-move-light: #e7df9a;
-    --valid-move-dark: rgb(171, 167, 103);
+    --button-colour: rgb(42, 41, 46);
+    --board-container-colour: var(--button-colour);
+    --dark:      rgb(141, 161, 104);
+    --light:     rgb(220, 218, 180);
   }
 body{
   background-color: var(--background);
@@ -310,7 +309,7 @@ body{
   max-width: var(--board-size);
   max-height: var(--board-size);
   padding: 4%;
-  background-color: rgb(42, 41, 46);
+  background-color: var(--board-container-colour);
   border: 0.1vh solid black;
   border-radius: 2vh;
   z-index: 1;
@@ -358,7 +357,7 @@ td.legend.bottom:last-child{
   height: var(--box-size);
   min-width: var(--box-size);
   min-height: var(--box-size);
-  transition: background-color 0.2s; 
+  transition: filter 0.2s; 
 }
 .light{
   background-color: var(--light);
@@ -367,14 +366,11 @@ td.legend.bottom:last-child{
   background-color: var(--dark)
 }
 .square:hover{
-  background-color: var(--hover);
-  cursor: pointer
+  filter: brightness(105%) hue-rotate(-15deg) saturate(1.4);
+  cursor: pointer;
 }
-.square.dark.validMove{
-  background-color: var(--valid-move-dark);
-}
-.square.light.validMove{
-  background-color: var(--valid-move-light);
+.square.validMove{
+  filter: brightness(105%) hue-rotate(-15deg) saturate(1.4);
 }
 
 /* the butttons below the board */
@@ -429,7 +425,7 @@ td.legend.bottom:last-child{
 }
 
 button{
-  background-color: rgb(42, 41, 46);
+  background-color: var(--button-colour);
   color: rgb(224, 224, 224);
   border: 0.1vh solid black;
   width: var(--button-width);
