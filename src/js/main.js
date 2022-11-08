@@ -134,8 +134,6 @@ function initMain(){
 
     //---buttons---
     //Create the event listeners for buttons
-
-
     const rulesTabEle = document.getElementById('rules-tab');
     rulesTabEle.addEventListener('click', ()=>{
         const rulesPanelEle = document.getElementById('rules-panel');
@@ -157,7 +155,6 @@ function initMain(){
         newGame();
         if(gameData.multiplayer){gameSocket.emit('newGame', {roomId: gameData.roomId})};
     });
-
 
     //Renders a new board from white's perspective, sets the global turnlist variable
     function newGame(){
@@ -204,8 +201,6 @@ function initMain(){
             if(gameData.multiplayer){gameSocket.emit('move', {roomId: gameData.roomId, boardState: nextBoardState, isWhiteTurn: nextIsWhiteTurn, cssText: nextCssText})};
         }
     });
-
-
 
     //Create the board
     setMultiplayer(true);
