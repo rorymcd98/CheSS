@@ -15,6 +15,9 @@ Chess edge cases
     Castling
 
 Bugs
+    Major - The server begins to break for more than 2 players
+           When joining a room if there is at least a 3rd player on the server then moves can no longer be made.
+    Medium - ghost pieces can't be moved through in some cases (e.g. queen can't move through)
     ...
 
 Back end
