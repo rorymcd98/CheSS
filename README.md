@@ -6,7 +6,7 @@ Play now at [chess-css.herokuapp.com](https://chess-css.herokuapp.com/)
 
 <h2>Preview</h2> 
 
-![text](https://i.imgur.com/GdAaxjN.png)
+![text](https://i.imgur.com/3EmpYXB.png)
 
 <h2>Game features</h2> 
 
